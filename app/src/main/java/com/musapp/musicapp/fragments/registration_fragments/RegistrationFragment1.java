@@ -1,0 +1,87 @@
+package com.musapp.musicapp.fragments.registration_fragments;
+
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.musapp.musicapp.R;
+import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegisterFragmentTransaction;
+import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
+import com.musapp.musicapp.utils.CheckUtils;
+import com.musapp.musicapp.utils.ContextUtils;
+import com.musapp.musicapp.utils.ErrorShowUtils;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class RegistrationFragment1 extends Fragment {
+     @BindView(R.id.registration_fragment_1_fullname) EditText fullname;
+     @BindView(R.id.registration_fragment_1_nickname) EditText nickname;
+     @BindView(R.id.registration_fragment_1_next_button) Button nextButton;
+     final String TAG = RegistrationFragment1.class.getSimpleName();
+
+   private View.OnClickListener nextClickListener = new View.OnClickListener() {
+       @Override
+       public void onClick(View v) {
+           if(submitInformation())
+                RegistrationTransactionWrapper.registerForNextFragment((int)nextButton.getTag());
+           //TODO set animation to another fragment
+
+       }
+   };
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+       View view  = inflater.inflate(R.layout.registration_fragment_1, container, false);
+       ButterKnife.bind(this, view);
+       return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        nextButton.setTag(R.integer.registration_fragment_1);
+        nextButton.setOnClickListener(nextClickListener);
+    }
+
+    private boolean checEditTextField(){
+        if(CheckUtils.checkEditTextEmpty(fullname)){
+            ErrorShowUtils.showEditTextError(fullname, ContextUtils.getResourceString(this, R.string.empty_error_message));
+            return false;
+        }
+        else if(!CheckUtils.checkIsntOneWord(fullname)){
+            ErrorShowUtils.showEditTextError(fullname, ContextUtils.getResourceString(this, R.string.fullname_one_word_error_message));
+            return false;
+        }
+        if(CheckUtils.checkEditTextEmpty(nickname)){
+            ErrorShowUtils.showEditTextError(nickname, ContextUtils.getResourceString(this, R.string.empty_error_message));
+            return false;
+        }
+        return true;
+    }
+
+    private boolean submitInformation(){
+
+        if(checEditTextField()){
+            Log.i(TAG, "use info");
+            return true;
+        }
+        //TODO set information to user local object
+        return false;
+    }
+
+
+}

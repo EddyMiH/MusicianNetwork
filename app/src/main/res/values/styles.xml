@@ -1,0 +1,36 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="MyDatePickerSpinnerStyle" parent="@android:style/Widget.DatePicker">
+        <item name="android:calendarViewShown">false</item>
+        <item name="colorControlNormal">@color/darkPurple</item>
+    </style>
+    <style name="error_appearance" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/darkPurple</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="DefaultTextStyle">
+        <item name="android:textColor">@color/textBlue</item>
+        <item name="android:textColorHint">@color/textBlue</item>
+    </style>
+    <style name="LogoStyle">
+        <item name="android:text">@string/app_name</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#b7d6ef</item>
+        <item name="android:textSize">40sp</item>
+    </style>
+    <style name="NextButtonStyle">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/textBlue</item>
+        <item name="android:text">@string/next</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+
+</resources>

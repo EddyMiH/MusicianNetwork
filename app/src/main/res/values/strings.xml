@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Carambola</string>
+    <string name="fullname">Fullname</string>
+    <string name="nickname">Nickname</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="next">Next</string>
+    <string name="empty_error_message">Field is empty</string>
+    <string name="fullname_one_word_error_message">Please, enter your name and surname </string>
+    <string name="wrong_email_message">Entered email is wrong</string>
+    <string name="password_match">Password doesn\'t match</string>
+</resources>

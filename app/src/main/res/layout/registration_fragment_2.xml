@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+   >
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/registration_fragment_2_date_picker"
+        android:datePickerMode="spinner"
+        style="@style/MyDatePickerSpinnerStyle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        >
+    </DatePicker>
+<RadioGroup
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/registration_fragment_2_radio_group"
+    android:orientation="horizontal"
+    app:layout_constraintTop_toBottomOf="@id/registration_fragment_2_date_picker"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginTop="20dp"
+   >
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/registration_fragment_2_male_button"
+        android:text="@string/male"
+        style="@style/DefaultTextStyle"
+        android:layout_marginRight="50dp"
+        android:checked="true"
+        android:buttonTint="@color/darkPurple"
+        />
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/registration_fragment_2_female_button"
+        android:text="@string/female"
+        style="@style/DefaultTextStyle"
+        android:buttonTint="@color/darkPurple"
+       />
+</RadioGroup>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/registration_fragment_2_next_button"
+        style="@style/NextButtonStyle"
+        app:layout_constraintTop_toBottomOf="@id/registration_fragment_2_radio_group"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+</android.support.constraint.ConstraintLayout>
