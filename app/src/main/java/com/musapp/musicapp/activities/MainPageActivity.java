@@ -60,33 +60,5 @@ public class MainPageActivity extends AppCompatActivity {
         finish();
     }
 
-    protected void setMenuBackground() {
-        // Log.d(TAG, "Enterting setMenuBackGround");
-        getLayoutInflater().setFactory(new LayoutInflater.Factory() {
 
-            @Override
-            public View onCreateView(String name, Context context,
-                                     AttributeSet attrs) {
-                if (name.equalsIgnoreCase("com.android.internal.view.menu.IconMenuItemView")) {
-                    try { // Ask our inflater to create the view
-                        LayoutInflater f = getLayoutInflater();
-                        final View view = f.createView(name, null, attrs);
-                        /* The background gets refreshed each time a new item is added the options menu.
-                         * So each time Android applies the default background we need to set our own
-                         * background. This is done using a thread giving the background change as runnable
-                         * object */
-                        new Handler().post(new Runnable() {
-                            public void run() {
-                                // sets the background color
-                                view.setBackgroundColor(Color.TRANSPARENT);
-                            }
-                        });
-                        return view;
-                    } catch (InflateException | ClassNotFoundException e) {
-                    }
-                }
-                return null;
-            }
-        });
-    }
 }
