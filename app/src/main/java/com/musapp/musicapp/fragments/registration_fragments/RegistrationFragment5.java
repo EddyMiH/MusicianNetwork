@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
+import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.utils.CheckUtils;
 import com.musapp.musicapp.utils.ContextUtils;
 import com.musapp.musicapp.utils.ErrorShowUtils;
@@ -20,19 +21,19 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RegistrationFragment5 extends Fragment {
-    @BindView(R.id.registration_fragment_4_email) EditText email;
-    @BindView(R.id.registration_fragment_4_password) EditText password;
-    @BindView(R.id.registration_fragment_4_confirm_password) EditText confirm_password;
-    @BindView(R.id.registration_fragment_4_next_button)
+    @BindView(R.id.text_fragment_registration_5_email) EditText email;
+    @BindView(R.id.text_fragment_registration_5_password) EditText password;
+    @BindView(R.id.text_fragment_registration_5_confirm_pass) EditText confirm_password;
+    @BindView(R.id.action_fragment_registration_5_next)
     Button nextButton;
     private final String TAG = RegistrationFragment1.class.getSimpleName();
     private View.OnClickListener nextClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(submitInformation())
-                RegistrationTransactionWrapper.registerForNextFragment((int)nextButton.getTag());
-            //TODO set animation to another fragment
-
+            if(submitInformation()) {
+                RegistrationTransactionWrapper.registerForNextFragment((int) nextButton.getTag());
+                RegisterPreferences.saveState(getActivity().getBaseContext(), true);
+            }
         }
     };
 
@@ -44,7 +45,7 @@ public class RegistrationFragment5 extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view  = inflater.inflate(R.layout.registration_fragment_5, container, false);
+        View view  = inflater.inflate(R.layout.fragment_registration_5, container, false);
         ButterKnife.bind(this, view);
         return view;
     }

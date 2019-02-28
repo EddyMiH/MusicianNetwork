@@ -1,11 +1,9 @@
 package com.musapp.musicapp.fragments.registration_fragments;
 
-import android.app.DatePickerDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,10 +22,10 @@ import butterknife.ButterKnife;
 
 public class RegistrationFragment2 extends Fragment {
 
-     @BindView(R.id.registration_fragment_2_date_picker) DatePicker datePicker;
-     @BindView(R.id.registration_fragment_2_male_button) RadioButton maleRadioButton;
-     @BindView(R.id.registration_fragment_2_female_button) RadioButton femaleRadioButton;
-     @BindView(R.id.registration_fragment_2_next_button) Button nextButton;
+     @BindView(R.id.date_fragment_registration_2_birth) DatePicker datePicker;
+     @BindView(R.id.action_fragment_registration_2_male) RadioButton maleRadioButton;
+     @BindView(R.id.action_fragment_registration_2_female) RadioButton femaleRadioButton;
+     @BindView(R.id.action_fragment_registration_2_next) Button nextButton;
 
     private Calendar birthDate = Calendar.getInstance();
 
@@ -57,7 +55,7 @@ public class RegistrationFragment2 extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-       View view =  inflater.inflate(R.layout.registration_fragment_2, container, false);
+       View view =  inflater.inflate(R.layout.fragment_registration_2, container, false);
         ButterKnife.bind(this, view);
         return view;
     }

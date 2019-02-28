@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.musapp.musicapp.R;
-import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegisterFragmentTransaction;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.utils.CheckUtils;
 import com.musapp.musicapp.utils.ContextUtils;
@@ -22,9 +21,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RegistrationFragment1 extends Fragment {
-     @BindView(R.id.registration_fragment_1_fullname) EditText fullname;
-     @BindView(R.id.registration_fragment_1_nickname) EditText nickname;
-     @BindView(R.id.registration_fragment_1_next_button) Button nextButton;
+     @BindView(R.id.text_fragment_registration_1_fullname) EditText fullname;
+     @BindView(R.id.text_fragment_registration_1_nickname) EditText nickname;
+     @BindView(R.id.action_fragment_registration_1_next) Button nextButton;
      final String TAG = RegistrationFragment1.class.getSimpleName();
 
    private View.OnClickListener nextClickListener = new View.OnClickListener() {
@@ -45,7 +44,7 @@ public class RegistrationFragment1 extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-       View view  = inflater.inflate(R.layout.registration_fragment_1, container, false);
+       View view  = inflater.inflate(R.layout.fragment_registration_1, container, false);
        ButterKnife.bind(this, view);
        return view;
     }

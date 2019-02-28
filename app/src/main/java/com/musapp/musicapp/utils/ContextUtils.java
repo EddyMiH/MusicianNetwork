@@ -8,4 +8,7 @@ public final class ContextUtils {
     public static String getResourceString(Fragment fragment, int id){
         return fragment.getActivity().getBaseContext().getString(id);
     }
+    public static int getResourceInteger(Fragment fragment, int id){
+        return fragment.getActivity().getBaseContext().getResources().getInteger(id);
+    }
 }
