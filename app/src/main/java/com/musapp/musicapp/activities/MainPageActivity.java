@@ -21,6 +21,7 @@ import com.musapp.musicapp.preferences.RememberPreferences;
 public class MainPageActivity extends AppCompatActivity {
 
     private Menu mMenu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,11 +39,11 @@ public class MainPageActivity extends AppCompatActivity {
         return true;
     }
 
-   
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.quit_activity_main_page_menu:{
+        switch (item.getItemId()) {
+            case R.id.quit_activity_main_page_menu: {
                 RememberPreferences.saveState(getApplicationContext(), false);
                 startSignIn();
             }
@@ -50,7 +51,7 @@ public class MainPageActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void startSignIn(){
+    private void startSignIn() {
         Intent intent = new Intent(this, StartActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -58,32 +59,34 @@ public class MainPageActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-    protected void setMenuBackground(){
+
+    protected void setMenuBackground() {
         // Log.d(TAG, "Enterting setMenuBackGround");
-        getLayoutInflater().setFactory( new LayoutInflater.Factory() {
+        getLayoutInflater().setFactory(new LayoutInflater.Factory() {
 
             @Override
             public View onCreateView(String name, Context context,
                                      AttributeSet attrs) {
-                if ( name.equalsIgnoreCase( "com.android.internal.view.menu.IconMenuItemView" ) ) {
+                if (name.equalsIgnoreCase("com.android.internal.view.menu.IconMenuItemView")) {
                     try { // Ask our inflater to create the view
                         LayoutInflater f = getLayoutInflater();
-                        final View view = f.createView( name, null, attrs );
+                        final View view = f.createView(name, null, attrs);
                         /* The background gets refreshed each time a new item is added the options menu.
                          * So each time Android applies the default background we need to set our own
                          * background. This is done using a thread giving the background change as runnable
                          * object */
                         new Handler().post(new Runnable() {
-                            public void run () {
+                            public void run() {
                                 // sets the background color
                                 view.setBackgroundColor(Color.TRANSPARENT);
                             }
-                        } );
+                        });
                         return view;
+                    } catch (InflateException | ClassNotFoundException e) {
                     }
-                    catch ( InflateException|ClassNotFoundException e ) {}
                 }
                 return null;
-            }});
+            }
+        });
     }
 }

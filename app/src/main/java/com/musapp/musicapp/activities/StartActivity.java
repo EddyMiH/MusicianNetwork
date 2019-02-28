@@ -22,35 +22,35 @@ import com.musapp.musicapp.preferences.RememberPreferences;
 
 public class StartActivity extends AppCompatActivity {
 
-  private   RegistrationFragment1 register1;
-  private   RegistrationFragment2 register2;
-  private RegistrationFragment5 register4;
-  private SignInFragment signInFragment;
-  ConstraintLayout main;
+    private RegistrationFragment1 register1;
+    private RegistrationFragment2 register2;
+    private RegistrationFragment5 register4;
+    private SignInFragment signInFragment;
 
-  private RegisterFragmentTransaction registerFragmentTransaction = new RegisterFragmentTransaction() {
-      @Override
-      public void getNextFragment(int id) {
-          if(id == R.integer.registration_fragment_1) {
-              beginTransaction(register2);
-          }
-          if(id == R.integer.registration_fragment_2) {
-              beginTransaction(register4);
-          }
-          if(id == R.integer.registration_fragment_5) {
-             beginTransaction(signInFragment);
-          }
-          if(id == R.integer.sign_in_fragment_main_page){
-              startMainPageActivity();
-          }
-          if(id == R.integer.sign_in_fragment_registration){
-              beginTransaction(register1);
-          }
-          if(id == R.integer.sign_in_fragment_forgot_pass){
-              //TODO beginTransaction(forgotPasswordFragment)
-          }
-      }
-  };
+
+    private RegisterFragmentTransaction registerFragmentTransaction = new RegisterFragmentTransaction() {
+        @Override
+        public void getNextFragment(int id) {
+            if (id == R.integer.registration_fragment_1) {
+                beginTransaction(register2);
+            }
+            if (id == R.integer.registration_fragment_2) {
+                beginTransaction(register4);
+            }
+            if (id == R.integer.registration_fragment_5) {
+                beginTransaction(signInFragment);
+            }
+            if (id == R.integer.sign_in_fragment_main_page) {
+                startMainPageActivity();
+            }
+            if (id == R.integer.sign_in_fragment_registration) {
+                beginTransaction(register1);
+            }
+            if (id == R.integer.sign_in_fragment_forgot_pass) {
+                //TODO beginTransaction(forgotPasswordFragment)
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +65,14 @@ public class StartActivity extends AppCompatActivity {
 
     }
 
-    private void init(){
+    private void init() {
         register1 = new RegistrationFragment1();
         register2 = new RegistrationFragment2();
         register4 = new RegistrationFragment5();
         signInFragment = new SignInFragment();
     }
 
-    private void beginTransaction(Fragment fragment){
+    private void beginTransaction(Fragment fragment) {
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -80,16 +80,17 @@ public class StartActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
         transaction.commit();
     }
-    private void start(){
-        if(!RegisterPreferences.getState(this))
+
+    private void start() {
+        if (!RegisterPreferences.getState(this))
             beginTransaction(register1);
-        else if(!RememberPreferences.getState(this)){
-           beginTransaction(signInFragment);
-        }
-        else
+        else if (!RememberPreferences.getState(this)) {
+            beginTransaction(signInFragment);
+        } else
             startMainPageActivity();
     }
-    private void startMainPageActivity(){
+
+    private void startMainPageActivity() {
         Intent intent = new Intent(this, MainPageActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -100,6 +101,10 @@ public class StartActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-       //TODO call onDestroy() when necessary
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.layout_activity_start_content_main);
+        if (f instanceof RegistrationFragment1 || f instanceof SignInFragment) {
+            finish();
+        }
+        super.onBackPressed();
     }
 }
