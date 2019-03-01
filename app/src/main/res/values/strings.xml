@@ -19,4 +19,34 @@
     <string name="quit">Quit</string>
     <string name="settings_char">:</string>
 
+    <string name="profession_prompt">Choose your profession</string>
+    <string name="login_button_text">Next</string>
+    <string name="additional_info_text_hint">Tell something about yourself...</string>
+
+
+    <string-array name="professions">
+        <item>Singer/Vocalist</item>
+        <item>Record Producer</item>
+        <item>Composer</item>
+        <item>Songwriter</item>
+        <item>Critic</item>
+        <item>Pianist</item>
+        <item>Rapper</item>
+        <item>Bassoonist</item>
+        <item>Cellist</item>
+        <item>Electronic musician</item>
+        <item>Flautist</item>
+        <item>Guitarist</item>
+        <item>Keyboardist</item>
+        <item>Organist</item>
+        <item>Saxophonist</item>
+        <item>Trumpet player</item>
+        <item>Violinist</item>
+        <item>Bassist</item>
+        <item>Hornist</item>
+        <item>Organ grinder</item>
+        <item>Drummer</item>
+        <item>Bandurist</item>
+    </string-array>
+
 </resources>

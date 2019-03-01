@@ -6,4 +6,10 @@
     <color name="darkPurple">#803491</color>
     <color name="lightBlue">#71B8F2</color>
     <color name="textBlue">#b7d6ef</color>
+
+    <color name="colorGreyDark">#303030</color>
+    <color name="colorWhiteTransparent">#20FFFFFF</color>
+    <color name="colorGenreChecked">#80D81B60</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>
