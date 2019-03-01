@@ -45,7 +45,8 @@ public class StartActivity extends AppCompatActivity {
                 beginTransaction(register4);
             }
             if (id == R.integer.registration_fragment_5) {
-                beginTransaction(signInFragment);
+                //beginTransaction(signInFragment);
+                beginTransaction(register3);
             }
             if (id == R.integer.sign_in_fragment_main_page) {
                 startMainPageActivity();
@@ -59,10 +60,10 @@ public class StartActivity extends AppCompatActivity {
             //@Gohar i pass wrong fragments in beginTransaction method and don't change above fragments sequence
             //please fix it, I could not understand which fragment is going after other fragments
             if(id == R.integer.registration_fragment_grid_view_3){
-                beginTransaction(register3);
+                beginTransaction(register5);
             }
             if(id == R.integer.registration_fragment_professions_4){
-                beginTransaction(register5);
+                beginTransaction(signInFragment);
             }
         }
     };
@@ -99,8 +100,12 @@ public class StartActivity extends AppCompatActivity {
             transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left
                     , R.anim.slide_in_left, R.anim.slide_out_right);
             findViewById(R.id.container_grid_and_profession_fragment).setVisibility(View.VISIBLE);
+            findViewById(R.id.layout_activity_start_content_main).setVisibility(View.GONE);
             transaction.replace(R.id.container_grid_and_profession_fragment, fragment);
         }else{
+            findViewById(R.id.container_grid_and_profession_fragment).setVisibility(View.GONE);
+            findViewById(R.id.layout_activity_start_content_main).setVisibility(View.VISIBLE);
+
             transaction.replace(R.id.layout_activity_start_content_main, fragment);
         }
         transaction.addToBackStack(null);
