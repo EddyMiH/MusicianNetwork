@@ -5,9 +5,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.Window;
+import android.view.animation.TranslateAnimation;
+import android.widget.FrameLayout;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.fragments.registration_fragments.GenreGridFragment;
+import com.musapp.musicapp.fragments.registration_fragments.ProfessionAndBioFragment;
 import com.musapp.musicapp.fragments.registration_fragments.RegistrationFragment1;
 import com.musapp.musicapp.fragments.registration_fragments.RegistrationFragment2;
 import com.musapp.musicapp.fragments.registration_fragments.RegistrationFragment5;
@@ -17,12 +22,16 @@ import com.musapp.musicapp.fragments.sign_in_fragments.SignInFragment;
 import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.preferences.RememberPreferences;
 
+import butterknife.BindView;
+
 
 public class StartActivity extends AppCompatActivity {
 
     private RegistrationFragment1 register1;
     private RegistrationFragment2 register2;
     private RegistrationFragment5 register4;
+    private GenreGridFragment register3;
+    private ProfessionAndBioFragment register5;
     private SignInFragment signInFragment;
 
 
@@ -47,6 +56,14 @@ public class StartActivity extends AppCompatActivity {
             if (id == R.integer.sign_in_fragment_forgot_pass) {
                 //TODO beginTransaction(forgotPasswordFragment)
             }
+            //@Gohar i pass wrong fragments in beginTransaction method and don't change above fragments sequence
+            //please fix it, I could not understand which fragment is going after other fragments
+            if(id == R.integer.registration_fragment_grid_view_3){
+                beginTransaction(register3);
+            }
+            if(id == R.integer.registration_fragment_professions_4){
+                beginTransaction(register5);
+            }
         }
     };
 
@@ -67,16 +84,37 @@ public class StartActivity extends AppCompatActivity {
         register1 = new RegistrationFragment1();
         register2 = new RegistrationFragment2();
         register4 = new RegistrationFragment5();
+        register3 = new GenreGridFragment();
+        register5 = new ProfessionAndBioFragment();
         signInFragment = new SignInFragment();
     }
 
     private void beginTransaction(Fragment fragment) {
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
+        //I change this set with my version of animation, if you don't like it, change =)
         transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-        transaction.replace(R.id.layout_activity_start_content_main, fragment);
+        if(fragment instanceof GenreGridFragment || fragment instanceof ProfessionAndBioFragment){
+            //TODO call slideContainerToLeft method, see below  |
+            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left
+                    , R.anim.slide_in_left, R.anim.slide_out_right);
+            findViewById(R.id.container_grid_and_profession_fragment).setVisibility(View.VISIBLE);
+            transaction.replace(R.id.container_grid_and_profession_fragment, fragment);
+        }else{
+            transaction.replace(R.id.layout_activity_start_content_main, fragment);
+        }
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    //for animation fragment visibility
+    private void slideContainerToLeft(boolean hide){
+        FrameLayout view = findViewById(R.id.container_grid_and_profession_fragment);
+        TranslateAnimation animate = new TranslateAnimation(0, -view.getWidth(), 0, 0);
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+        view.setVisibility(hide ? View.GONE : View.VISIBLE);
     }
 
     private void start() {

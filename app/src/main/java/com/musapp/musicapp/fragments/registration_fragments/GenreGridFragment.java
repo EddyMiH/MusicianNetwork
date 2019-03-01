@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.GridViewAdapter;
+import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.Genre;
 import com.musapp.musicapp.preferences.AppPreferences;
 
@@ -103,16 +104,19 @@ public class GenreGridFragment extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO save checked genres and change fragment
-                //--ProfessionAndBioFragment fragment = new ProfessionAndBioFragment();
-//                getFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right
-//                        , R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.container,fragment).addToBackStack(null).commit();
-                //--getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left
-                       //-- , R.anim.slide_in_left, R.anim.slide_out_right).replace(R.id.container,fragment).addToBackStack(null).commit();
+
+                RegistrationTransactionWrapper.registerForNextFragment((int)nextButton.getTag());
             }
         });
         return rootView;
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        nextButton.setTag(R.integer.registration_fragment_grid_view_3);
+    }
+
     private GridViewAdapter gridAdapter;
 
     private void initGridView(){

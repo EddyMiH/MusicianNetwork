@@ -56,7 +56,7 @@ public class RegistrationFragment1 extends Fragment {
         nextButton.setOnClickListener(nextClickListener);
     }
 
-    private boolean checEditTextField(){
+    private boolean checkEditTextField(){
         if(CheckUtils.checkEditTextEmpty(fullname)){
             ErrorShowUtils.showEditTextError(fullname, ContextUtils.getResourceString(this, R.string.empty_error_message));
             return false;
@@ -74,7 +74,7 @@ public class RegistrationFragment1 extends Fragment {
 
     private boolean submitInformation(){
 
-        if(checEditTextField()){
+        if(checkEditTextField()){
             Log.i(TAG, "use info");
             return true;
         }

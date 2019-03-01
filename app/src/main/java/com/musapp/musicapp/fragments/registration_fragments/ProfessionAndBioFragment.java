@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.ProfessionAndInfo;
 
 
@@ -63,10 +64,18 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
             @Override
             public void onClick(View v) {
                 userInfo.setAdditionalInfo(userInfoTextView.getText().toString());
+                RegistrationTransactionWrapper.registerForNextFragment((int)nextButton.getTag());
+
                 //TODO save data and change fragment
             }
         });
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        nextButton.setTag(R.integer.registration_fragment_professions_4);
     }
 
     private void selectImage(){

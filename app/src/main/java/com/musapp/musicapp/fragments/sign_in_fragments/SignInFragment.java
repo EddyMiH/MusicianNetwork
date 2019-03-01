@@ -91,7 +91,7 @@ public class SignInFragment extends Fragment {
         return view;
     }
 
-    private boolean checEditTextField(){
+    private boolean checkEditTextField(){
         if(CheckUtils.checkEditTextEmpty(email)){
             ErrorShowUtils.showEditTextError(email, ContextUtils.getResourceString(this, R.string.empty_error_message));
             return false;
@@ -112,7 +112,7 @@ public class SignInFragment extends Fragment {
 
 
     private boolean checkEnteredInformation() {
-        if(checEditTextField()) {
+        if(checkEditTextField()) {
             //TODO check entered email and password
             return true;
         }
