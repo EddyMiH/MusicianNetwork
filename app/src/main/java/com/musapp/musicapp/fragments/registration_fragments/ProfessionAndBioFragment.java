@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.ProfessionAndInfo;
+import com.musapp.musicapp.utils.UIUtils;
 
 
 public class ProfessionAndBioFragment extends Fragment  implements AdapterView.OnItemSelectedListener {
@@ -46,8 +47,7 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
         profileImage = rootView.findViewById(R.id.profile_img_image_view);
         professionSpinner = rootView.findViewById(R.id.profession_spinner_view);
         userInfoTextView = rootView.findViewById( R.id.user_info_text_view_profession_fragment);
-        nextButton = rootView.findViewById(R.id.next_button_professions_fragment);
-
+        nextButton = UIUtils.getButtonFromView(getActivity().findViewById(R.id.layout_activity_start_content_main), R.id.action_fragment_grid_and_profession_next);
         professionSpinner.setOnItemSelectedListener(this);
         ArrayAdapter<CharSequence> spinnerDataAdapter = ArrayAdapter.createFromResource(getContext(), R.array.professions, android.R.layout.simple_spinner_dropdown_item);
         spinnerDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -132,6 +132,7 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
 
     public ProfessionAndBioFragment() {
     }
+
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

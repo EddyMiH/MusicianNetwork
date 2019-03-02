@@ -9,16 +9,30 @@
     android:background="@drawable/register_background"
   >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/layout_start_activity_all_view">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/layout_start_activity_logo"
+        android:layout_gravity="center"
+      >
+
     <TextView
         android:id="@+id/label_activity_start_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:background="@drawable/carambola"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/text_activity_start_logo_text"/>
+        android:layout_gravity="center"/>
 
     <com.musapp.musicapp.ui_custom_views.LogoTextView
         android:id="@+id/text_activity_start_logo_text"
@@ -26,29 +40,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
-        app:layout_constraintBottom_toTopOf="@id/layout_activity_start_content_main"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/label_activity_start_logo" />
+        android:layout_gravity="center"
+
+      />
+    </LinearLayout>
+
+
     <FrameLayout
         android:id="@+id/layout_activity_start_content_main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_activity_start_logo_text"
+        app:layout_constraintTop_toBottomOf="@id/layout_start_activity_logo"
         android:elevation="4dp"
-      />
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/container_grid_and_profession_fragment"
-        android:visibility="gone"
-        android:background="@drawable/login_fragment_background">
-
+      >
+        <Button
+            android:id="@+id/action_fragment_grid_and_profession_next"
+            style="@style/NextButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spinner_margin_bottom"
+            android:text="@string/login_button_text"
+            android:layout_gravity="bottom|center"
+            android:visibility="gone"
+            />
     </FrameLayout>
+
+    </LinearLayout>
 
 
 </android.support.constraint.ConstraintLayout>

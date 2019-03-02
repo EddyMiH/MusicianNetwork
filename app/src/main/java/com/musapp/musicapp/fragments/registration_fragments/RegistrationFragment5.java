@@ -24,9 +24,7 @@ public class RegistrationFragment5 extends Fragment {
     @BindView(R.id.text_fragment_registration_5_email) EditText email;
     @BindView(R.id.text_fragment_registration_5_password) EditText password;
     @BindView(R.id.text_fragment_registration_5_confirm_pass) EditText confirm_password;
-    @BindView(R.id.action_fragment_registration_5_next)
-    Button nextButton;
-    private final String TAG = RegistrationFragment1.class.getSimpleName();
+    @BindView(R.id.action_fragment_registration_5_next) Button nextButton;
     private View.OnClickListener nextClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -36,6 +34,7 @@ public class RegistrationFragment5 extends Fragment {
             }
         }
     };
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

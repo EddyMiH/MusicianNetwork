@@ -19,11 +19,14 @@ import com.musapp.musicapp.adapters.GridViewAdapter;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.Genre;
 import com.musapp.musicapp.preferences.AppPreferences;
+import com.musapp.musicapp.utils.UIUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import butterknife.BindView;
 
 public class GenreGridFragment extends Fragment {
 
@@ -80,7 +83,9 @@ public class GenreGridFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.login_grid_view_genre_fragment, container, false);
         genreGridView = rootView.findViewById(R.id.genre_grid_view);
-        nextButton =rootView.findViewById(R.id.btn_next);
+    //    nextButton = rootView.findViewById(R.id.action_fragment_grid_and_profession_next);
+        //TODO very bad solution
+        nextButton = UIUtils.getButtonFromView(getActivity().findViewById(R.id.layout_activity_start_content_main), R.id.action_fragment_grid_and_profession_next);
 
         initGridView();
         genreGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -97,7 +102,7 @@ public class GenreGridFragment extends Fragment {
                     temp.setBackgroundColor(getResources().getColor(R.color.colorWhiteTransparent));
                 }
 
-                Toast.makeText(getContext(), listOfGenres.get(position).getName(), Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getContext(), listOfGenres.get(position).getName(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -151,5 +156,11 @@ public class GenreGridFragment extends Fragment {
 
     public GenreGridFragment() {
     }
+    //TODO its not best solution to share one button from layout between two fragments, try something else
+    public void setNextButton(Button button){
+        nextButton = button;
+    }
+
+
 }
 

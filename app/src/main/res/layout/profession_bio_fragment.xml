@@ -1,75 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/login_fragment_background">
+    android:background="@drawable/register_background">
 
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_img_image_view"
-        app:civ_border_width="2dp"
-        app:civ_border_color="#FF000000"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_alignParentTop="true"
         android:layout_gravity="center_horizontal|center_vertical"
-        android:scaleType="centerCrop"
         android:layout_marginTop="@dimen/spinner_margin_top"
+        android:scaleType="centerCrop"
         android:src="@drawable/ic_person_black_24dp"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
+        android:id="@+id/profession_spinner_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/professions"
-        android:prompt="@string/profession_prompt"
-        android:id="@+id/profession_spinner_view"
-        app:layout_constraintTop_toBottomOf="@+id/profile_img_image_view"
+        android:layout_marginHorizontal="@dimen/spinner_margin_horizontal"
         android:layout_marginTop="@dimen/spinner_margin_top"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="#20FFFFFF"
-        android:paddingVertical="10dp"
         android:layout_marginBottom="@dimen/spinner_margin_bottom"
-        android:layout_marginHorizontal="@dimen/spinner_margin_horizontal">
+        android:background="#20FFFFFF"
+        android:entries="@array/professions"
+        android:paddingVertical="10dp"
+        android:prompt="@string/profession_prompt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_img_image_view">
 
     </Spinner>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spinner_margin_horizontal"
         android:src="@android:drawable/arrow_down_float"
-        app:layout_constraintTop_toTopOf="@+id/profession_spinner_view"
-        app:layout_constraintEnd_toEndOf="@+id/profession_spinner_view"
         app:layout_constraintBottom_toBottomOf="@+id/profession_spinner_view"
-        android:layout_marginEnd="@dimen/spinner_margin_horizontal"/>
+        app:layout_constraintEnd_toEndOf="@+id/profession_spinner_view"
+        app:layout_constraintTop_toTopOf="@+id/profession_spinner_view" />
 
     <EditText
+        android:id="@+id/user_info_text_view_profession_fragment"
         android:layout_width="match_parent"
         android:layout_height="350dp"
+        android:layout_marginHorizontal="@dimen/spinner_margin_horizontal"
+        android:layout_marginTop="@dimen/info_text_view_margin_top"
         android:background="#20FFFFFF"
-        android:id="@+id/user_info_text_view_profession_fragment"
+        android:gravity="top"
         android:hint="@string/additional_info_text_hint"
         android:textSize="20sp"
-        android:gravity="top"
-        app:layout_constraintTop_toBottomOf="@+id/profession_spinner_view"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/info_text_view_margin_top"
-        android:layout_marginHorizontal="@dimen/spinner_margin_horizontal"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_backgrount"
-        android:text="@string/login_button_text"
-        android:layout_marginBottom="@dimen/spinner_margin_bottom"
-        android:paddingHorizontal="@dimen/login_button_horizontal_padding"
-        android:id="@+id/next_button_professions_fragment"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/profession_spinner_view" />
+
+
 </android.support.constraint.ConstraintLayout>
