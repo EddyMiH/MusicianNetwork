@@ -17,11 +17,17 @@
     <string name="sign_up">Sign up</string>
     <string name="forgot_pass">Forgot password</string>
     <string name="quit">Quit</string>
+    <string name="confirm">Confirm</string>
+    <string name="sent_again">Sent again</string>
+    <string name="enter_code">Enter code</string>
+    <string name="sign_in_with">Sign in with:</string>
     <string name="settings_char">:</string>
 
     <string name="profession_prompt">Choose your profession</string>
     <string name="login_button_text">Next</string>
     <string name="additional_info_text_hint">Tell something about yourself...</string>
+    
+    <string name="dialog_email_info">Please enter your email addres. We\'ll sent you a code. </string>
 
 
     <string-array name="professions">

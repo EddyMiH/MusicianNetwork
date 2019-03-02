@@ -12,6 +12,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.dialogs.ForgotPassDialog;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.preferences.RememberPreferences;
@@ -36,6 +37,12 @@ public class SignInFragment extends Fragment {
     Button forgotPass;
     @BindView(R.id.check_fragment_sign_in_remember)
     CheckBox remembered;
+    @BindView(R.id.action_fragment_sign_in_facebook)
+    Button facebookSign;
+    @BindView(R.id.action_fragment_sign_in_twitter)
+    Button twitterSign;
+    @BindView(R.id.action_fragment_sign_in_google_plus)
+    Button googleSign;
 
 
     private View.OnClickListener onSignInClickListener = new View.OnClickListener() {
@@ -62,7 +69,14 @@ public class SignInFragment extends Fragment {
    private View.OnClickListener onForgotPassClickListener = new View.OnClickListener() {
        @Override
        public void onClick(View v) {
-           //TODO
+           new ForgotPassDialog().show(getFragmentManager(), "dialog");
+       }
+   };
+
+   private View.OnClickListener onSocialButtonsClickListener = new View.OnClickListener() {
+       @Override
+       public void onClick(View v) {
+           //TODO get information from api
        }
    };
 
@@ -81,6 +95,9 @@ public class SignInFragment extends Fragment {
         signUp.setOnClickListener(onSignUpClickListener);
         forgotPass.setTag(R.integer.sign_in_fragment_forgot_pass);
         forgotPass.setOnClickListener(onForgotPassClickListener);
+        facebookSign.setOnClickListener(onSocialButtonsClickListener);
+        twitterSign.setOnClickListener(onSocialButtonsClickListener);
+        googleSign.setOnClickListener(onSocialButtonsClickListener);
     }
 
     @Nullable

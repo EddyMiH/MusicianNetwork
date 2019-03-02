@@ -9,4 +9,5 @@
     <dimen name="spinner_margin_horizontal">10dp</dimen>
     <dimen name="login_button_horizontal_padding">100dp</dimen>
     <dimen name="info_text_view_margin_top">20dp</dimen>
+    <dimen name="edit_text_min_weight">150dp</dimen>
 </resources>
