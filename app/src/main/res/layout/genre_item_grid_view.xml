@@ -20,18 +20,18 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/genre_image_view"
+            android:id="@+id/image_genre_item_grid_view_genre_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="50dp"
             android:src="@android:drawable/ic_menu_gallery"
-            app:layout_constraintBottom_toTopOf="@id/genre_label_text_view"
+            app:layout_constraintBottom_toTopOf="@id/text_genre_grid_fragment_genre_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/genre_label_text_view"
+            android:id="@+id/text_genre_grid_fragment_genre_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#20FFFFFF"
@@ -43,7 +43,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/genre_image_view" />
+            app:layout_constraintTop_toBottomOf="@id/image_genre_item_grid_view_genre_image" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -17,8 +17,8 @@ public class GenreViewHolder extends RecyclerView.ViewHolder {
     public GenreViewHolder(@NonNull View itemView) {
         super(itemView);
 
-        img = itemView.findViewById(R.id.genre_image_view);
-        mName = itemView.findViewById(R.id.genre_label_text_view);
+        img = itemView.findViewById(R.id.image_genre_item_grid_view_genre_image);
+        mName = itemView.findViewById(R.id.text_genre_grid_fragment_genre_name);
     }
 
     public void setImage(int source) {

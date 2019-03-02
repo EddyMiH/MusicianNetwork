@@ -81,7 +81,7 @@ public class GenreGridFragment extends Fragment {
         public void onItemSelected(Genre genre, View view) {
             //TODO Change background of textView and remember checked genre
 
-            View temp = view.findViewById(R.id.genre_label_text_view);
+            View temp = view.findViewById(R.id.text_genre_grid_fragment_genre_name);
             boolean flag = genre.isChecked();
             if (!flag){
                 temp.setBackgroundColor(getResources().getColor(R.color.colorGenreChecked));
