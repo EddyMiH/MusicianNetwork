@@ -28,8 +28,10 @@
         <item name="android:textSize">40sp</item>
     </style>
     <style name="NextButtonStyle">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:textColor">@color/darkPurple</item>
+        <!--<item name="android:background">@android:color/transparent</item>-->
+        <item name="android:background">@drawable/button_backgrount</item>
+        <!--<item name="android:textColor">@color/darkPurple</item>-->
+        <item name="android:textColor">@color/lightBlue</item>
         <item name="android:text">@string/next</item>
         <item name="android:textSize">20sp</item>
     </style>

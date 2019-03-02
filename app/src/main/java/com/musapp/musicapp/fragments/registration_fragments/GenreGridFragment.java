@@ -4,18 +4,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.musapp.musicapp.R;
-import com.musapp.musicapp.adapters.GridViewAdapter;
+import com.musapp.musicapp.adapters.GenreRecyclerViewAdapter;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.Genre;
 import com.musapp.musicapp.preferences.AppPreferences;
@@ -26,11 +26,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
-
 public class GenreGridFragment extends Fragment {
 
-    private GridView genreGridView;
+    private GenreRecyclerViewAdapter genreRecyclerAdapter;
     private Button nextButton;
     private List<Genre> listOfGenres = new ArrayList<Genre>(
             Arrays.asList(new Genre("Rock", null)
@@ -78,33 +76,37 @@ public class GenreGridFragment extends Fragment {
                     ,new Genre("African music", null))
     );
 
+    private GenreRecyclerViewAdapter.OnItemSelectedListener mOnItemSelectedListener = new GenreRecyclerViewAdapter.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(Genre genre, View view) {
+            //TODO Change background of textView and remember checked genre
+
+            View temp = view.findViewById(R.id.genre_label_text_view);
+            boolean flag = genre.isChecked();
+            if (!flag){
+                temp.setBackgroundColor(getResources().getColor(R.color.colorGenreChecked));
+                Toast.makeText(getContext(),genre.getName() + " :checked " , Toast.LENGTH_SHORT).show();
+
+            }
+            else{
+                Toast.makeText(getContext(),genre.getName() + " :Unchecked ", Toast.LENGTH_SHORT).show();
+
+                temp.setBackgroundColor(getResources().getColor(R.color.colorWhiteTransparent));
+            }
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.login_grid_view_genre_fragment, container, false);
-        genreGridView = rootView.findViewById(R.id.genre_grid_view);
+
+        RecyclerView view = rootView.findViewById(R.id.genre_recycler_view_genre_fragment);
+
+        initRecyclerAdapter(view);
     //    nextButton = rootView.findViewById(R.id.action_fragment_grid_and_profession_next);
         //TODO very bad solution
         nextButton = UIUtils.getButtonFromView(getActivity().findViewById(R.id.layout_activity_start_content_main), R.id.action_fragment_grid_and_profession_next);
-
-        initGridView();
-        genreGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //TODO Change background of textView and remember checked genre
-                View temp = view.findViewById(R.id.genre_label_text_view);
-                boolean flag = gridAdapter.getItem(position).isChecked();
-                gridAdapter.setItemCheck(position,!flag);
-                if (!flag){
-                    temp.setBackgroundColor(getResources().getColor(R.color.colorGenreChecked));
-                }
-                else{
-                    temp.setBackgroundColor(getResources().getColor(R.color.colorWhiteTransparent));
-                }
-
-               // Toast.makeText(getContext(), listOfGenres.get(position).getName(), Toast.LENGTH_SHORT).show();
-            }
-        });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,17 +118,19 @@ public class GenreGridFragment extends Fragment {
         return rootView;
     }
 
+    private void initRecyclerAdapter(RecyclerView view){
+        genreRecyclerAdapter = new GenreRecyclerViewAdapter();
+        genreRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
+        genreRecyclerAdapter.setData(listOfGenres);
+        view.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        view.setAdapter(genreRecyclerAdapter);
+
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         nextButton.setTag(R.integer.registration_fragment_grid_view_3);
-    }
-
-    private GridViewAdapter gridAdapter;
-
-    private void initGridView(){
-        gridAdapter = new GridViewAdapter(getContext(), listOfGenres);
-        genreGridView.setAdapter(gridAdapter);
     }
 
     @Override
@@ -149,7 +153,7 @@ public class GenreGridFragment extends Fragment {
     public void onStop() {
         super.onStop();
         Gson gson = new Gson();
-        String json = gson.toJson(gridAdapter.getData());
+        String json = gson.toJson(genreRecyclerAdapter.getData());
 
         AppPreferences.saveGenreState(getActivity().getBaseContext(), json);
     }

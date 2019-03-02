@@ -66,8 +66,7 @@ public class StartActivity extends AppCompatActivity {
             if (id == R.integer.sign_in_fragment_forgot_pass) {
                 //TODO beginTransaction(forgotPasswordFragment)
             }
-            //@Gohar i pass wrong fragments in beginTransaction method and don't change above fragments sequence
-            //please fix it, I could not understand which fragment is going after other fragments
+
 
 
         }
