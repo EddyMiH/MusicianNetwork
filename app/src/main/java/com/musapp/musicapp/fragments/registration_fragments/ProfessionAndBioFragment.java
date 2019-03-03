@@ -1,16 +1,21 @@
 package com.musapp.musicapp.fragments.registration_fragments;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +44,11 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
     private final int REQUEST_CAMERA = 1;
     private final int SELECT_FILE = 0;
 
+    private final int STORAGE_CAMERA_PERMISSION_CODE = 100;
+    public boolean isPermissionAccepted = false;
+    private boolean isCameraPermissionAccepted = false;
+    private boolean isStoragePermissionAccepted = false;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,7 +66,12 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectImage();
+                if ( isPermissionAccepted ) {
+                    selectImage();
+                } else{
+                    requestPermission();
+                    //requestCameraPermission();
+                }
             }
         });
 
@@ -70,6 +85,32 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
             }
         });
         return rootView;
+    }
+
+    private void requestPermission(){
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, STORAGE_CAMERA_PERMISSION_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Toast.makeText(getContext(), "yess",Toast.LENGTH_SHORT).show();
+
+        if (requestCode == STORAGE_CAMERA_PERMISSION_CODE)  {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                isPermissionAccepted = true;
+                isStoragePermissionAccepted = true;
+                selectImage();
+            }
+            if (grantResults.length > 0 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                isPermissionAccepted = true;
+                isCameraPermissionAccepted = true;
+                selectImage();
+            }
+        }
     }
 
     @Override
@@ -89,17 +130,17 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (items[i].equals("Camera")) {
-
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, REQUEST_CAMERA);
-
+                    if(isCameraPermissionAccepted){
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, REQUEST_CAMERA);
+                    }
                 } else if (items[i].equals("Gallery")) {
-
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setType("image/*");
-                    //startActivityForResult(intent.createChooser(intent, "Select File"), SELECT_FILE);
-                    startActivityForResult(intent, SELECT_FILE);
-
+                    if (isStoragePermissionAccepted){
+                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        //startActivityForResult(intent.createChooser(intent, "Select File"), SELECT_FILE);
+                        startActivityForResult(intent, SELECT_FILE);
+                    }
                 } else if (items[i].equals("Cancel")) {
                     dialogInterface.dismiss();
                 }
@@ -133,6 +174,20 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
     public ProfessionAndBioFragment() {
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED){
+            isPermissionAccepted = true;
+            isStoragePermissionAccepted = true;
+
+        } if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            isCameraPermissionAccepted = true;
+            isPermissionAccepted = true;
+        }
+    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
