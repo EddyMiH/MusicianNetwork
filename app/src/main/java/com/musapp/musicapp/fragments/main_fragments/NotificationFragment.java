@@ -12,16 +12,15 @@ import android.view.ViewGroup;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.NotificationRecyclerViewAdapter;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Notification;
-import com.musapp.musicapp.model.Post;
 
 import java.util.Arrays;
-
-import butterknife.ButterKnife;
 
 public class NotificationFragment extends Fragment {
     private RecyclerView notificationRecyclerView;
     private NotificationRecyclerViewAdapter notificationRecyclerViewAdapter;
+    private SetToolBarTitle setToolBarTitle;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,5 +43,11 @@ public class NotificationFragment extends Fragment {
        notificationRecyclerViewAdapter.setData(Arrays.asList(notifications));
         notificationRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         notificationRecyclerView.setAdapter(notificationRecyclerViewAdapter);
+        setToolBarTitle.setTitle(R.string.title_notifications);
     }
+
+    public void setSetToolBarTitle(SetToolBarTitle toolBarTitle){
+        setToolBarTitle = toolBarTitle;
+    }
+
 }

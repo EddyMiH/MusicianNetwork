@@ -7,17 +7,18 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.PostRecyclerViewAdapter;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,6 +45,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+       setHasOptionsMenu(true);
     }
 
     @Override
@@ -69,7 +71,7 @@ public class ProfileFragment extends Fragment {
         postRecyclerViewAdapter.setData(Arrays.asList(posts));
         postsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         postsRecyclerView.setAdapter(postRecyclerViewAdapter);
-//        setToolBarTitle.setTitle(R.string.toolbar_title_profile);
+        setToolBarTitle.setTitle(R.string.toolbar_title_profile);
 
     }
 
@@ -91,7 +93,9 @@ public class ProfileFragment extends Fragment {
         setToolBarTitle = toolBarTitle;
     }
 
-    public interface SetToolBarTitle{
-        void setTitle(int titleId);
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main_user_profile, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }

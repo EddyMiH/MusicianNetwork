@@ -11,13 +11,19 @@ import android.view.MenuItem;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.fragments.main_fragments.NotificationFragment;
 import com.musapp.musicapp.fragments.main_fragments.ProfileFragment;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 
 public class AppMainActivity extends AppCompatActivity {
 
 
     private NotificationFragment mNotificationFragment;
     private ProfileFragment mProfileFragment;
-
+    private SetToolBarTitle mToolBarTitle = new SetToolBarTitle() {
+        @Override
+        public void setTitle(int titleId) {
+            getSupportActionBar().setTitle(getString(titleId));
+        }
+    };
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -53,6 +59,8 @@ public class AppMainActivity extends AppCompatActivity {
     private void init(){
         mNotificationFragment = new NotificationFragment();
         mProfileFragment = new ProfileFragment();
+        mProfileFragment.setSetToolBarTitle(mToolBarTitle);
+        mNotificationFragment.setSetToolBarTitle(mToolBarTitle);
     }
 
     private void beginTransaction(Fragment fragment){
