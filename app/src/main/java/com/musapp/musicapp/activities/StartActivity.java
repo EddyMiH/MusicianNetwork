@@ -2,12 +2,11 @@ package com.musapp.musicapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
@@ -23,9 +22,6 @@ import com.musapp.musicapp.fragments.registration_fragments.registration_fragmen
 import com.musapp.musicapp.fragments.sign_in_fragments.SignInFragment;
 import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.preferences.RememberPreferences;
-import com.musapp.musicapp.utils.UIUtils;
-
-import butterknife.BindView;
 
 
 public class StartActivity extends AppCompatActivity {
@@ -81,6 +77,23 @@ public class StartActivity extends AppCompatActivity {
         init();
         RegistrationTransactionWrapper.setRegisterFragmentTransaction(registerFragmentTransaction);
         start();
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                // TODO handle logo visibility
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                if (fragmentManager.getFragments().size() == 0) {
+                    return;
+                }
+                Fragment currentFragment = fragmentManager.getFragments().get(fragmentManager.getFragments().size() - 1);
+                if (currentFragment instanceof RegistrationFragment2) {
+                    handleLogoVisibility(View.VISIBLE);
+                }
+                else if(currentFragment instanceof GenreGridFragment || currentFragment instanceof ProfessionAndBioFragment){
+                    handleLogoVisibility(View.GONE);
+                }
+            }
+        });
 
 
     }
@@ -160,7 +173,7 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void startMainPageActivity() {
-        Intent intent = new Intent(this, MainPageActivity.class);
+        Intent intent = new Intent(this, AppMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -173,8 +186,8 @@ public class StartActivity extends AppCompatActivity {
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.layout_activity_start_content_main);
         if (f instanceof RegistrationFragment1 || f instanceof SignInFragment) {
             finish();
-        }
-        super.onBackPressed();
+        }else{
+            super.onBackPressed();}
     }
 
 

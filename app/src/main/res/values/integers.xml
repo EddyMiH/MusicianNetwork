@@ -10,4 +10,5 @@
     <integer name="sign_in_fragment_forgot_pass">8</integer>
     <integer name="is_quit">1</integer>
     <integer name="isnt_quit">2</integer>
+    <integer name="pages_count">4</integer>
 </resources>

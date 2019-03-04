@@ -22,11 +22,13 @@
     <string name="enter_code">Enter code</string>
     <string name="sign_in_with">Sign in with:</string>
     <string name="settings_char">:</string>
+    <string name="more_info">more information...</string>
 
     <string name="profession_prompt">Choose your profession</string>
     <string name="login_button_text">Next</string>
     <string name="additional_info_text_hint">Tell something about yourself...</string>
-    
+    <string name="profile">Profile</string>
+
     <string name="dialog_email_info">Please enter your email addres. We\'ll sent you a code. </string>
 
 
@@ -54,5 +56,19 @@
         <item>Drummer</item>
         <item>Bandurist</item>
     </string-array>
+    <string name="title_activity_app_main">AppMainActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="action_edit_profile_info">edit profile info</string>
+    <string name="action_notification">notification</string>
+    <string name="action_about_us">about us</string>
+    <string name="action_feedback">feedback</string>
+    <string name="action_log_out">log out</string>
+    <string name="toolbar_title_profile">Profile</string>
+    <string name="title_activity_app">AppActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 
 </resources>
