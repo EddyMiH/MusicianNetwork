@@ -71,4 +71,16 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
+    <string name="text_bottom_navigation_item_home">Home</string>
+    <string name="text_bottom_navigation_item_messages">Messages</string>
+    <string name="text_bottom_navigation_item_notification">Notification</string>
+    <string name="text_bottom_navigation_item_profile">Profile</string>
+    <string name="test_string_long">Test Test 11</string>
+    <string name="test_string_short">test</string>
+    <string name="zero">0</string>
+    <string name="test_sentence">ajimbf gtowf jgrdigk jdrgks lkjg qwq kothfln</string>
+    <string name="favorite_pop_up_menu_title">Save to favorite</string>
+    <string name="search_bar_title_menu">Search</string>
+    <string name="add_post_action_bar_title_menu">New Post</string>
+
 </resources>

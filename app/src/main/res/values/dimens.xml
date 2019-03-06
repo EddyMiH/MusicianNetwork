@@ -17,4 +17,5 @@
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="user_profile_info_text_margin_top">10dp</dimen>
     <dimen name="image_view_margin_top">10dp</dimen>
+
 </resources>

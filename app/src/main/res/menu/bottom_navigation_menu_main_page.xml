@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_item_bottom_home"
+       android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/text_bottom_navigation_item_home"/>
+
+    <item android:id="@+id/menu_item_bottom_messages"
+        android:title="@string/text_bottom_navigation_item_messages"/>
+       <!--android:icon="@drawable/ic_chat_black_24dp"-->
+
+
+    <item android:id="@+id/menu_item_bottom_notification"
+       android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/text_bottom_navigation_item_notification"/>
+
+    <item android:id="@+id/menu_item_bottom_profile"
+       android:icon="@drawable/ic_person_black_24dp"
+        android:title="@string/text_bottom_navigation_item_profile"/>
+
+</menu>
