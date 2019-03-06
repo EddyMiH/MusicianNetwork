@@ -21,5 +21,10 @@
         android:title="@string/action_feedback"
         app:showAsAction="never"
         />
+    <item
+        android:id="@+id/action_log_out"
+        android:title="@string/action_log_out"
+        app:showAsAction="never"
+        />
 
 </menu>

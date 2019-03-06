@@ -1,5 +1,6 @@
 package com.musapp.musicapp.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -12,6 +13,7 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.fragments.main_fragments.NotificationFragment;
 import com.musapp.musicapp.fragments.main_fragments.ProfileFragment;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+import com.musapp.musicapp.preferences.RememberPreferences;
 
 public class AppMainActivity extends AppCompatActivity {
 
@@ -22,6 +24,13 @@ public class AppMainActivity extends AppCompatActivity {
         @Override
         public void setTitle(int titleId) {
             getSupportActionBar().setTitle(getString(titleId));
+        }
+    };
+
+    private ProfileFragment.ChangeActivity mChangeActivity = new ProfileFragment.ChangeActivity() {
+        @Override
+        public void changeActivity( Class nextActivity) {
+           activityTransaction( nextActivity);
         }
     };
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -61,6 +70,7 @@ public class AppMainActivity extends AppCompatActivity {
         mProfileFragment = new ProfileFragment();
         mProfileFragment.setSetToolBarTitle(mToolBarTitle);
         mNotificationFragment.setSetToolBarTitle(mToolBarTitle);
+        mProfileFragment.setChangeActivity(mChangeActivity);
     }
 
     private void beginTransaction(Fragment fragment){
@@ -71,4 +81,17 @@ public class AppMainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+
+
+
+
+    private void activityTransaction(Class nextActivity){
+        Intent intent = new Intent(this, nextActivity);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.putExtra(getString(R.string.quit), false );
+        startActivity(intent);
+        finish();
+    }
 }

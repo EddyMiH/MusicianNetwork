@@ -9,11 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.activities.StartActivity;
 import com.musapp.musicapp.adapters.PostRecyclerViewAdapter;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
@@ -39,6 +41,7 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.recycler_fragment_profile_user_posts)
     RecyclerView postsRecyclerView;
     private SetToolBarTitle setToolBarTitle;
+    private ChangeActivity changeActivity;
 
     private PostRecyclerViewAdapter postRecyclerViewAdapter = new PostRecyclerViewAdapter();
 
@@ -97,5 +100,24 @@ public class ProfileFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main_user_profile, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case(R.id.action_log_out):{
+              changeActivity.changeActivity(StartActivity.class);
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void setChangeActivity(ChangeActivity changeActivity){
+        this.changeActivity = changeActivity;
+    }
+
+    public interface ChangeActivity{
+        void changeActivity( Class nextActivity);
     }
 }

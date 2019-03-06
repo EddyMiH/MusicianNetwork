@@ -75,8 +75,11 @@ public class StartActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         setContentView(R.layout.activity_start);
         init();
+        setRememberSharedPreferenceState();
         RegistrationTransactionWrapper.setRegisterFragmentTransaction(registerFragmentTransaction);
         start();
+
+
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
@@ -196,7 +199,10 @@ public class StartActivity extends AppCompatActivity {
         findViewById(R.id.action_fragment_grid_and_profession_next).setVisibility(visibility == View.GONE ? View.VISIBLE : View.GONE);
     }
 
-    private void setLogoVisibility(int visibility) {
-        findViewById(R.id.layout_start_activity_logo).setVisibility(visibility);
+    private void setRememberSharedPreferenceState(){
+        Intent intent = getIntent();
+        if(intent != null){
+            RememberPreferences.saveState(this, intent.getBooleanExtra(getString(R.string.quit), RememberPreferences.getState(this)));
+        }
     }
 }
