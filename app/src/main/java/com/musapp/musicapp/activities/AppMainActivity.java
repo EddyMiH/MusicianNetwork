@@ -10,16 +10,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.fragments.main_fragments.HomePageFragment;
+import com.musapp.musicapp.fragments.main_fragments.MessagesFragment;
 import com.musapp.musicapp.fragments.main_fragments.NotificationFragment;
 import com.musapp.musicapp.fragments.main_fragments.ProfileFragment;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.preferences.RememberPreferences;
+import com.musapp.musicapp.utils.GlideUtil;
 
 public class AppMainActivity extends AppCompatActivity {
 
 
     private NotificationFragment mNotificationFragment;
     private ProfileFragment mProfileFragment;
+    private HomePageFragment mHomePageFragment;
+    private MessagesFragment mMessagesFragment;
     private SetToolBarTitle mToolBarTitle = new SetToolBarTitle() {
         @Override
         public void setTitle(int titleId) {
@@ -40,13 +45,15 @@ public class AppMainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-              //      mTextMessage.setText(R.string.title_home);
+              //     mTextMessage.setText(R.string.title_home);
+                    beginTransaction(mHomePageFragment);
                     return true;
                 case R.id.navigation_mail:
                 //    mTextMessage.setText(R.string.title_dashboard);
+                    beginTransaction(mMessagesFragment);
                     return true;
                 case R.id.navigation_notifications:
-                 beginTransaction(mNotificationFragment);
+                    beginTransaction(mNotificationFragment);
                     return true;
                 case R.id.navigation_profile:
                     beginTransaction(mProfileFragment);
@@ -62,12 +69,15 @@ public class AppMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_app_main);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation_activity_main);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        GlideUtil.setContext(this);
         init();
     }
 
     private void init(){
         mNotificationFragment = new NotificationFragment();
         mProfileFragment = new ProfileFragment();
+        mHomePageFragment = new HomePageFragment();
+        mMessagesFragment = new MessagesFragment();
         mProfileFragment.setSetToolBarTitle(mToolBarTitle);
         mNotificationFragment.setSetToolBarTitle(mToolBarTitle);
         mProfileFragment.setChangeActivity(mChangeActivity);

@@ -24,7 +24,7 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter<PostViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder postViewHolder, int i) {
-        postViewHolder.setPostText(data.get(i).getText());
+        postViewHolder.setPostText(data.get(i).getPostText());
     }
 
     @Override
