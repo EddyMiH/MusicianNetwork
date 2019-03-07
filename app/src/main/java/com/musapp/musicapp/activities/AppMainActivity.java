@@ -90,10 +90,7 @@ public class AppMainActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
         transaction.commit();
     }
-
-
-
-
+    
 
     private void activityTransaction(Class nextActivity){
         Intent intent = new Intent(this, nextActivity);
