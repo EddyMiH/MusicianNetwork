@@ -6,12 +6,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.currentinformation.CurrentUser;
+import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.fragments.registration_fragments.GenreGridFragment;
 import com.musapp.musicapp.fragments.registration_fragments.ProfessionAndBioFragment;
 import com.musapp.musicapp.fragments.registration_fragments.RegistrationFragment1;
@@ -20,6 +24,7 @@ import com.musapp.musicapp.fragments.registration_fragments.RegistrationFragment
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegisterFragmentTransaction;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.fragments.sign_in_fragments.SignInFragment;
+import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.preferences.RememberPreferences;
 
@@ -78,7 +83,6 @@ public class StartActivity extends AppCompatActivity {
         setRememberSharedPreferenceState();
         RegistrationTransactionWrapper.setRegisterFragmentTransaction(registerFragmentTransaction);
         start();
-
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
@@ -176,6 +180,11 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void startMainPageActivity() {
+
+        CurrentUser.getCurrentUser().setPrimaryKey(DBAccess.createChild(FirebaseDatabase.getInstance().getReference(), "", CurrentUser.getCurrentUser(), "user"));
+        Log.i("USERKEY", CurrentUser.getCurrentUser().getPrimaryKey() + "gg");
+        DBAccess.createChild(FirebaseDatabase.getInstance().getReference(), "user/" + CurrentUser.getCurrentUser().getPrimaryKey() + '/', new Post(), "post");
+
         Intent intent = new Intent(this, AppMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -12,7 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
+import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.CheckUtils;
 import com.musapp.musicapp.utils.ContextUtils;
 import com.musapp.musicapp.utils.ErrorShowUtils;
@@ -25,12 +27,14 @@ public class RegistrationFragment1 extends Fragment {
      @BindView(R.id.text_fragment_registration_1_nickname) EditText nickname;
      @BindView(R.id.action_fragment_registration_1_next) Button nextButton;
      final String TAG = RegistrationFragment1.class.getSimpleName();
+     private User user = CurrentUser.getCurrentUser();
 
    private View.OnClickListener nextClickListener = new View.OnClickListener() {
        @Override
        public void onClick(View v) {
-           if(submitInformation())
+           if(submitInformation()){
                 RegistrationTransactionWrapper.registerForNextFragment((int)nextButton.getTag());
+           CurrentUser.setCurrentUser(user);}
            //TODO set animation to another fragment
 
        }
@@ -75,10 +79,11 @@ public class RegistrationFragment1 extends Fragment {
     private boolean submitInformation(){
 
         if(checkEditTextField()){
+            user.setFullName(fullname.getText().toString());
+            user.setNickName(nickname.getText().toString());
             Log.i(TAG, "use info");
             return true;
         }
-        //TODO set information to user local object
         return false;
     }
 

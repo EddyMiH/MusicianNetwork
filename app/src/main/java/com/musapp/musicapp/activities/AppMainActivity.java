@@ -9,7 +9,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.fragments.main_fragments.HomePageFragment;
 import com.musapp.musicapp.fragments.main_fragments.MessagesFragment;
 import com.musapp.musicapp.fragments.main_fragments.NotificationFragment;
@@ -72,6 +75,8 @@ public class AppMainActivity extends AppCompatActivity {
         GlideUtil.setContext(this);
         init();
         navigation.setSelectedItemId(R.id.navigation_home);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
     }
 
     private void init(){

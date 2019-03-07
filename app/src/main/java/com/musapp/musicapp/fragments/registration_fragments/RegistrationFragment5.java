@@ -11,7 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
+import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.utils.CheckUtils;
 import com.musapp.musicapp.utils.ContextUtils;
@@ -25,12 +27,15 @@ public class RegistrationFragment5 extends Fragment {
     @BindView(R.id.text_fragment_registration_5_password) EditText password;
     @BindView(R.id.text_fragment_registration_5_confirm_pass) EditText confirm_password;
     @BindView(R.id.action_fragment_registration_5_next) Button nextButton;
+
+    private User user = CurrentUser.getCurrentUser();
     private View.OnClickListener nextClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if(submitInformation()) {
                 RegistrationTransactionWrapper.registerForNextFragment((int) nextButton.getTag());
                 RegisterPreferences.saveState(getActivity().getBaseContext(), true);
+                CurrentUser.setCurrentUser(user);
             }
         }
     };
@@ -79,7 +84,7 @@ public class RegistrationFragment5 extends Fragment {
     private boolean submitInformation(){
 
         if(checEditTextField()) {
-            //TODO set information to user local object
+           user.setEmail(email.getText().toString());
             return true;
     }
         return false;
