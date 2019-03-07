@@ -1,23 +1,49 @@
 package com.musapp.musicapp.model;
 
+import android.arch.persistence.room.Ignore;
 import android.net.Uri;
 
 import com.musapp.musicapp.enums.PostUploadType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Post {
     //instead of userName & ProfileImage fields must be User class field
     //private User mUser;
-    //after creating Comment class |
-    //private List<Comment> comments;
+    @Ignore
+    private String primaryKey;
     private String mUserName;
     private String mPublishedTime;
     private String mPostText;
     private String mProfileImage;
-    private String mPostImage;
-    private Uri mVideoUri;
 
     private PostUploadType type;
+    private List<String> commentsId;
+    private String attachmentId;
 
+    public List<String> getCommentsId() {
+        return commentsId;
+    }
+
+    public void setCommentsId(List<String> commentsId) {
+        this.commentsId = commentsId;
+    }
+
+    public void addCommentId(String id){
+        if(commentsId == null){
+            commentsId = new ArrayList<>();
+        }
+        commentsId.add(id);
+    }
+
+    public String getAttachmentId() {
+        return attachmentId;
+    }
+
+    public void setAttachmentId(String attachmentId) {
+        this.attachmentId = attachmentId;
+    }
 
     public void setType(PostUploadType type) {
         this.type = type;
@@ -32,13 +58,18 @@ public class Post {
         mPostText = "Post";
     }
 
-    public Post(String mUserName, String mPublishedTime, String mPostText, String mProfileImageUri, String mPostImageUri, Uri mVideoUri, PostUploadType type) {
+    public void setPrimaryKey(String primaryKey) {
+        this.primaryKey = primaryKey;
+    }
+
+    public Post(String mUserName, String mPublishedTime, String mPostText, String mProfileImageUri
+            , String attachmentId, List<String> commentsId, PostUploadType type) {
         this.mUserName = mUserName;
         this.mPublishedTime = mPublishedTime;
         this.mPostText = mPostText;
         this.mProfileImage = mProfileImageUri;
-        this.mPostImage = mPostImageUri;
-        this.mVideoUri = mVideoUri;
+        this.attachmentId = attachmentId;
+        this.commentsId = commentsId;
         this.type = type;
     }
 
@@ -58,14 +89,6 @@ public class Post {
         return mProfileImage;
     }
 
-    public String getPostImage() {
-        return mPostImage;
-    }
-
-    public Uri getVideoUri() {
-        return mVideoUri;
-    }
-
     public void setUserName(String mUserName) {
         this.mUserName = mUserName;
     }
@@ -82,11 +105,4 @@ public class Post {
         this.mProfileImage = mProfileImageUri;
     }
 
-    public void setPostImage(String mPostImageUri) {
-        this.mPostImage = mPostImageUri;
-    }
-
-    public void setVideoUri(Uri mVideoUri) {
-        this.mVideoUri = mVideoUri;
-    }
 }

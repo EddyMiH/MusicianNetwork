@@ -2,7 +2,9 @@ package com.musapp.musicapp.model;
 
 import android.arch.persistence.room.Ignore;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class User {
     private String fullName;
@@ -11,10 +13,52 @@ public class User {
     private String email;
     private Calendar birthDay;
     private Gender gender;
+    private List<String> postId;
+    private String professionAndInfoId;
+    private List<String> genresId;
+
     @Ignore
     private String primaryKey;
 
     public User(){}
+
+    public List<String> getPostId() {
+        return postId;
+    }
+
+    public List<String> getGenresId() {
+        return genresId;
+    }
+
+    public void setGenresId(List<String> genresId) {
+        this.genresId = genresId;
+    }
+
+    public void addGenreId(String genre){
+        if(genresId == null){
+            genresId = new ArrayList<>();
+        }
+        genresId.add(genre);
+    }
+
+    public void setPostId(List<String> postId) {
+        this.postId = postId;
+    }
+
+    public void addPostId(String id){
+        if (postId == null) {
+            postId = new ArrayList<>();
+        }
+        postId.add(id);
+    }
+
+    public String getProfessionAndInfoId() {
+        return professionAndInfoId;
+    }
+
+    public void setProfessionAndInfoId(String professionAndInfoId) {
+        this.professionAndInfoId = professionAndInfoId;
+    }
 
     public String getFullName() {
         return fullName;

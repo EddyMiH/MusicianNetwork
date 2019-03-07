@@ -23,6 +23,22 @@
           }
         },
         {
+          "client_id": "264244105271-mog5ots78ikr6fhhac5gi55s9gntgg0q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.musapp.musicapp",
+            "certificate_hash": "5d2368511bbd977e3714480a22d613dacb33b20e"
+          }
+        },
+        {
+          "client_id": "264244105271-21oidv8dn05r08thq73gru3fbqo18fir.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.musapp.musicapp",
+            "certificate_hash": "ef66f6fac9c15ede2128beef249ec4daa297957e"
+          }
+        },
+        {
           "client_id": "264244105271-r3psc41t75gu630oc21f7b3tqt4v2fi7.apps.googleusercontent.com",
           "client_type": 3
         }
