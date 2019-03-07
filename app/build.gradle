@@ -32,6 +32,11 @@ dependencies {
     implementation 'com.android.databinding:library:3.3.1'
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation 'com.google.firebase:firebase-core:16.0.7'
+    implementation 'com.google.firebase:firebase-database:16.1.0'
+    implementation 'com.google.firebase:firebase-storage:16.1.0'
+    implementation 'com.google.firebase:firebase-auth:16.1.0'
+
+
 
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
@@ -52,6 +57,7 @@ dependencies {
     def nav_version = "1.0.0-alpha05"
     implementation "android.arch.navigation:navigation-fragment:$nav_version"
     implementation "android.arch.navigation:navigation-ui:$nav_version"
+
 }
 
 apply plugin: 'com.google.gms.google-services'

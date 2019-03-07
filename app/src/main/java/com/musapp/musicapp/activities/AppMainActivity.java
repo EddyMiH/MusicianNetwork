@@ -71,6 +71,7 @@ public class AppMainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         GlideUtil.setContext(this);
         init();
+        navigation.setSelectedItemId(R.id.navigation_home);
     }
 
     private void init(){
