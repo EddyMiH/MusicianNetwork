@@ -70,31 +70,42 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         feedViewHolder.setPostText(post.getPostText());
         feedViewHolder.setPostTime(post.getPublishedTime());
 
-        switch (post.getType()){
+        /*switch (post.getType()){
             case NONE:
 
                 break;
             case IMAGE:
+<<<<<<< HEAD
           //      feedViewHolder.setPostImage(post.getPostImage());
             //    feedViewHolder.setPostImageVisible();
                 break;
             case VIDEO:
               //  feedViewHolder.setPostVideo(post.getVideoUri());
                 //feedViewHolder.setPostVideoVisible();
+=======
+                //feedViewHolder.setPostImage(post.getPostImage());
+                feedViewHolder.setPostImageVisible();
+                break;
+            case VIDEO:
+                //feedViewHolder.setPostVideo(post.getVideoUri());
+                feedViewHolder.setPostVideoVisible();
+>>>>>>> add posts firebase database
                 break;
             case MUSIC:
                 //TODO
                 break;
             case IMAGE_AND_MUSIC:
                 //feedViewHolder.setPostImage(post.getPostImage());
+<<<<<<< HEAD
                 //feedViewHolder.setPostImageVisible();
+=======
+                feedViewHolder.setPostImageVisible();
+>>>>>>> add posts firebase database
                 //TODO
-        }
+        }*/
         //after creating Comment class
         //feedViewHolder.setCommentCount();
         //feedViewHolder.setCommentIcon();
-
-
 
     }
 

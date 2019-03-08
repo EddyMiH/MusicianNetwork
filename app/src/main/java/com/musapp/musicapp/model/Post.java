@@ -30,6 +30,10 @@ public class Post {
         this.commentsId = commentsId;
     }
 
+    public int getCommentsQuantity(){
+        return commentsId == null ? 0 : commentsId.size();
+    }
+
     public void addCommentId(String id){
         if(commentsId == null){
             commentsId = new ArrayList<>();

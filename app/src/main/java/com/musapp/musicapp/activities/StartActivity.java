@@ -182,6 +182,8 @@ public class StartActivity extends AppCompatActivity {
     private void startMainPageActivity() {
 
 
+
+
         Log.i("USERKEY", CurrentUser.getCurrentUser().getPrimaryKey() + "gg");
         Intent intent = new Intent(this, AppMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |

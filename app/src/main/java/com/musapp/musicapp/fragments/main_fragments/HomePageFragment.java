@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,9 +15,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.enums.PostUploadType;
+import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.model.Post;
 
 import java.util.ArrayList;
@@ -28,12 +34,12 @@ public class HomePageFragment extends Fragment {
     private FeedRecyclerAdapter feedRecyclerAdapter;
 
     private List<Post> posts = new ArrayList<Post>(
-            Arrays.asList(new Post("John Johnson", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
-                    , null, null, null, PostUploadType.NONE)
-            ,new Post("John Johnson", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
-                            , null, null, null, PostUploadType.NONE)
-            ,new Post("John Johnson", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
-                            , null, null, null, PostUploadType.NONE))
+//            Arrays.asList(new Post("John Johnson", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
+//                    , null, null, null, PostUploadType.NONE)
+//            ,new Post("John Johnson", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
+//                            , null, null, null, PostUploadType.NONE)
+//            ,new Post("John Johnson", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
+//                            , null, null, null, PostUploadType.NONE))
     );
 
     private FeedRecyclerAdapter.OnItemSelectedListener mOnItemSelectedListener =
@@ -49,6 +55,7 @@ public class HomePageFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView  = inflater.inflate(R.layout.fragment_home_page, container, false);
         RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view_fragment_home_page_posts);
+        loadPostsFromDatabase();
         initRecyclerView(recyclerView);
         return rootView;
     }
@@ -59,6 +66,26 @@ public class HomePageFragment extends Fragment {
         feedRecyclerAdapter.setData(posts);
         view.setLayoutManager(new LinearLayoutManager(getContext()));
         view.setAdapter(feedRecyclerAdapter);
+    }
+
+    private void loadPostsFromDatabase(){
+        FirebaseDatabase.getInstance().getReference().child("posts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Post> list = new ArrayList<>();
+                for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                    Post post = postSnapshot.getValue(Post.class);
+                    list.add(post);
+                }
+                posts.addAll(list);
+                feedRecyclerAdapter.setData(posts);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("HOME_PAGE", "onCancelled: data loading is cancelled");
+            }
+        });
     }
 
     @Override
@@ -99,6 +126,12 @@ public class HomePageFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+//        DBAccess.createChild(FirebaseDatabase.getInstance().getReference(), "", new Post("fangfang great", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
+//                    , null, null, null, PostUploadType.NONE), "posts");
+//        DBAccess.createChild(FirebaseDatabase.getInstance().getReference(), "", new Post("john johnson", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
+//                , null, null, null, PostUploadType.NONE), "posts");
+//        DBAccess.createChild(FirebaseDatabase.getInstance().getReference(), "", new Post("jimbo jojo", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
+//                , null, null, null, PostUploadType.NONE), "posts");
     }
 
     public HomePageFragment() {
