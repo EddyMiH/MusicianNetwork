@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,11 @@ import android.widget.DatePicker;
 import android.widget.RadioButton;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
+import com.musapp.musicapp.model.Gender;
+import com.musapp.musicapp.model.User;
+import com.musapp.musicapp.utils.StringUtils;
 
 import java.util.Calendar;
 
@@ -28,10 +33,11 @@ public class RegistrationFragment2 extends Fragment {
      @BindView(R.id.action_fragment_registration_2_next) Button nextButton;
 
     private Calendar birthDate = Calendar.getInstance();
-
+    private User user = CurrentUser.getCurrentUser();
     private DatePicker.OnDateChangedListener dateChangedListener =
             new DatePicker.OnDateChangedListener(){
                 @Override
+                //TODO date not changing
                 public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
                    birthDate.set(Calendar.YEAR, datePicker.getYear());
                    birthDate.set(Calendar.MONTH, datePicker.getMonth());
@@ -43,7 +49,7 @@ public class RegistrationFragment2 extends Fragment {
         public void onClick(View v) {
             submitInformation();
             RegistrationTransactionWrapper.registerForNextFragment((int)nextButton.getTag());
-            //TODO set animation to another fragment
+            CurrentUser.setCurrentUser(user);
         }
     };
 
@@ -72,7 +78,9 @@ public class RegistrationFragment2 extends Fragment {
     }
 
     private void submitInformation(){
-        //TODO set information to local user
+        Log.i("USERDATE", StringUtils.CalendarToString(birthDate));
+       user.setBirthDay(StringUtils.CalendarToString(birthDate));
+       user.setGender(maleRadioButton.isChecked() ? Gender.MAN : Gender.WOMAN);
     }
 
 }

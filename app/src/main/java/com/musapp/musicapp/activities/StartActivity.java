@@ -53,6 +53,7 @@ public class StartActivity extends AppCompatActivity {
             }
             if (id == R.integer.registration_fragment_professions_4) {
                 beginTransaction(register5);
+                CurrentUser.getCurrentUser().setPrimaryKey(DBAccess.createChild("user", CurrentUser.getCurrentUser()));
             }
             if (id == R.integer.registration_fragment_5) {
                 beginTransaction(signInFragment);
@@ -109,7 +110,6 @@ public class StartActivity extends AppCompatActivity {
         register1 = new RegistrationFragment1();
         register2 = new RegistrationFragment2();
         register3 = new GenreGridFragment();
-        //  register3.setNextButton(UIUtils.getButtonFromView(findViewById(R.id.action_fragment_grid_and_profession_next), R.id.next_button_professions_fragment));
         register4 = new ProfessionAndBioFragment();
         register5 = new RegistrationFragment5();
         signInFragment = new SignInFragment();
@@ -181,10 +181,8 @@ public class StartActivity extends AppCompatActivity {
 
     private void startMainPageActivity() {
 
-        CurrentUser.getCurrentUser().setPrimaryKey(DBAccess.createChild(FirebaseDatabase.getInstance().getReference(), "", CurrentUser.getCurrentUser(), "user"));
-        Log.i("USERKEY", CurrentUser.getCurrentUser().getPrimaryKey() + "gg");
-        DBAccess.createChild(FirebaseDatabase.getInstance().getReference(), "user/" + CurrentUser.getCurrentUser().getPrimaryKey() + '/', new Post(), "post");
 
+        Log.i("USERKEY", CurrentUser.getCurrentUser().getPrimaryKey() + "gg");
         Intent intent = new Intent(this, AppMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_NEW_TASK);

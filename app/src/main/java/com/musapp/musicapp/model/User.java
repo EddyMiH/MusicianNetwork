@@ -2,6 +2,8 @@ package com.musapp.musicapp.model;
 
 import android.arch.persistence.room.Ignore;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -11,13 +13,13 @@ public class User {
     private String nickName;
     private String password;
     private String email;
-    private Calendar birthDay;
+    private String birthDay;
     private Gender gender;
     private List<String> postId;
     private String professionAndInfoId;
     private List<String> genresId;
 
-    @Ignore
+    @Exclude
     private String primaryKey;
 
     public User(){}
@@ -88,11 +90,11 @@ public class User {
         this.email = email;
     }
 
-    public Calendar getBirthDay() {
+    public String getBirthDay() {
         return birthDay;
     }
 
-    public void setBirthDay(Calendar birthDay) {
+    public void setBirthDay(String birthDay) {
         this.birthDay = birthDay;
     }
 

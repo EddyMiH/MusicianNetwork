@@ -16,8 +16,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.GenreRecyclerViewAdapter;
+import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.Genre;
+import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.preferences.AppPreferences;
 import com.musapp.musicapp.utils.UIUtils;
 
@@ -30,6 +32,7 @@ public class GenreGridFragment extends Fragment {
 
     private GenreRecyclerViewAdapter genreRecyclerAdapter;
     private Button nextButton;
+    private User user = CurrentUser.getCurrentUser();
     private List<Genre> listOfGenres = new ArrayList<Genre>(
             Arrays.asList(new Genre("Rock", null)
                     ,new Genre("Blues", null)
@@ -90,7 +93,6 @@ public class GenreGridFragment extends Fragment {
             }
             else{
                 Toast.makeText(getContext(),genre.getName() + " :Unchecked ", Toast.LENGTH_SHORT).show();
-
                 temp.setBackgroundColor(getResources().getColor(R.color.colorWhiteTransparent));
             }
         }
@@ -111,8 +113,9 @@ public class GenreGridFragment extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 RegistrationTransactionWrapper.registerForNextFragment((int)nextButton.getTag());
+                submitInformation();
+                CurrentUser.setCurrentUser(user);
             }
         });
         return rootView;
@@ -160,11 +163,17 @@ public class GenreGridFragment extends Fragment {
 
     public GenreGridFragment() {
     }
-    //TODO its not best solution to share one button from layout between two fragments, try something else
-    public void setNextButton(Button button){
-        nextButton = button;
-    }
 
+    private void submitInformation(){
+        List<String> genreId = new ArrayList<>();
+        for(Genre genre: listOfGenres){
+            if(genre.isChecked()){
+                genreId.add(genre.getName());
+            }
+        }
+        user.setGenresId(genreId);
+
+    }
 
 }
 

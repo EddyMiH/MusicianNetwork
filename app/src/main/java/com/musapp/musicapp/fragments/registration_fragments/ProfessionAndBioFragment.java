@@ -28,8 +28,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.currentinformation.CurrentUser;
+import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.ProfessionAndInfo;
+import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.UIUtils;
 
 
@@ -40,9 +43,10 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
     private TextView userInfoTextView;
     private Button nextButton;
     private ProfessionAndInfo userInfo;
-
+    private User user = CurrentUser.getCurrentUser();
     private final int REQUEST_CAMERA = 1;
     private final int SELECT_FILE = 0;
+
 
     private final int STORAGE_CAMERA_PERMISSION_CODE = 100;
     public boolean isPermissionAccepted = false;
@@ -70,7 +74,7 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
                     selectImage();
                 } else{
                     requestPermission();
-                    //requestCameraPermission();
+                    //equestCameraPermission();
                 }
             }
         });
@@ -80,8 +84,8 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
             public void onClick(View v) {
                 userInfo.setAdditionalInfo(userInfoTextView.getText().toString());
                 RegistrationTransactionWrapper.registerForNextFragment((int)nextButton.getTag());
-
-                //TODO save data and change fragment
+                submitInformation();
+                CurrentUser.setCurrentUser(user);
             }
         });
         return rootView;
@@ -198,7 +202,10 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+    }
 
+    private void submitInformation(){
+       user.setProfessionAndInfoId(DBAccess.createChild("profession_and_bio", userInfo));
     }
 }
 

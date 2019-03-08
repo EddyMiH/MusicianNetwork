@@ -1,8 +1,14 @@
 package com.musapp.musicapp.model;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class Genre {
     private String name;
     private Integer imageResource;
+
+    @Exclude
     private boolean isChecked;
 
     public void setChecked(boolean checked) {

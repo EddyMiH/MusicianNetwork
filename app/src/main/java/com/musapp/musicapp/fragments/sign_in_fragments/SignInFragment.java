@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.dialogs.ForgotPassDialog;
+import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.preferences.RememberPreferences;
@@ -130,9 +132,9 @@ public class SignInFragment extends Fragment {
 
     private boolean checkEnteredInformation() {
         if(checkEditTextField()) {
-            //TODO check entered email and password
-            return true;
+       //    if(DBAccess.selectEmail("user", email.getText().toString())){
+         //   return true;}
         }
-        return false;
+        return true;
     }
 }

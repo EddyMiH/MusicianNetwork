@@ -31,11 +31,11 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:8.8.1"
     implementation 'com.android.databinding:library:3.3.1'
     implementation 'org.apache.commons:commons-lang3:3.7'
+
     implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'com.google.firebase:firebase-storage:16.1.0'
     implementation 'com.google.firebase:firebase-auth:16.1.0'
-
 
 
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
@@ -61,3 +61,4 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+

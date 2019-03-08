@@ -35,8 +35,6 @@ public class RegistrationFragment1 extends Fragment {
            if(submitInformation()){
                 RegistrationTransactionWrapper.registerForNextFragment((int)nextButton.getTag());
            CurrentUser.setCurrentUser(user);}
-           //TODO set animation to another fragment
-
        }
    };
 
@@ -81,7 +79,6 @@ public class RegistrationFragment1 extends Fragment {
         if(checkEditTextField()){
             user.setFullName(fullname.getText().toString());
             user.setNickName(nickname.getText().toString());
-            Log.i(TAG, "use info");
             return true;
         }
         return false;

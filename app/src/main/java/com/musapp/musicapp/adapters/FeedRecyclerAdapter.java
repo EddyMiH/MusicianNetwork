@@ -75,19 +75,19 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
                 break;
             case IMAGE:
-                feedViewHolder.setPostImage(post.getPostImage());
-                feedViewHolder.setPostImageVisible();
+          //      feedViewHolder.setPostImage(post.getPostImage());
+            //    feedViewHolder.setPostImageVisible();
                 break;
             case VIDEO:
-                feedViewHolder.setPostVideo(post.getVideoUri());
-                feedViewHolder.setPostVideoVisible();
+              //  feedViewHolder.setPostVideo(post.getVideoUri());
+                //feedViewHolder.setPostVideoVisible();
                 break;
             case MUSIC:
                 //TODO
                 break;
             case IMAGE_AND_MUSIC:
-                feedViewHolder.setPostImage(post.getPostImage());
-                feedViewHolder.setPostImageVisible();
+                //feedViewHolder.setPostImage(post.getPostImage());
+                //feedViewHolder.setPostImageVisible();
                 //TODO
         }
         //after creating Comment class
