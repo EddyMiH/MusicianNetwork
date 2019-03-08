@@ -82,5 +82,6 @@
     <string name="favorite_pop_up_menu_title">Save to favorite</string>
     <string name="search_bar_title_menu">Search</string>
     <string name="add_post_action_bar_title_menu">New Post</string>
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>

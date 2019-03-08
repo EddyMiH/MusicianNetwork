@@ -95,27 +95,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/image_post_item_image"
-                android:visibility="visible"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:layout_marginTop="5dp"
-                android:src="@drawable/temp_post_image"/>
-
-            <VideoView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/video_view_post_item_video"
-                android:visibility="gone"
-                android:layout_marginTop="5dp"/>
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/recycler_view_post_item_container"
+                android:id="@+id/innner_recycler_view_post_item_container"
                 android:visibility="gone"
                 android:layout_marginTop="5dp">
 
