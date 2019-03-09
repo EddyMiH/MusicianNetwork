@@ -16,10 +16,14 @@ public final class  UploadsAdapterFactory {
 
     public static <T extends BaseUpload, Y extends BasePostViewHolder> BaseUploadsAdapter<T, Y> setAdapterTypeByInputType(PostUploadType type){
        switch (type){
-           case IMAGE : return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<ImageUpload , ImagePostViewHolder>();
-           case VIDEO: return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<VideoUpload, VideoPostViewHolder>();
-           case MUSIC: return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<MusicUpload, MusicPostViewHolder>();
-           default: return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<BaseUpload, BasePostViewHolder>();
+           case IMAGE :
+               return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<ImageUpload , ImagePostViewHolder>();
+           case VIDEO:
+               return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<VideoUpload, VideoPostViewHolder>();
+           case MUSIC:
+               return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<MusicUpload, MusicPostViewHolder>();
+           default:
+               return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<BaseUpload, BasePostViewHolder>();
        }
 }
 

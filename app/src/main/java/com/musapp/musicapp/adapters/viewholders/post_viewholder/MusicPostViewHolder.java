@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 public class MusicPostViewHolder extends BasePostViewHolder {
+
+
     public MusicPostViewHolder(@NonNull View itemView) {
         super(itemView);
     }
