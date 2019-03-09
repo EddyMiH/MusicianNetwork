@@ -8,6 +8,8 @@
     <color name="textBlue">#b7d6ef</color>
     <color name="purple">#664eae</color>
 
+    <color name="dark_purple">#800080</color>
+
     <color name="colorGreyDark">#303030</color>
     <color name="colorWhiteTransparent">#20FFFFFF</color>
     <color name="colorGenreChecked">#80D81B60</color>

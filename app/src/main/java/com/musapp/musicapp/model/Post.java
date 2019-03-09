@@ -123,7 +123,7 @@ public class Post {
     private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> innerAdapter;
 
     public void setInnerRecyclerView(View view){
-        innerRecyclerView = view.findViewById(R.id.innner_recycler_view_post_item_container);
+        innerRecyclerView = view.findViewById(R.id.inner_recycler_view_post_item_container);
     }
 
     public void initializeInnerRecyclerAndAapater(){

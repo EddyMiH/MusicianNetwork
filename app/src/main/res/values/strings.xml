@@ -29,6 +29,7 @@
     <string name="additional_info_text_hint">Tell something about yourself...</string>
     <string name="profile">Profile</string>
 
+    <string name="comment_hint">Comment...</string>
     <string name="dialog_email_info">Please enter your email addres. We\'ll sent you a code. </string>
 
 
