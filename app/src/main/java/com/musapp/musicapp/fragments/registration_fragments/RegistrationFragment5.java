@@ -12,17 +12,26 @@ import android.widget.EditText;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
+import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.firebase.DBAsyncTask;
+import com.musapp.musicapp.firebase.DBAsyncTaskResponse;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.utils.CheckUtils;
 import com.musapp.musicapp.utils.ContextUtils;
 import com.musapp.musicapp.utils.ErrorShowUtils;
+import com.musapp.musicapp.utils.HashUtils;
+
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RegistrationFragment5 extends Fragment {
+public class RegistrationFragment5 extends Fragment implements DBAsyncTaskResponse {
     @BindView(R.id.text_fragment_registration_5_email) EditText email;
     @BindView(R.id.text_fragment_registration_5_password) EditText password;
     @BindView(R.id.text_fragment_registration_5_confirm_pass) EditText confirm_password;
@@ -84,9 +93,27 @@ public class RegistrationFragment5 extends Fragment {
     private boolean submitInformation(){
 
         if(checEditTextField()) {
-           user.setEmail(email.getText().toString());
+             user.setEmail(email.getText().toString());
+            DBAsyncTask.waitResponse("user", this,  user);
             return true;
     }
         return false;
+    }
+
+    @Override
+    public void doOnResponse(String key) {
+        user.setPrimaryKey(key);
+        user.setPassword(password.getText().toString());
+     //   DBAccess.createChild("user/" + user.getPrimaryKey() + '/', "primaryKey", user.getPrimaryKey());
+        HashMap<String, Object> userHashMap = new HashMap<>();
+        //TODO if nested primaryKey is needed
+        userHashMap.put("primaryKey", user.getPrimaryKey());
+        userHashMap.put("password", HashUtils.hash(password.getText().toString()));
+        DBAccess.createFields(userHashMap, "user/"+user.getPrimaryKey()+'/');
+    }
+
+    @Override
+    public void doForResponse(String str, Object obj) {
+        DBAccess.createChild("user", user);
     }
 }

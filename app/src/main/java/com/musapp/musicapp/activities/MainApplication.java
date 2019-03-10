@@ -8,6 +8,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.firebase.DBAsyncTask;
 import com.musapp.musicapp.model.Genre;
 import com.musapp.musicapp.model.User;
 
@@ -71,6 +72,7 @@ public class MainApplication extends Application {
         DatabaseReference ref = database.getReference();
 
         DBAccess.setDatabaseReference(ref);
+        DBAsyncTask.setDatabaseReference(ref);
 
         DatabaseReference childRef = ref.child("genres");
 

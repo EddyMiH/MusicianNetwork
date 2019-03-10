@@ -30,13 +30,15 @@ import android.widget.Toast;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.firebase.DBAsyncTask;
+import com.musapp.musicapp.firebase.DBAsyncTaskResponse;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.ProfessionAndInfo;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.UIUtils;
 
 
-public class ProfessionAndBioFragment extends Fragment  implements AdapterView.OnItemSelectedListener {
+public class ProfessionAndBioFragment extends Fragment  implements AdapterView.OnItemSelectedListener, DBAsyncTaskResponse {
 
     private ImageView profileImage;
     private Spinner professionSpinner;
@@ -205,7 +207,17 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
     }
 
     private void submitInformation(){
-       user.setProfessionAndInfoId(DBAccess.createChild("profession_and_bio", userInfo));
+        DBAsyncTask.waitResponse("profession_and_bio", this, userInfo);
+    }
+
+    @Override
+    public void doOnResponse(String key) {
+        user.setProfessionAndInfoId(key);
+    }
+
+    @Override
+    public void  doForResponse(String str, Object obj) {
+        DBAccess.createChild("profession_and_bio", userInfo);
     }
 }
 

@@ -53,11 +53,9 @@ public class StartActivity extends AppCompatActivity {
             }
             if (id == R.integer.registration_fragment_professions_4) {
                 beginTransaction(register5);
-                CurrentUser.getCurrentUser().setPrimaryKey(DBAccess.createChild("user", CurrentUser.getCurrentUser()));
             }
             if (id == R.integer.registration_fragment_5) {
                 beginTransaction(signInFragment);
-                //beginTransaction(register3);
             }
             if (id == R.integer.sign_in_fragment_main_page) {
                 startMainPageActivity();

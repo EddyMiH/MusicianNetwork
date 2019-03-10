@@ -22,8 +22,9 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     private TextView mPostTime;
     private ImageView mPostSetting;
     private TextView mPostText;
-    private ImageView mPostImage;
-    private VideoView mPostVideo;
+    //image and video are placed in innner  recyclerview
+ //   private ImageView mPostImage;
+ //   private VideoView mPostVideo;
     private ImageView mCommentIcon;
     private TextView mCommentCount;
 
@@ -57,8 +58,8 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         mPostTime = itemView.findViewById(R.id.text_post_item_published_time);
         mPostSetting = itemView.findViewById(R.id.image_post_item_setting);
         mPostText = itemView.findViewById(R.id.text_post_item_post_text);
-        mPostImage = itemView.findViewById(R.id.image_post_item_image);
-        mPostVideo = itemView.findViewById(R.id.video_view_post_item_video);
+     //   mPostImage = itemView.findViewById(R.id.image_post_item_image);
+     //   mPostVideo = itemView.findViewById(R.id.video_view_post_item_video);
         mCommentIcon = itemView.findViewById(R.id.image_comment_icon);
         mCommentCount = itemView.findViewById(R.id.text_post_item_comment_count);
 
@@ -70,10 +71,10 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setPostImageVisible(){
-        mPostImage.setVisibility(View.VISIBLE);
+   //     mPostImage.setVisibility(View.VISIBLE);
     }
     public void setPostVideoVisible(){
-        mPostVideo.setVisibility(View.VISIBLE);
+        //mPostVideo.setVisibility(View.VISIBLE);
     }
 
     public void setFeedProfileImage(String src) {
@@ -97,11 +98,11 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setPostImage(String src) {
-        GlideUtil.setImageGlide(src, this.mPostImage);
+        //GlideUtil.setImageGlide(src, this.mPostImage);
     }
 
     public void setPostVideo(Uri videoFilePath) {
-        mPostVideo.setVideoURI(videoFilePath);
+      //  mPostVideo.setVideoURI(videoFilePath);
         //TODO set video into YouTubeVideoView
         //VideoViewInitUtil.setVideoView(mPostVideo);
     }

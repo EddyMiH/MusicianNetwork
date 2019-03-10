@@ -12,8 +12,8 @@ public final class UploadTypeFactory {
     public static BaseUpload setUploadByType(PostUploadType type, String url){
         switch (type){
             case IMAGE: return new ImageUpload(url);
-            case VIDEO: return new VideoUpload();
-            case MUSIC: return new MusicUpload();
+            case VIDEO: return new VideoUpload(url);
+            case MUSIC: return new MusicUpload(url);
             default: return new BaseUpload();
         }
     }

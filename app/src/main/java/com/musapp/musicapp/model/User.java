@@ -19,7 +19,6 @@ public class User {
     private String professionAndInfoId;
     private List<String> genresId;
 
-    @Exclude
     private String primaryKey;
 
     public User(){}

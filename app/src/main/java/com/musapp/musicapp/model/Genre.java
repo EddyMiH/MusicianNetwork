@@ -3,7 +3,6 @@ package com.musapp.musicapp.model;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
-@IgnoreExtraProperties
 public class Genre {
     private String name;
     private Integer imageResource;
