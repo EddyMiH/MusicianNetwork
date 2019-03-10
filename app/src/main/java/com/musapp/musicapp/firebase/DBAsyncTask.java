@@ -24,8 +24,24 @@ public final class DBAsyncTask {
                             DataSnapshot snapshot = dataSnapshot;
                             while(childIterator.hasNext())
                              snapshot =  childIterator.next();
-                            Log.i("keyfff", snapshot.getKey());
                         response.doOnResponse(snapshot.getKey());
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+    }
+
+
+    public static void waitSimpleResponse(String childName, final DBAsyncTaskResponse response, String... args){
+        response.doForResponse(childName, args);
+        databaseReference.child(childName)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot != null){
+                            response.doOnResponse("Done");
                         }
                     }
                     @Override
