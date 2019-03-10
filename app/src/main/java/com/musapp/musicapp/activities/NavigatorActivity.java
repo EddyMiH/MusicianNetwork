@@ -22,5 +22,6 @@ public class NavigatorActivity extends Activity {
         }
 
         startActivity(new Intent(this, activityClass));
+        finish();
     }
 }
