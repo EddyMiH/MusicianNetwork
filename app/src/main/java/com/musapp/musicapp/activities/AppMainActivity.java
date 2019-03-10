@@ -1,6 +1,7 @@
 package com.musapp.musicapp.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -79,6 +80,16 @@ public class AppMainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("lastActivity", getClass().getName());
+        editor.apply();
+    }
+
     private void init(){
         mNotificationFragment = new NotificationFragment();
         mProfileFragment = new ProfileFragment();
@@ -107,4 +118,6 @@ public class AppMainActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+
 }

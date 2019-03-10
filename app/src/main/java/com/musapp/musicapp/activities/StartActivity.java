@@ -1,6 +1,7 @@
 package com.musapp.musicapp.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -104,6 +105,16 @@ public class StartActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("lastActivity", getClass().getName());
+        editor.apply();
+    }
+
     private void init() {
         register1 = new RegistrationFragment1();
         register2 = new RegistrationFragment2();
@@ -178,14 +189,9 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void startMainPageActivity() {
-
-
-
-
-        Log.i("USERKEY", CurrentUser.getCurrentUser().getPrimaryKey() + "gg");
         Intent intent = new Intent(this, AppMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                Intent.FLAG_ACTIVITY_NEW_TASK);
+                Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);
         finish();

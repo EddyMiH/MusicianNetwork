@@ -19,16 +19,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">
-        <activity android:name=".activities.StartActivity">
+        <activity android:name=".activities.NavigatorActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.AppMainActivity"
-            android:label="@string/title_activity_app" />
+            android:label="@string/title_activity_app"/>
+        <activity android:name=".activities.StartActivity"/>
     </application>
 
 </manifest>
