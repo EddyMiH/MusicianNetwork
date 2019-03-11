@@ -12,6 +12,7 @@
 
     <color name="colorGreyDark">#303030</color>
     <color name="colorWhiteTransparent">#20FFFFFF</color>
+    <color name="colorWhiteTransparent2">#80FFFFFF</color>
     <color name="colorGenreChecked">#80D81B60</color>
 
     <color name="black_overlay">#66000000</color>

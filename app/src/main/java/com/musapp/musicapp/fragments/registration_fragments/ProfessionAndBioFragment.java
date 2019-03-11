@@ -2,6 +2,7 @@ package com.musapp.musicapp.fragments.registration_fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,9 +17,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -27,6 +30,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
@@ -87,7 +93,7 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
                 userInfo.setAdditionalInfo(userInfoTextView.getText().toString());
                 RegistrationTransactionWrapper.registerForNextFragment((int)nextButton.getTag());
                 submitInformation();
-                CurrentUser.setCurrentUser(user);
+                //CurrentUser.setCurrentUser(user);
             }
         });
         return rootView;
@@ -169,12 +175,33 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
 
             }else if(requestCode==SELECT_FILE){
 
-                Uri selectedImageUri = data.getData();
+                final Uri selectedImageUri = data.getData();
                 profileImage.setImageURI(selectedImageUri);
-                userInfo.setImageUri(selectedImageUri);
+                final StorageReference fileReference = DBAccess.creatStorageChild("image/", System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
+                fileReference.putFile(selectedImageUri).addOnSuccessListener(
+                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                userInfo.setImageUri(uri.toString());
+
+                            }
+                        });
+                        //userInfo.setImageUri(taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                    }
+                });
+                //userInfo.setImageUri(selectedImageUri.);
             }
 
         }
+    }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver cR = getActivity().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
     public ProfessionAndBioFragment() {
@@ -207,6 +234,7 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
     }
 
     private void submitInformation(){
+<<<<<<< HEAD
         DBAsyncTask.waitResponse("profession_and_bio", this, userInfo);
     }
 
@@ -218,6 +246,10 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
     @Override
     public void  doForResponse(String str, Object obj) {
         DBAccess.createChild("profession_and_bio", userInfo);
+=======
+       user.setProfessionAndInfoId(DBAccess.createChild("profession_and_bio", userInfo));
+       CurrentUser.setCurrentUser(user);
+>>>>>>> add posts and comments layouts and classes, comments recycler view and adapters
     }
 }
 

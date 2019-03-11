@@ -33,20 +33,19 @@ public class HomePageFragment extends Fragment {
 
     private FeedRecyclerAdapter feedRecyclerAdapter;
 
-    private List<Post> posts = new ArrayList<Post>(
-//            Arrays.asList(new Post("John Johnson", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
-//                    , null, null, null, PostUploadType.NONE)
-//            ,new Post("John Johnson", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
-//                            , null, null, null, PostUploadType.NONE)
-//            ,new Post("John Johnson", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
-//                            , null, null, null, PostUploadType.NONE))
-    );
+    private List<Post> posts = new ArrayList<Post>();
+    public static final String ARG_POST = "current_post";
 
     private FeedRecyclerAdapter.OnItemSelectedListener mOnItemSelectedListener =
             new FeedRecyclerAdapter.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(Post post) {
                     //TODO open extended post fragment
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(HomePageFragment.ARG_POST, post);
+                    OpenedPostFragment fragment = new OpenedPostFragment();
+                    fragment.setArguments(bundle);
+                    beginTransaction(fragment);
                 }
             };
 
@@ -75,7 +74,9 @@ public class HomePageFragment extends Fragment {
                 List<Post> list = new ArrayList<>();
                 for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
                     Post post = postSnapshot.getValue(Post.class);
-                    list.add(post);
+                    if(!posts.contains(post)){
+                        list.add(post);
+                    }
                 }
                 posts.addAll(list);
                 feedRecyclerAdapter.setData(posts);
@@ -118,6 +119,7 @@ public class HomePageFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.action_add_home_fragment_menu_item:
                 //TODO open new fragment for add new post
+                beginTransaction(new AddPostFragment());
         }
         return true;
     }
@@ -126,12 +128,11 @@ public class HomePageFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-//        DBAccess.createChild(FirebaseDatabase.getInstance().getReference(), "", new Post("fangfang great", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
-//                    , null, null, null, PostUploadType.NONE), "posts");
-//        DBAccess.createChild(FirebaseDatabase.getInstance().getReference(), "", new Post("john johnson", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
-//                , null, null, null, PostUploadType.NONE), "posts");
-//        DBAccess.createChild(FirebaseDatabase.getInstance().getReference(), "", new Post("jimbo jojo", "21:11", "troi reijdsg lisgf oijgsf gijrsg "
-//                , null, null, null, PostUploadType.NONE), "posts");
+    }
+
+    public void beginTransaction(Fragment fragment){
+        getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, fragment)
+                .addToBackStack(null).commit();
     }
 
     public HomePageFragment() {

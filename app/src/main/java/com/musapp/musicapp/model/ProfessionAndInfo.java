@@ -7,13 +7,13 @@ public class ProfessionAndInfo {
     private String profession;
     private String additionalInfo;
     //maybe field for image
-    private Uri imageUri;
+    private String imageUri;
 
-    public Uri getImageUri() {
+    public String getImageUri() {
         return imageUri;
     }
 
-    public void setImageUri(Uri imageUri) {
+    public void setImageUri(String imageUri) {
         this.imageUri = imageUri;
     }
 
