@@ -84,5 +84,6 @@
     <string name="search_bar_title_menu">Search</string>
     <string name="add_post_action_bar_title_menu">New Post</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="save">Save</string>
 
 </resources>

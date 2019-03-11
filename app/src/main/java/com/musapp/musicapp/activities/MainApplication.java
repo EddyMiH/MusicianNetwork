@@ -7,6 +7,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase.DBAsyncTask;
 import com.musapp.musicapp.model.Genre;
@@ -69,10 +71,17 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final FirebaseStorage storage = FirebaseStorage.getInstance();
         DatabaseReference ref = database.getReference();
+        StorageReference storageReference = storage.getReference();
 
         DBAccess.setDatabaseReference(ref);
+
         DBAsyncTask.setDatabaseReference(ref);
+
+
+        DBAccess.setStorageReference(storageReference);
+
 
         DatabaseReference childRef = ref.child("genres");
 

@@ -1,8 +1,10 @@
 package com.musapp.musicapp.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,9 +68,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
         //feedViewHolder.setOnSettingClickListener(mOnClickListener);
         feedViewHolder.setUserName(post.getUserName());
-        //feedViewHolder.setFeedProfileImage(post.getProfileImage());
+        feedViewHolder.setFeedProfileImage(post.getProfileImage());
         feedViewHolder.setPostText(post.getPostText());
         feedViewHolder.setPostTime(post.getPublishedTime());
+        feedViewHolder.setCommentCount(String.valueOf(post.getCommentsQuantity()));
 
         /*switch (post.getType()){
             case NONE:
@@ -103,9 +106,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 >>>>>>> add posts firebase database
                 //TODO
         }*/
-        //after creating Comment class
-        //feedViewHolder.setCommentCount();
-        //feedViewHolder.setCommentIcon();
+
 
     }
 

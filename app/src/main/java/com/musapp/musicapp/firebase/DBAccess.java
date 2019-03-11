@@ -6,6 +6,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.HashUtils;
 
@@ -17,6 +18,7 @@ public final class DBAccess {
     }
 
     private static DatabaseReference databaseReference;
+    private static StorageReference mStorageReference;
     private static String DEFAULT_PATH = "";
 
     //CREATE
@@ -73,5 +75,14 @@ public final class DBAccess {
                 });
 
         return res[0];
+    }
+
+    public static void setStorageReference (StorageReference ref){
+       mStorageReference = ref;
+    }
+
+    public static StorageReference creatStorageChild(String path, String childName){
+       StorageReference ref = mStorageReference.child(path + childName);
+       return ref;
     }
 }

@@ -21,6 +21,6 @@ public class ImagePostViewHolder extends BasePostViewHolder {
     }
 
     public void setImage(String url) {
-        GlideUtil.setImageGlide(url, imageView);
+        GlideUtil.setImageGlideSquare(url, imageView);
     }
 }
