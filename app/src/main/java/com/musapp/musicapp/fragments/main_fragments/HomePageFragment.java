@@ -33,8 +33,21 @@ public class HomePageFragment extends Fragment {
 
     private FeedRecyclerAdapter feedRecyclerAdapter;
 
+
     private List<Post> posts = new ArrayList<Post>();
     public static final String ARG_POST = "current_post";
+
+    private OpenUserFragment mOpenUserFragment;
+
+    private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
+        @Override
+        public void onProfileImageClickListener() {
+            mOpenUserFragment.openUserFragment();
+        }
+    };
+
+
+
 
     private FeedRecyclerAdapter.OnItemSelectedListener mOnItemSelectedListener =
             new FeedRecyclerAdapter.OnItemSelectedListener() {
@@ -62,6 +75,7 @@ public class HomePageFragment extends Fragment {
     private void initRecyclerView(RecyclerView view){
         feedRecyclerAdapter = new FeedRecyclerAdapter();
         feedRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
+        feedRecyclerAdapter.setOnUserImageListener(mOnUserImageListener);
         feedRecyclerAdapter.setData(posts);
         view.setLayoutManager(new LinearLayoutManager(getContext()));
         view.setAdapter(feedRecyclerAdapter);
@@ -137,5 +151,13 @@ public class HomePageFragment extends Fragment {
 
     public HomePageFragment() {
         //Required
+    }
+
+    public void setOpenUserFragment(OpenUserFragment openUserFragment) {
+        mOpenUserFragment = openUserFragment;
+    }
+
+    public interface OpenUserFragment{
+        void openUserFragment();
     }
 }

@@ -37,6 +37,12 @@ public class AppMainActivity extends AppCompatActivity {
         }
     };
 
+    private HomePageFragment.OpenUserFragment mOpenUserFragment = new HomePageFragment.OpenUserFragment() {
+        @Override
+        public void openUserFragment() {
+            //TODO fill user's profile page and open user's fragment by id
+        }
+    };
     private ProfileFragment.ChangeActivity mChangeActivity = new ProfileFragment.ChangeActivity() {
         @Override
         public void changeActivity( Class nextActivity) {
@@ -99,6 +105,7 @@ public class AppMainActivity extends AppCompatActivity {
         mProfileFragment.setSetToolBarTitle(mToolBarTitle);
         mNotificationFragment.setSetToolBarTitle(mToolBarTitle);
         mProfileFragment.setChangeActivity(mChangeActivity);
+        mHomePageFragment.setOpenUserFragment(mOpenUserFragment);
     }
 
     private void beginTransaction(Fragment fragment){
