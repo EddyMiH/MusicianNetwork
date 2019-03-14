@@ -33,8 +33,6 @@ import com.google.firebase.storage.UploadTask;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
-import com.musapp.musicapp.firebase.DBAsyncTask;
-import com.musapp.musicapp.firebase.DBAsyncTaskResponse;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.Info;
 import com.musapp.musicapp.model.Profession;
@@ -42,7 +40,7 @@ import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.UIUtils;
 
 
-public class ProfessionAndBioFragment extends Fragment  implements AdapterView.OnItemSelectedListener {
+public class ProfessionAndBioFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private ImageView profileImage;
     private Spinner professionSpinner;
@@ -67,7 +65,7 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
         View rootView = inflater.inflate(R.layout.profession_bio_fragment, container, false);
         profileImage = rootView.findViewById(R.id.circular_view_profession_fragment_profile_image);
         professionSpinner = rootView.findViewById(R.id.spinner_profession_fragment_profession_drop_down);
-        userInfoTextView = rootView.findViewById( R.id.text_profession_fragment_user_info);
+        userInfoTextView = rootView.findViewById(R.id.text_profession_fragment_user_info);
         nextButton = UIUtils.getButtonFromView(getActivity().findViewById(R.id.layout_activity_start_content_main), R.id.action_fragment_grid_and_profession_next);
         professionSpinner.setOnItemSelectedListener(this);
         ArrayAdapter<CharSequence> spinnerDataAdapter = ArrayAdapter.createFromResource(getContext(), R.array.professions, android.R.layout.simple_spinner_dropdown_item);
@@ -77,9 +75,9 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ( isPermissionAccepted ) {
+                if (isPermissionAccepted) {
                     selectImage();
-                } else{
+                } else {
                     requestPermission();
                     //equestCameraPermission();
                 }
@@ -90,7 +88,7 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
             @Override
             public void onClick(View v) {
                 userInfo.setAdditionalInfo(userInfoTextView.getText().toString());
-                RegistrationTransactionWrapper.registerForNextFragment((int)nextButton.getTag());
+                RegistrationTransactionWrapper.registerForNextFragment((int) nextButton.getTag());
                 submitInformation();
                 //CurrentUser.setCurrentUser(user);
             }
@@ -98,7 +96,7 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
         return rootView;
     }
 
-    private void requestPermission(){
+    private void requestPermission() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -108,9 +106,9 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Toast.makeText(getContext(), "yess",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "yess", Toast.LENGTH_SHORT).show();
 
-        if (requestCode == STORAGE_CAMERA_PERMISSION_CODE)  {
+        if (requestCode == STORAGE_CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 isPermissionAccepted = true;
                 isStoragePermissionAccepted = true;
@@ -130,8 +128,8 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
         nextButton.setTag(R.integer.registration_fragment_professions_4);
     }
 
-    private void selectImage(){
-        final CharSequence[] items={"Camera","Gallery", "Cancel"};
+    private void selectImage() {
+        final CharSequence[] items = {"Camera", "Gallery", "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Add Image");
@@ -141,12 +139,12 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (items[i].equals("Camera")) {
-                    if(isCameraPermissionAccepted){
+                    if (isCameraPermissionAccepted) {
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         startActivityForResult(intent, REQUEST_CAMERA);
                     }
                 } else if (items[i].equals("Gallery")) {
-                    if (isStoragePermissionAccepted){
+                    if (isStoragePermissionAccepted) {
                         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         intent.setType("image/*");
                         //startActivityForResult(intent.createChooser(intent, "Select File"), SELECT_FILE);
@@ -161,18 +159,18 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
     }
 
     @Override
-    public  void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode, resultCode,data);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode== Activity.RESULT_OK){
+        if (resultCode == Activity.RESULT_OK) {
 
-            if(requestCode==REQUEST_CAMERA){
+            if (requestCode == REQUEST_CAMERA) {
 
                 Bundle bundle = data.getExtras();
                 final Bitmap bmp = (Bitmap) bundle.get("data");
                 profileImage.setImageBitmap(bmp);
 
-            }else if(requestCode==SELECT_FILE){
+            } else if (requestCode == SELECT_FILE) {
 
                 final Uri selectedImageUri = data.getData();
                 profileImage.setImageURI(selectedImageUri);
@@ -209,12 +207,14 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        profession = new Profession();
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED){
+                == PackageManager.PERMISSION_GRANTED) {
             isPermissionAccepted = true;
             isStoragePermissionAccepted = true;
 
-        } if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+        }
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
             isCameraPermissionAccepted = true;
             isPermissionAccepted = true;
