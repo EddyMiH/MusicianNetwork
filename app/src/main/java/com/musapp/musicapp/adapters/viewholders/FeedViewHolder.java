@@ -65,8 +65,6 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         mPostTime = itemView.findViewById(R.id.text_post_item_published_time);
         mPostSetting = itemView.findViewById(R.id.image_post_item_setting);
         mPostText = itemView.findViewById(R.id.text_post_item_post_text);
-     //   mPostImage = itemView.findViewById(R.id.image_post_item_image);
-     //   mPostVideo = itemView.findViewById(R.id.video_view_post_item_video);
         mCommentIcon = itemView.findViewById(R.id.image_comment_icon);
         mCommentCount = itemView.findViewById(R.id.text_post_item_comment_count);
 

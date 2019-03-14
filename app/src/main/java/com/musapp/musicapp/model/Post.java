@@ -1,6 +1,8 @@
 package com.musapp.musicapp.model;
 
 import android.arch.persistence.room.Ignore;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -16,7 +18,7 @@ import com.musapp.musicapp.uploads.BaseUpload;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Post {
+public class Post implements Parcelable {
     //instead of userName & ProfileImage fields must be User class field
     //private User mUser;
     @Ignore
@@ -25,13 +27,19 @@ public class Post {
     private String mPublishedTime;
     private String mPostText;
     private String mProfileImage;
+    private int mCommentCount;
 
     private PostUploadType type;
     private List<String> commentsId;
+
     private String attachmentId;
 
     public List<String> getCommentsId() {
         return commentsId;
+    }
+
+    public String getPrimaryKey() {
+        return primaryKey;
     }
 
     public void setCommentsId(List<String> commentsId) {
@@ -68,6 +76,8 @@ public class Post {
     public Post() {
         //temporary hardcode
         mPostText = "Post";
+        mCommentCount = 0;
+        commentsId = new ArrayList<>();
     }
 
     public void setPrimaryKey(String primaryKey) {
@@ -75,7 +85,7 @@ public class Post {
     }
 
     public Post(String mUserName, String mPublishedTime, String mPostText, String mProfileImageUri
-            , String attachmentId, List<String> commentsId, PostUploadType type) {
+            , String attachmentId, List<String> commentsId, PostUploadType type, int mCommentCount) {
         this.mUserName = mUserName;
         this.mPublishedTime = mPublishedTime;
         this.mPostText = mPostText;
@@ -83,6 +93,7 @@ public class Post {
         this.attachmentId = attachmentId;
         this.commentsId = commentsId;
         this.type = type;
+        this.mCommentCount = mCommentCount;
     }
 
     public String getUserName() {
@@ -123,7 +134,7 @@ public class Post {
     private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> innerAdapter;
 
     public void setInnerRecyclerView(View view){
-        innerRecyclerView = view.findViewById(R.id.innner_recycler_view_post_item_container);
+        innerRecyclerView = view.findViewById(R.id.inner_recycler_view_post_item_container);
     }
 
     public void initializeInnerRecyclerAndAapater(){
@@ -138,5 +149,44 @@ public class Post {
         innerRecyclerView.setAdapter(innerAdapter);
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(primaryKey);
+            dest.writeString(mUserName);
+            dest.writeString(mPublishedTime);
+            dest.writeString(mPostText);
+            dest.writeString(mProfileImage);
+            dest.writeStringList(commentsId);
+            dest.writeString(attachmentId);
+    }
+
+    private static Post createFromParcel(Parcel source){
+        Post post = new Post();
+        post.primaryKey = source.readString();
+        post.mUserName = source.readString();
+        post.mPublishedTime = source.readString();
+        post.mPostText = source.readString();
+        post.mProfileImage = source.readString();
+        post.commentsId = new ArrayList<String>();
+        source.writeStringList(post.commentsId);
+        return post;
+    }
+
+    public static final Parcelable.Creator<Post> CREATOR = new Creator<Post>() {
+        @Override
+        public Post createFromParcel(Parcel source) {
+            return Post.createFromParcel(source);
+        }
+
+        @Override
+        public Post[] newArray(int size) {
+            return new Post[size];
+        }
+    };
 }

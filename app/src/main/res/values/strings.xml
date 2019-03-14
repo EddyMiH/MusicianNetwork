@@ -29,6 +29,7 @@
     <string name="additional_info_text_hint">Tell something about yourself...</string>
     <string name="profile">Profile</string>
 
+    <string name="comment_hint">Comment...</string>
     <string name="dialog_email_info">Please enter your email addres. We\'ll sent you a code. </string>
 
 
@@ -83,5 +84,6 @@
     <string name="search_bar_title_menu">Search</string>
     <string name="add_post_action_bar_title_menu">New Post</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="save">Save</string>
 
 </resources>

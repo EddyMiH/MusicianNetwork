@@ -15,6 +15,8 @@ import android.widget.EditText;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.dialogs.ForgotPassDialog;
 import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.firebase.DBAsyncTask;
+import com.musapp.musicapp.firebase.DBAsyncTaskResponse;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.preferences.RememberPreferences;
@@ -25,7 +27,7 @@ import com.musapp.musicapp.utils.ErrorShowUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SignInFragment extends Fragment {
+public class SignInFragment extends Fragment implements DBAsyncTaskResponse{
 
     @BindView(R.id.text_fragment_sign_in_email)
     EditText email;
@@ -46,12 +48,14 @@ public class SignInFragment extends Fragment {
     @BindView(R.id.action_fragment_sign_in_google_plus)
     Button googleSign;
 
+    private boolean match = false;
 
     private View.OnClickListener onSignInClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
             if(checkEnteredInformation()){
+
                 RegistrationTransactionWrapper.registerForNextFragment((int)signIn.getTag());
                 RememberPreferences.saveState(getActivity().getBaseContext(),remembered.isChecked());
 
@@ -127,14 +131,27 @@ public class SignInFragment extends Fragment {
         return true;
     }
 
-
+    public void setMatch(boolean res){
+        match = res;
+    }
 
 
     private boolean checkEnteredInformation() {
-        if(checkEditTextField()) {
-       //    if(DBAccess.selectEmail("user", email.getText().toString())){
-         //   return true;}
+        if(checkEditTextField()){
+            DBAsyncTask.waitSimpleResponse("user", this, email.getText().toString(), password.getText().toString());
         }
-        return true;
+       return  match;
+    }
+
+    @Override
+    public void doOnResponse(String str) {
+        if(str.equals("Done")){
+            match = true;
+        }
+    }
+
+    @Override
+    public void doForResponse(String str, Object obj) {
+        DBAccess.selectEmail("user", email.getText().toString(), password.getText().toString());
     }
 }

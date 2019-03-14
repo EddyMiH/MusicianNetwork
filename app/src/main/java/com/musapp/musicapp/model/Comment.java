@@ -5,12 +5,34 @@ public class Comment {
     private String userCreatorNickName;
     private String userProfileImageUrl;
     private String creationTime;
+    private String commentText;
+    private String creatorId;
 
     public Comment() {
     }
 
     public void setPrimaryKey(String primaryKey) {
         this.primaryKey = primaryKey;
+    }
+
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public String getCommentText() {
+        return commentText;
+    }
+
+    public void setCommentText(String commentText) {
+        this.commentText = commentText;
     }
 
     public String getUserCreatorNickName() {
@@ -35,5 +57,17 @@ public class Comment {
 
     public void setCreationTime(String creationTime) {
         this.creationTime = creationTime;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj){
+            return true;
+        }
+        if(obj == null){
+            return false;
+        }
+        Comment comment = (Comment) obj;
+        return comment.getPrimaryKey() == this.primaryKey;
     }
 }

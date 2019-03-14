@@ -15,7 +15,6 @@ public class AttachedFile {
     private PostUploadType fileType;
 
     public AttachedFile() {
-        filesUrls = new ArrayList<>();
         fileType = PostUploadType.NONE;
     }
 
@@ -32,6 +31,9 @@ public class AttachedFile {
     }
 
     public void addFile(String url){
+        if(filesUrls == null){
+            filesUrls = new ArrayList<>();
+        }
         filesUrls.add(url);
     }
 
