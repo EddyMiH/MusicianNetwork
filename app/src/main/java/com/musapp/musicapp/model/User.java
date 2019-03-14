@@ -16,7 +16,8 @@ public class User {
     private String birthDay;
     private Gender gender;
     private List<String> postId;
-    private String professionAndInfoId;
+    private Profession profession;
+    private Info userInfo;
     private List<String> genresId;
 
     private String primaryKey;
@@ -53,13 +54,7 @@ public class User {
         postId.add(id);
     }
 
-    public String getProfessionAndInfoId() {
-        return professionAndInfoId;
-    }
 
-    public void setProfessionAndInfoId(String professionAndInfoId) {
-        this.professionAndInfoId = professionAndInfoId;
-    }
 
     public String getFullName() {
         return fullName;
@@ -111,5 +106,21 @@ public class User {
 
     public void setPrimaryKey(String primaryKey) {
         this.primaryKey = primaryKey;
+    }
+
+    public Profession getProfession() {
+        return profession;
+    }
+
+    public void setProfession(Profession profession) {
+        this.profession = profession;
+    }
+
+    public Info getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(Info userInfo) {
+        this.userInfo = userInfo;
     }
 }

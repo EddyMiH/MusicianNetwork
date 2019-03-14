@@ -12,12 +12,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,18 +36,20 @@ import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase.DBAsyncTask;
 import com.musapp.musicapp.firebase.DBAsyncTaskResponse;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
-import com.musapp.musicapp.model.ProfessionAndInfo;
+import com.musapp.musicapp.model.Info;
+import com.musapp.musicapp.model.Profession;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.UIUtils;
 
 
-public class ProfessionAndBioFragment extends Fragment  implements AdapterView.OnItemSelectedListener, DBAsyncTaskResponse {
+public class ProfessionAndBioFragment extends Fragment  implements AdapterView.OnItemSelectedListener {
 
     private ImageView profileImage;
     private Spinner professionSpinner;
     private TextView userInfoTextView;
     private Button nextButton;
-    private ProfessionAndInfo userInfo;
+    private Info userInfo;
+    private Profession profession;
     private User user = CurrentUser.getCurrentUser();
     private final int REQUEST_CAMERA = 1;
     private final int SELECT_FILE = 0;
@@ -64,7 +63,7 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        userInfo = new ProfessionAndInfo();
+        userInfo = new Info();
         View rootView = inflater.inflate(R.layout.profession_bio_fragment, container, false);
         profileImage = rootView.findViewById(R.id.circular_view_profession_fragment_profile_image);
         professionSpinner = rootView.findViewById(R.id.spinner_profession_fragment_profession_drop_down);
@@ -225,7 +224,7 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String item = parent.getItemAtPosition(position).toString();
-        userInfo.setProfession(item);
+        profession.setName(item);
         Toast.makeText(getContext(), item, Toast.LENGTH_SHORT).show();
     }
 
@@ -233,23 +232,11 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
-    private void submitInformation(){
-<<<<<<< HEAD
-        DBAsyncTask.waitResponse("profession_and_bio", this, userInfo);
+    private void submitInformation() {
+
+        user.setProfession(profession);
+        user.setUserInfo(userInfo);
+    }
     }
 
-    @Override
-    public void doOnResponse(String key) {
-        user.setProfessionAndInfoId(key);
-    }
-
-    @Override
-    public void  doForResponse(String str, Object obj) {
-        DBAccess.createChild("profession_and_bio", userInfo);
-=======
-       user.setProfessionAndInfoId(DBAccess.createChild("profession_and_bio", userInfo));
-       CurrentUser.setCurrentUser(user);
->>>>>>> add posts and comments layouts and classes, comments recycler view and adapters
-    }
-}
 

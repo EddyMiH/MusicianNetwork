@@ -2,7 +2,7 @@ package com.musapp.musicapp.model;
 
 import android.net.Uri;
 
-public class ProfessionAndInfo {
+public class Info {
 
     private String profession;
     private String additionalInfo;
