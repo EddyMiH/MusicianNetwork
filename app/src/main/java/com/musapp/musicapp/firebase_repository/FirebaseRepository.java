@@ -22,5 +22,9 @@ public class FirebaseRepository {
     public static void setUserInnerPrimaryKeyToFirebase() {
         DBAccess.createField(CurrentUser.getCurrentUser().getPrimaryKey(), "users/" + CurrentUser.getCurrentUser().getPrimaryKey() + "/primaryKey");
     }
+    public static void setUserHashedPassword(String password){
+        DBAccess.createField(password, "users/" + CurrentUser.getCurrentUser().getPrimaryKey() + "/password");
+
+    }
 
 }

@@ -22,6 +22,7 @@ import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.utils.CheckUtils;
 import com.musapp.musicapp.utils.ContextUtils;
 import com.musapp.musicapp.utils.ErrorShowUtils;
+import com.musapp.musicapp.utils.HashUtils;
 
 import java.util.Iterator;
 
@@ -46,7 +47,7 @@ public class RegistrationFragment5 extends Fragment {
                 RegistrationTransactionWrapper.registerForNextFragment((int) nextButton.getTag());
                 RegisterPreferences.saveState(getActivity().getBaseContext(), true);
                 CurrentUser.setCurrentUser(user);
-                setUserPrimaryKey();
+                addUserToFirebase();
             }
         }
     };
@@ -96,13 +97,14 @@ public class RegistrationFragment5 extends Fragment {
 
         if (checkEditTextField()) {
             user.setEmail(email.getText().toString());
-            user.setPassword(password.getText().toString());
+            //TODO does password need to be saved locally?
+            user.setPassword(HashUtils.hash(password.getText().toString()));
             return true;
         }
         return false;
     }
 
-    private void setUserPrimaryKey() {
+    private void addUserToFirebase() {
         FirebaseRepository.addCurrentUserToFirebase(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -112,6 +114,7 @@ public class RegistrationFragment5 extends Fragment {
                         Iterator<DataSnapshot> lastChild = dataSnapshot.getChildren().iterator();
                         CurrentUser.getCurrentUser().setPrimaryKey(lastChild.next().getKey());
                         FirebaseRepository.setUserInnerPrimaryKeyToFirebase();
+                        FirebaseRepository.setUserHashedPassword(HashUtils.hash(password.getText().toString()));
                     }
 
                     @Override
