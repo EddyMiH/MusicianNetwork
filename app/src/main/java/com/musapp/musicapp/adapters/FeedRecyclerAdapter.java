@@ -18,6 +18,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
     private List<Post> mData;
     private OnItemSelectedListener mOnItemSelectedListener;
+    private OnUserImageListener mOnUserImageListener;
+    private FeedViewHolder.OnUserProfileImageListener mOnUserProfileImageListener = new FeedViewHolder.OnUserProfileImageListener() {
+        @Override
+        public void onUserImageClickListener() {
+            mOnUserImageListener.onProfileImageClickListener();
+        }
+    };
     private Context context;
 
     public void setData(List<Post> mData) {
@@ -56,6 +63,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
                 }
             }
         });
+
+        viewHolder.setUserProfileImageListener(mOnUserProfileImageListener);
 
         return viewHolder;
     }
@@ -114,7 +123,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         return mData.size();
     }
 
+    public void setOnUserImageListener(OnUserImageListener onUserImageListener) {
+        mOnUserImageListener = onUserImageListener;
+    }
+
     public interface OnItemSelectedListener{
         void onItemSelected(Post post);
+    }
+
+    public interface OnUserImageListener{
+        void onProfileImageClickListener();
     }
 }

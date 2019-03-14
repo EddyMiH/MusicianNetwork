@@ -45,7 +45,6 @@ public class OtherUserProfileFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -71,7 +70,6 @@ public class OtherUserProfileFragment extends Fragment {
         postRecyclerViewAdapter.setData(Arrays.asList(posts));
         postsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         postsRecyclerView.setAdapter(postRecyclerViewAdapter);
-    //    setToolBarTitle.setTitle(R.string.toolbar_title_profile);
 
     }
 
