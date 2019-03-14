@@ -22,13 +22,14 @@
         <activity android:name=".activities.NavigatorActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.AppMainActivity"
-            android:label="@string/title_activity_app"/>
-        <activity android:name=".activities.StartActivity"/>
+            android:label="@string/title_activity_app" />
+        <activity android:name=".activities.StartActivity" />
     </application>
 
 </manifest>
