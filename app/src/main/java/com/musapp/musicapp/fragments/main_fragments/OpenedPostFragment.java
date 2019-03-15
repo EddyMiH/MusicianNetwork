@@ -23,6 +23,7 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.CommentRecyclerViewAdapter;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.utils.GlideUtil;
@@ -31,6 +32,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class OpenedPostFragment extends Fragment {
@@ -85,7 +87,7 @@ public class OpenedPostFragment extends Fragment {
             public void onClick(View v) {
                 String postText = mCommentText.getText().toString();
                 if (!postText.isEmpty()){
-                    Comment newComment = new Comment();
+                    final Comment newComment = new Comment();
                     DateFormat simple = new SimpleDateFormat("dd MMM HH:mm");
                     Date date = new Date(System.currentTimeMillis());
                     newComment.setCreationTime(simple.format(date));
@@ -93,13 +95,39 @@ public class OpenedPostFragment extends Fragment {
                     newComment.setCreatorId(CurrentUser.getCurrentUser().getPrimaryKey());
                     newComment.setUserCreatorNickName(mCurrentPost.getUserName());
                     newComment.setUserProfileImageUrl(mCurrentPost.getProfileImage());
-                    String commentId = DBAccess.createChild("comments", newComment);
-                    FirebaseDatabase.getInstance().getReference().child("comments").child(commentId)
+                    String commentId = "";//DBAccess.createChild("comments", newComment);
+                    FirebaseRepository.createComment(newComment, new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            FirebaseRepository.setCommentInnerPrimaryKey(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    Iterator<DataSnapshot> lastChild = dataSnapshot.getChildren().iterator();
+                                    newComment.setPrimaryKey(lastChild.next().getKey());
+                                    FirebaseRepository.setCommentInnerPrimaryKeyToFirebase(newComment);
+                                    mCurrentPost.addCommentId(newComment.getPrimaryKey());
+                                    FirebaseRepository.setCommentInnerPrimaryKeyToFirebasePost(mCurrentPost);
+                                    mCommentAdapter.notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                  /*  FirebaseDatabase.getInstance().getReference().child("comments").child(commentId)
                             .child("primaryKey").setValue(commentId);
                     mCurrentPost.addCommentId(commentId);
                     FirebaseDatabase.getInstance().getReference().child("posts").child(mCurrentPost.getPrimaryKey())
                             .setValue(mCurrentPost);
-                    mCommentAdapter.notifyDataSetChanged();
+                    mCommentAdapter.notifyDataSetChanged();*/
 
                 }
             }

@@ -5,10 +5,8 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,7 +29,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -41,19 +37,14 @@ import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.model.Info;
 import com.musapp.musicapp.model.Post;
-import com.musapp.musicapp.model.ProfessionAndInfo;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.uploads.AttachedFile;
-import com.musapp.musicapp.uploads.BaseUpload;
-import com.musapp.musicapp.uploads.ImageUpload;
-import com.musapp.musicapp.utils.GlideUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class AddPostFragment extends Fragment {
 
@@ -98,8 +89,8 @@ public class AddPostFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()){
-                    if (data.getKey().equals(CurrentUser.getCurrentUser().getProfessionAndInfoId())){
-                        mNewPost.setProfileImage(data.getValue(ProfessionAndInfo.class).getImageUri());
+                    if (data.getKey().equals(CurrentUser.getCurrentUser().getUserInfo())){
+                        mNewPost.setProfileImage(data.getValue(Info.class).getImageUri());
                     }
                 }
             }
@@ -204,7 +195,9 @@ public class AddPostFragment extends Fragment {
             case R.id.save_and_publish_post:
                 //TODO save into Firebase and close fragment
                 savePost();
-                String postId = DBAccess.createChild("posts", mNewPost);
+                String postId = "";
+                //TODO
+                DBAccess.createChild("posts", mNewPost);
                 FirebaseDatabase.getInstance().getReference().child("posts").child(postId)
                         .child("primaryKey").setValue(postId);
                 User user = CurrentUser.getCurrentUser();
@@ -221,7 +214,8 @@ public class AddPostFragment extends Fragment {
         DateFormat simple = new SimpleDateFormat("dd MMM HH:mm");
         Date date = new Date(System.currentTimeMillis());
         mNewPost.setPublishedTime( simple.format(date));
-        mNewPost.setAttachmentId(DBAccess.createChild("attachments", mAttachedFile));
+        //TODO
+      //  mNewPost.setAttachmentId(DBAccess.createChild("attachments", mAttachedFile));
     }
 
     private String getFileExtension(Uri uri) {

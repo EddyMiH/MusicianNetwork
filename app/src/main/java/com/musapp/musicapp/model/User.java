@@ -107,4 +107,20 @@ public class User {
     public void setPrimaryKey(String primaryKey) {
         this.primaryKey = primaryKey;
     }
+
+    public Profession getProfession() {
+        return profession;
+    }
+
+    public void setProfession(Profession profession) {
+        this.profession = profession;
+    }
+
+    public Info getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(Info userInfo) {
+        this.userInfo = userInfo;
+    }
 }

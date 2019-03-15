@@ -23,6 +23,7 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.model.Post;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class HomePageFragment extends Fragment {
     private FeedRecyclerAdapter feedRecyclerAdapter;
 
 
-    private List<Post> posts = new ArrayList<Post>();
+    private List<Post> posts;
     public static final String ARG_POST = "current_post";
 
     private OpenUserFragment mOpenUserFragment;
@@ -68,6 +69,7 @@ public class HomePageFragment extends Fragment {
         View rootView  = inflater.inflate(R.layout.fragment_home_page, container, false);
         RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view_fragment_home_page_posts);
         loadPostsFromDatabase();
+        posts = new ArrayList<>();
         initRecyclerView(recyclerView);
         return rootView;
     }
@@ -76,13 +78,13 @@ public class HomePageFragment extends Fragment {
         feedRecyclerAdapter = new FeedRecyclerAdapter();
         feedRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
         feedRecyclerAdapter.setOnUserImageListener(mOnUserImageListener);
-        feedRecyclerAdapter.setData(posts);
+    //    feedRecyclerAdapter.setData(posts);
         view.setLayoutManager(new LinearLayoutManager(getContext()));
         view.setAdapter(feedRecyclerAdapter);
     }
 
     private void loadPostsFromDatabase(){
-        FirebaseDatabase.getInstance().getReference().child("posts").addValueEventListener(new ValueEventListener() {
+     /*   FirebaseDatabase.getInstance().getReference().child("posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Post> list = new ArrayList<>();
@@ -100,7 +102,29 @@ public class HomePageFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("HOME_PAGE", "onCancelled: data loading is cancelled");
             }
+        });*/
+        //TODO
+        FirebaseRepository.getAllPosts(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Post> list = new ArrayList<>();
+                for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                        Post post = postSnapshot.getValue(Post.class);
+                        if(!posts.contains(post)){
+                            list.add(post);
+                        }
+                    }
+                    posts.addAll(list);
+                    feedRecyclerAdapter.setData(posts);
+                }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
         });
+
     }
 
     @Override

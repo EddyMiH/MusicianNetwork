@@ -121,7 +121,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return mData ==  null ? 0 : mData.size();
     }
 
     public void setOnUserImageListener(OnUserImageListener onUserImageListener) {
