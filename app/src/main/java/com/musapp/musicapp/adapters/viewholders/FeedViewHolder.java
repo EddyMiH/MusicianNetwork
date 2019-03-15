@@ -4,12 +4,10 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.utils.GlideUtil;
@@ -27,6 +25,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     private ImageView mCommentIcon;
     private TextView mCommentCount;
 
+    private OnUserProfileImageListener userProfileImageListener;
     //add field for inflate music view
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -49,10 +48,18 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         }
     };
 
+    private View.OnClickListener onImageViewClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            userProfileImageListener.onUserImageClickListener();
+        }
+    };
+
     public FeedViewHolder(@NonNull View itemView) {
         super(itemView);
 
         mFeedProfileImage = itemView.findViewById(R.id.image_profile_image_post);
+        mFeedProfileImage.setOnClickListener(onImageViewClickListener);
         mUserName = itemView.findViewById(R.id.text_post_item_user_name);
         mPostTime = itemView.findViewById(R.id.text_post_item_published_time);
         mPostSetting = itemView.findViewById(R.id.image_post_item_setting);
@@ -114,5 +121,13 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
 
     public ImageView getPostSettingView(){
         return mPostSetting;
+    }
+
+    public void setUserProfileImageListener(OnUserProfileImageListener userProfileImageListener) {
+        this.userProfileImageListener = userProfileImageListener;
+    }
+
+    public interface OnUserProfileImageListener {
+        void onUserImageClickListener();
     }
 }
