@@ -40,7 +40,7 @@ import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase.DBAsyncTask;
 import com.musapp.musicapp.firebase.DBAsyncTaskResponse;
 import com.musapp.musicapp.model.Post;
-import com.musapp.musicapp.model.ProfessionAndInfo;
+import com.musapp.musicapp.model.Info;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.uploads.AttachedFile;
 
@@ -48,7 +48,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
+
+public class AddPostFragment extends Fragment {
 
     private Post mNewPost;
     private EditText mPostText;
@@ -68,7 +69,6 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
 
     private AttachedFile mAttachedFile;
     private BaseUploadsAdapter mUploadsAdapter;
-
     private User user = CurrentUser.getCurrentUser();
 
 
@@ -78,12 +78,14 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
         mNewPost.setUserName(CurrentUser.getCurrentUser().getNickName());
         //get image url from profession and bio database
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
         mDatabaseReference.child("profession_and_bio").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()){
-                    if (data.getKey().equals(CurrentUser.getCurrentUser().getProfessionAndInfoId())){
-                        mNewPost.setProfileImage(data.getValue(ProfessionAndInfo.class).getImageUri());
+
+                    if (data.getKey().equals(CurrentUser.getCurrentUser().getUserInfo())){
+                        mNewPost.setProfileImage(data.getValue(Info.class).getImageUri());
                     }
                 }
             }
@@ -98,7 +100,6 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mAttachedFile = new AttachedFile();
         setHasOptionsMenu(true);
     }
 
@@ -122,6 +123,8 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
 
                 }
                 mType = PostUploadType.IMAGE;
+
+                mAttachedFile = new AttachedFile();
                 mAttachedFile.setFileType(PostUploadType.IMAGE);
 
                 if (isStoragePermissionAccepted){
@@ -129,7 +132,6 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
                 }
             }
         });
-
         mAddVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,6 +146,7 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
                 }
             }
         });
+
         return view;
     }
 
@@ -153,6 +156,7 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         startActivityForResult(intent, SELECT_IMAGE);
+
           Log.d("DODO", "onActivityResult: zero here");
 
       }
@@ -177,6 +181,7 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
             if(requestCode == SELECT_IMAGE){
                 mAddVideo.setEnabled(false);
                 mAddMusic.setEnabled(false);
+
                 Log.d("DODO", "onActivityResult: I'm here, in if!!");
                 final Uri selectedImageUri = data.getData();
                 final StorageReference fileReference = DBAccess.creatStorageChild("image/", System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
@@ -195,6 +200,7 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
                             }
                         });
                 mSelectedFilesName.setText(selectedFiles);
+
             }else if(requestCode == SELECT_VIDEO){
                 mAddMusic.setEnabled(false);
                 mAddImage.setEnabled(false);
@@ -215,6 +221,7 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
                             }
                         });
                 mSelectedFilesName.setText(selectedFiles);
+
             }
 
         }
@@ -232,10 +239,20 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
         switch (item.getItemId()){
             case R.id.save_and_publish_post:
                 //TODO save into Firebase and close fragment
-                if(mAttachedFile.getFileType() != PostUploadType.NONE){
-                    DBAsyncTask.waitResponse("attachments", this, mAttachedFile);
-                }
+//                if(mAttachedFile.getFileType() != PostUploadType.NONE){
+//                    DBAsyncTask.waitResponse("attachments", this, mAttachedFile);
+//                }
+//                savePost();
                 savePost();
+                String postId = "";
+                //TODO
+                DBAccess.createChild("posts", mNewPost);
+                FirebaseDatabase.getInstance().getReference().child("posts").child(postId)
+                        .child("primaryKey").setValue(postId);
+                User user = CurrentUser.getCurrentUser();
+                user.addPostId(postId);
+                CurrentUser.setCurrentUser(user);
+                getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, new HomePageFragment()).addToBackStack(null).commit();
 
         }
         return true;
@@ -246,8 +263,9 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
         DateFormat simple = new SimpleDateFormat("dd MMM HH:mm");
         Date date = new Date(System.currentTimeMillis());
         mNewPost.setPublishedTime( simple.format(date));
-        DBAsyncTask.waitResponse("posts", this, mNewPost);
 
+        //TODO send post to database
+        //DBAsyncTask.waitResponse("posts", this, mNewPost);
     }
 
     private String getFileExtension(Uri uri) {
@@ -256,31 +274,32 @@ public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    @Override
-    public void doOnResponse(String str, String type) {
-        if(type.equals("posts")){
-            FirebaseDatabase.getInstance().getReference().child("posts").child(str)
-                    .child("primaryKey").setValue(str);
-            FirebaseDatabase.getInstance().getReference().child("posts").child(str)
-                    .child("attachmentsId").setValue(mAttachedFile.getPrimaryKey());
-            user.addPostId(str);
-            CurrentUser.setCurrentUser(user);
-            getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, new HomePageFragment()).addToBackStack(null).commit();
-        }else if(type.equals("attachments")){
-            FirebaseDatabase.getInstance().getReference().child("attachments").child(str)
-                    .child("primaryKey").setValue(str);
-            mAttachedFile.setPrimaryKey(str);
-            mNewPost.setAttachmentId(str);
-        }
-    }
+//    @Override
+//    public void doOnResponse(String str, String type) {
+//        if(type.equals("posts")){
+//            FirebaseDatabase.getInstance().getReference().child("posts").child(str)
+//                    .child("primaryKey").setValue(str);
+//            FirebaseDatabase.getInstance().getReference().child("posts").child(str)
+//                    .child("attachmentsId").setValue(mAttachedFile.getPrimaryKey());
+//            user.addPostId(str);
+//            CurrentUser.setCurrentUser(user);
+//            getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, new HomePageFragment()).addToBackStack(null).commit();
+//        }else if(type.equals("attachments")){
+//            FirebaseDatabase.getInstance().getReference().child("attachments").child(str)
+//                    .child("primaryKey").setValue(str);
+//            mAttachedFile.setPrimaryKey(str);
+//            mNewPost.setAttachmentId(str);
+//        }
+//    }
+//
+//    @Override
+//    public void doForResponse(String str, Object obj) {
+//        if(str.equals("posts")){
+//            DBAccess.createChild("posts", mNewPost);
+//
+//        }else if(str.equals("attachments")){
+//            DBAccess.createChild("attachments", mAttachedFile);
+//        }
+//    }
 
-    @Override
-    public void doForResponse(String str, Object obj) {
-        if(str.equals("posts")){
-            DBAccess.createChild("posts", mNewPost);
-
-        }else if(str.equals("attachments")){
-            DBAccess.createChild("attachments", mAttachedFile);
-        }
-    }
 }

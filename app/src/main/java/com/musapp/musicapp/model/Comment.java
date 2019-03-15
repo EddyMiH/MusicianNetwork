@@ -69,5 +69,6 @@ public class Comment {
         }
         Comment comment = (Comment) obj;
         return comment.getPrimaryKey().equals( this.primaryKey);
+
     }
 }

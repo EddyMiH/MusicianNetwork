@@ -13,6 +13,10 @@ import java.net.URL;
 
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
+import java.net.URL;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
 public final class GlideUtil {
 
     private static Context context;
@@ -22,12 +26,17 @@ public final class GlideUtil {
     }
 
     public static void setImageGlide(String src, ImageView view){
+<<<<<<< HEAD
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.ic_person_black_24dp);
 
         Glide.with(context)
                 .setDefaultRequestOptions(requestOptions)
                 .load(src)
+=======
+        //.transform(new RoundedCornersTransformation(radius, margin))
+        Glide.with(context).load(src)
+>>>>>>> 5519084eb727b46b743525f3c68170412757bc9f
                 .apply(RequestOptions.circleCropTransform())
                 .into(view);
     }

@@ -22,22 +22,23 @@ import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.CommentRecyclerViewAdapter;
 import com.musapp.musicapp.currentinformation.CurrentUser;
-import com.musapp.musicapp.firebase.DBAccess;
-import com.musapp.musicapp.firebase.DBAsyncTask;
-import com.musapp.musicapp.firebase.DBAsyncTaskResponse;
+
 import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Post;
-import com.musapp.musicapp.model.ProfessionAndInfo;
 import com.musapp.musicapp.model.User;
+import com.musapp.musicapp.firebase_repository.FirebaseRepository;
+
 import com.musapp.musicapp.utils.GlideUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import java.util.Iterator;
 import java.util.List;
 
-public class OpenedPostFragment extends Fragment implements DBAsyncTaskResponse {
+public class OpenedPostFragment extends Fragment {
 
     private ImageView mProfileImage;
     private TextView mFullName;
@@ -50,9 +51,9 @@ public class OpenedPostFragment extends Fragment implements DBAsyncTaskResponse 
     private RecyclerView mPostCommentsRecyclerView;
     private CommentRecyclerViewAdapter mCommentAdapter;
     private Post mCurrentPost;
+
     private User mCurrentUser = CurrentUser.getCurrentUser();
     private String mCurrentUserImage;
-
 
     private List<Comment> mComments;
 
@@ -64,26 +65,27 @@ public class OpenedPostFragment extends Fragment implements DBAsyncTaskResponse 
                 }
             };
 
-    private void loadUserProfileImage(){
-        FirebaseDatabase.getInstance().getReference().child("profession_and_bio").child(mCurrentUser.getProfessionAndInfoId()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String url = dataSnapshot.getValue(ProfessionAndInfo.class).getImageUri();
-                mCurrentUserImage = url;
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
+//    private void loadUserProfileImage(){
+//        FirebaseDatabase.getInstance().getReference().child("profession_and_bio").child(mCurrentUser.getProfessionAndInfoId()).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                String url = dataSnapshot.getValue(ProfessionAndInfo.class).getImageUri();
+//                mCurrentUserImage = url;
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        loadUserProfileImage();
+
+        //loadUserProfileImage();
+
         View view  = inflater.inflate(R.layout.fragment_post_single_opened_post, container, false);
         mProfileImage = view.findViewById(R.id.image_profile_image_post);
         mFullName = view.findViewById(R.id.text_post_item_user_name);
@@ -108,17 +110,52 @@ public class OpenedPostFragment extends Fragment implements DBAsyncTaskResponse 
                 String postText = mCommentText.getText().toString();
                 mCommentText.setText("");
                 if (!postText.isEmpty()){
-                    Comment newComment = new Comment();
+                    final Comment newComment = new Comment();
                     DateFormat simple = new SimpleDateFormat("dd MMM HH:mm");
                     Date date = new Date(System.currentTimeMillis());
                     newComment.setCreationTime(simple.format(date));
                     newComment.setCommentText(postText);
-                    newComment.setCreatorId(mCurrentUser.getPrimaryKey());
-                    newComment.setUserCreatorNickName(mCurrentUser.getNickName());
-                    newComment.setUserProfileImageUrl(mCurrentUserImage);/////
-                    DBAsyncTask.waitResponse("comments",OpenedPostFragment.this, newComment);
-                    DBAsyncTask.waitResponse("posts",OpenedPostFragment.this, mCurrentPost);
+//                    newComment.setCreatorId(mCurrentUser.getPrimaryKey());
+//                    newComment.setUserCreatorNickName(mCurrentUser.getNickName());
+//                    newComment.setUserProfileImageUrl(mCurrentUserImage);/////
+//                    DBAsyncTask.waitResponse("comments",OpenedPostFragment.this, newComment);
+//                    DBAsyncTask.waitResponse("posts",OpenedPostFragment.this, mCurrentPost);
+                    newComment.setCreatorId(CurrentUser.getCurrentUser().getPrimaryKey());
+                    newComment.setUserCreatorNickName(mCurrentPost.getUserName());
+                    newComment.setUserProfileImageUrl(mCurrentPost.getProfileImage());
+                    String commentId = "";//DBAccess.createChild("comments", newComment);
+                    FirebaseRepository.createComment(newComment, new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            FirebaseRepository.setCommentInnerPrimaryKey(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    Iterator<DataSnapshot> lastChild = dataSnapshot.getChildren().iterator();
+                                    newComment.setPrimaryKey(lastChild.next().getKey());
+                                    FirebaseRepository.setCommentInnerPrimaryKeyToFirebase(newComment);
+                                    mCurrentPost.addCommentId(newComment.getPrimaryKey());
+                                    FirebaseRepository.setCommentInnerPrimaryKeyToFirebasePost(mCurrentPost);
+                                    mCommentAdapter.notifyDataSetChanged();
+                                }
 
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                  /*  FirebaseDatabase.getInstance().getReference().child("comments").child(commentId)
+                            .child("primaryKey").setValue(commentId);
+                    mCurrentPost.addCommentId(commentId);
+                    FirebaseDatabase.getInstance().getReference().child("posts").child(mCurrentPost.getPrimaryKey())
+                            .setValue(mCurrentPost);
+                    mCommentAdapter.notifyDataSetChanged();*/
                 }
             }
         });
@@ -182,7 +219,6 @@ public class OpenedPostFragment extends Fragment implements DBAsyncTaskResponse 
 //                }
 //            });
         }
-        //setCommentsToAdapter(list);
     }
 
     private void setCommentsToAdapter(List<Comment> com){
@@ -191,6 +227,7 @@ public class OpenedPostFragment extends Fragment implements DBAsyncTaskResponse 
             mComments.addAll(com);
             mCommentAdapter.setData(mComments);
         }
+
     }
 
     private void setPostPage(){
@@ -215,23 +252,24 @@ public class OpenedPostFragment extends Fragment implements DBAsyncTaskResponse 
         mComments = new ArrayList<>();
     }
 
-    @Override
-    public void doOnResponse(String str, String type) {
-        if(type.equals("comments")){
-            FirebaseDatabase.getInstance().getReference().child("comments").child(str)
-                    .child("primaryKey").setValue(str);
-            mCurrentPost.addCommentId(str);
-            mCommentCount.setText(String.valueOf(mCurrentPost.getCommentsQuantity()));
-            loadCommentsFromDatabase();
-        }else if(type.equals("posts")){
-            FirebaseDatabase.getInstance().getReference().child("posts").child(mCurrentPost.getPrimaryKey())
-                    .setValue(mCurrentPost);
-        }
-    }
+//    @Override
+//    public void doOnResponse(String str, String type) {
+//        if(type.equals("comments")){
+//            FirebaseDatabase.getInstance().getReference().child("comments").child(str)
+//                    .child("primaryKey").setValue(str);
+//            mCurrentPost.addCommentId(str);
+//            mCommentCount.setText(String.valueOf(mCurrentPost.getCommentsQuantity()));
+//            loadCommentsFromDatabase();
+//        }else if(type.equals("posts")){
+//            FirebaseDatabase.getInstance().getReference().child("posts").child(mCurrentPost.getPrimaryKey())
+//                    .setValue(mCurrentPost);
+//        }
+//    }
+//
+//    @Override
+//    public void doForResponse(String str, Object obj) {
+//        if(!str.equals("posts"))
+//            DBAccess.createChild(str, obj);
+//    }
 
-    @Override
-    public void doForResponse(String str, Object obj) {
-        if(!str.equals("posts"))
-            DBAccess.createChild(str, obj);
-    }
 }

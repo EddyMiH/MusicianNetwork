@@ -6,6 +6,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -49,7 +51,6 @@ public class Post implements Parcelable {
         return primaryKey;
     }
 
-
     public void setCommentsId(List<String> commentsId) {
         this.commentsId = commentsId;
     }
@@ -84,10 +85,10 @@ public class Post implements Parcelable {
     public Post() {
         //temporary hardcode
         mPostText = "Post";
-        //attachmentId = "-L_tLuPJviiCyrQ_sTiD";
         mCommentCount = 0;
         commentsId = new ArrayList<>();
         type = PostUploadType.NONE;
+
     }
 
     public void setPrimaryKey(String primaryKey) {
@@ -162,6 +163,7 @@ public class Post implements Parcelable {
         innerRecyclerView.setAdapter(innerAdapter);
     }
 
+    //old version
     private void loadAttachedFiles(){
         if(type != PostUploadType.NONE){
             if(attachmentId != null) {
@@ -216,6 +218,7 @@ public class Post implements Parcelable {
         post.attachmentId = source.readString();
         return post;
     }
+
 
     public static final Parcelable.Creator<Post> CREATOR = new Creator<Post>() {
         @Override

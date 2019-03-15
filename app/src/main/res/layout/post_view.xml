@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+
     <RelativeLayout
         android:id="@+id/relative_layout_1"
         android:layout_width="match_parent"
@@ -87,8 +88,7 @@
             android:id="@+id/inner_recycler_view_post_item_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            >
+            android:layout_marginTop="5dp">
 
         </android.support.v7.widget.RecyclerView>
 

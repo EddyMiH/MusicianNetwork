@@ -2,14 +2,15 @@ package com.musapp.musicapp.model;
 
 import android.net.Uri;
 
-public class ProfessionAndInfo {
+public class Info {
 
     private String profession;
     private String additionalInfo;
     //maybe field for image
     private String imageUri;
 
-    public ProfessionAndInfo() {
+    public Info() {
+        //temporary hardcode, must generate gradient
         imageUri = "https://firebasestorage.googleapis.com/v0/b/musiciannetwork.appspot.com/o/image%2FAvfrlT7f698.jpg?alt=media&token=f7f616ad-26f0-461f-b6ae-1eac8668c50d";
     }
 

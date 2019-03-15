@@ -1,8 +1,10 @@
 package com.musapp.musicapp.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,18 +83,51 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         feedViewHolder.setPostTime(post.getPublishedTime());
         feedViewHolder.setCommentCount(String.valueOf(post.getCommentsQuantity()));
 
+        /*switch (post.getType()){
+            case NONE:
 
+                break;
+            case IMAGE:
+<<<<<<< HEAD
+          //      feedViewHolder.setPostImage(post.getPostImage());
+            //    feedViewHolder.setPostImageVisible();
+                break;
+            case VIDEO:
+              //  feedViewHolder.setPostVideo(post.getVideoUri());
+                //feedViewHolder.setPostVideoVisible();
+=======
+                //feedViewHolder.setPostImage(post.getPostImage());
+                feedViewHolder.setPostImageVisible();
+                break;
+            case VIDEO:
+                //feedViewHolder.setPostVideo(post.getVideoUri());
+                feedViewHolder.setPostVideoVisible();
+>>>>>>> add posts firebase database
+                break;
+            case MUSIC:
+                //TODO
+                break;
+            case IMAGE_AND_MUSIC:
+                //feedViewHolder.setPostImage(post.getPostImage());
+<<<<<<< HEAD
+                //feedViewHolder.setPostImageVisible();
+=======
+                feedViewHolder.setPostImageVisible();
+>>>>>>> add posts firebase database
+                //TODO
+        }*/
 
     }
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return mData ==  null ? 0 : mData.size();
     }
 
     public void setOnUserImageListener(OnUserImageListener onUserImageListener) {
         mOnUserImageListener = onUserImageListener;
     }
+
 
     public interface OnItemSelectedListener{
         void onItemSelected(Post post);

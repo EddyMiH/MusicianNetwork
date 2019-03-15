@@ -29,8 +29,8 @@ public final class DBAccess {
     }
 
     public static void createChild(String path, String childName, Object obj) {
-        String key = databaseReference.child(path + childName).push().getKey();
-        databaseReference.child(path + childName).child(key).setValue(obj);
+        String key = databaseReference.child(path + '/'+ childName).push().getKey();
+        databaseReference.child(path + '/'+ childName).child(key).setValue(obj);
 
     }
 
@@ -77,12 +77,27 @@ public final class DBAccess {
         return res[0];
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5519084eb727b46b743525f3c68170412757bc9f
     public static void setStorageReference (StorageReference ref){
        mStorageReference = ref;
     }
 
     public static StorageReference creatStorageChild(String path, String childName){
        StorageReference ref = mStorageReference.child(path + childName);
+<<<<<<< HEAD
        return ref;
+=======
+       return ref;}
+
+    public static DatabaseReference getUserReference(String childPath){
+        return databaseReference.child(childPath);
+    }
+    public static DatabaseReference getDatabaseReference(){
+        return databaseReference;
+
+>>>>>>> 5519084eb727b46b743525f3c68170412757bc9f
     }
 }
