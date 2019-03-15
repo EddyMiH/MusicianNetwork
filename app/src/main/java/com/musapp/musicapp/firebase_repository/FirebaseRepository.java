@@ -27,4 +27,9 @@ public class FirebaseRepository {
 
     }
 
+
+    public static void getUser(ValueEventListener valueEventListener){
+        DBAccess.getUserReference("users").addValueEventListener(valueEventListener);
+    }
+
 }
