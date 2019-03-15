@@ -22,7 +22,6 @@ public class ImageUploadsAdapter extends BaseUploadsAdapter<ImageUpload, ImagePo
 
     @Override
     public void onBindViewHolder(@NonNull ImagePostViewHolder imagePostViewHolder, int i) {
-        super.onBindViewHolder(imagePostViewHolder, i);
         imagePostViewHolder.setImage(uploads.get(i).getUrl());
     }
 }

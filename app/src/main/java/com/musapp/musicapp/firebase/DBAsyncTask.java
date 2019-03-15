@@ -13,7 +13,7 @@ public final class DBAsyncTask {
     private DBAsyncTask(){}
     private static DatabaseReference databaseReference;
 
-    public static void waitResponse(String childName, final DBAsyncTaskResponse response,  Object obj){
+    public static void waitResponse(final String childName, final DBAsyncTaskResponse response, Object obj){
       response.doForResponse(childName, obj);
         databaseReference.child(childName)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -24,7 +24,7 @@ public final class DBAsyncTask {
                             DataSnapshot snapshot = dataSnapshot;
                             while(childIterator.hasNext())
                              snapshot =  childIterator.next();
-                        response.doOnResponse(snapshot.getKey());
+                        response.doOnResponse(snapshot.getKey(), childName);
                         }
                     }
                     @Override
@@ -34,14 +34,14 @@ public final class DBAsyncTask {
     }
 
 
-    public static void waitSimpleResponse(String childName, final DBAsyncTaskResponse response, String... args){
+    public static void waitSimpleResponse(final String childName, final DBAsyncTaskResponse response, String... args){
         response.doForResponse(childName, args);
         databaseReference.child(childName)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if(dataSnapshot != null){
-                            response.doOnResponse("Done");
+                            response.doOnResponse("Done", childName);
                         }
                     }
                     @Override

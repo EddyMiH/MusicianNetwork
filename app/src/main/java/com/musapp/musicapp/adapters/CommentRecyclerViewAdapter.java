@@ -50,7 +50,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentView
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return  mData == null ? 0 : mData.size();
     }
 
     public void setData(List<Comment> mData) {

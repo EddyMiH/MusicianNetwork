@@ -101,7 +101,7 @@ public class RegistrationFragment5 extends Fragment implements DBAsyncTaskRespon
     }
 
     @Override
-    public void doOnResponse(String key) {
+    public void doOnResponse(String key, String childName) {
         user.setPrimaryKey(key);
         user.setPassword(password.getText().toString());
      //   DBAccess.createChild("user/" + user.getPrimaryKey() + '/', "primaryKey", user.getPrimaryKey());

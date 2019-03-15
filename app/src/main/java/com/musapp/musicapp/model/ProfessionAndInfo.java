@@ -9,6 +9,10 @@ public class ProfessionAndInfo {
     //maybe field for image
     private String imageUri;
 
+    public ProfessionAndInfo() {
+        imageUri = "https://firebasestorage.googleapis.com/v0/b/musiciannetwork.appspot.com/o/image%2FAvfrlT7f698.jpg?alt=media&token=f7f616ad-26f0-461f-b6ae-1eac8668c50d";
+    }
+
     public String getImageUri() {
         return imageUri;
     }

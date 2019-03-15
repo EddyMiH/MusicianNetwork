@@ -144,7 +144,7 @@ public class SignInFragment extends Fragment implements DBAsyncTaskResponse{
     }
 
     @Override
-    public void doOnResponse(String str) {
+    public void doOnResponse(String str, String childName) {
         if(str.equals("Done")){
             match = true;
         }

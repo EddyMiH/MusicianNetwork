@@ -1,6 +1,9 @@
 package com.musapp.musicapp.pattern;
 
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
+import com.musapp.musicapp.adapters.inner_post_adapter.ImageUploadsAdapter;
+import com.musapp.musicapp.adapters.inner_post_adapter.MusicUploadAdapter;
+import com.musapp.musicapp.adapters.inner_post_adapter.VideoUploadAdapter;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.ImagePostViewHolder;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.MusicPostViewHolder;
@@ -17,13 +20,14 @@ public final class  UploadsAdapterFactory {
     public static <T extends BaseUpload, Y extends BasePostViewHolder> BaseUploadsAdapter<T, Y> setAdapterTypeByInputType(PostUploadType type){
        switch (type){
            case IMAGE :
-               return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<ImageUpload , ImagePostViewHolder>();
+               return (BaseUploadsAdapter<T, Y>) new ImageUploadsAdapter();
            case VIDEO:
-               return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<VideoUpload, VideoPostViewHolder>();
+               return (BaseUploadsAdapter<T, Y>) new VideoUploadAdapter();
            case MUSIC:
-               return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<MusicUpload, MusicPostViewHolder>();
+               return (BaseUploadsAdapter<T, Y>) new MusicUploadAdapter();
            default:
-               return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<BaseUpload, BasePostViewHolder>();
+               return null;
+               //return (BaseUploadsAdapter<T, Y>) new BaseUploadsAdapter<BaseUpload, BasePostViewHolder>();
        }
 }
 

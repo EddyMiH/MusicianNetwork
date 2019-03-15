@@ -1,10 +1,8 @@
 package com.musapp.musicapp.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,20 +39,20 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     public void setOnItemSelectedListener(OnItemSelectedListener onItemSelectedListener) {
         this.mOnItemSelectedListener = onItemSelectedListener;
     }
-
+    private View view;
     @NonNull
     @Override
     public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_post_recycler_view_item, viewGroup, false);
+        view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_post_recycler_view_item, viewGroup, false);
         context = viewGroup.getContext();
         final FeedViewHolder viewHolder = new FeedViewHolder(view);
+
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mOnItemSelectedListener != null) {
                     mOnItemSelectedListener.onItemSelected(mData.get(viewHolder.getAdapterPosition()));
-                    //TODO implement this interface in homePageFragment
                 }
             }
         });
@@ -65,7 +63,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final FeedViewHolder feedViewHolder, int i) {
         Post post = mData.get(i);
-
+        post.setInnerRecyclerView(view);
+        post.initializeInnerRecyclerAndAdapter(context);
         //feedViewHolder.setOnSettingClickListener(mOnClickListener);
         feedViewHolder.setUserName(post.getUserName());
         feedViewHolder.setFeedProfileImage(post.getProfileImage());
@@ -73,39 +72,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         feedViewHolder.setPostTime(post.getPublishedTime());
         feedViewHolder.setCommentCount(String.valueOf(post.getCommentsQuantity()));
 
-        /*switch (post.getType()){
-            case NONE:
-
-                break;
-            case IMAGE:
-<<<<<<< HEAD
-          //      feedViewHolder.setPostImage(post.getPostImage());
-            //    feedViewHolder.setPostImageVisible();
-                break;
-            case VIDEO:
-              //  feedViewHolder.setPostVideo(post.getVideoUri());
-                //feedViewHolder.setPostVideoVisible();
-=======
-                //feedViewHolder.setPostImage(post.getPostImage());
-                feedViewHolder.setPostImageVisible();
-                break;
-            case VIDEO:
-                //feedViewHolder.setPostVideo(post.getVideoUri());
-                feedViewHolder.setPostVideoVisible();
->>>>>>> add posts firebase database
-                break;
-            case MUSIC:
-                //TODO
-                break;
-            case IMAGE_AND_MUSIC:
-                //feedViewHolder.setPostImage(post.getPostImage());
-<<<<<<< HEAD
-                //feedViewHolder.setPostImageVisible();
-=======
-                feedViewHolder.setPostImageVisible();
->>>>>>> add posts firebase database
-                //TODO
-        }*/
 
 
     }

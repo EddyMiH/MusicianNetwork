@@ -19,7 +19,7 @@ public class MusicUploadAdapter extends BaseUploadsAdapter<MusicUpload, MusicPos
 
     @Override
     public void onBindViewHolder(@NonNull MusicPostViewHolder musicPostViewHolder, int i) {
-        super.onBindViewHolder(musicPostViewHolder, i);
+        //super.onBindViewHolder(musicPostViewHolder, i);
         musicPostViewHolder.setMusic(uploads.get(i).getUrl());
     }
 }

@@ -43,6 +43,8 @@ import com.musapp.musicapp.model.ProfessionAndInfo;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.UIUtils;
 
+import java.io.File;
+
 
 public class ProfessionAndBioFragment extends Fragment  implements AdapterView.OnItemSelectedListener, DBAsyncTaskResponse {
 
@@ -234,22 +236,20 @@ public class ProfessionAndBioFragment extends Fragment  implements AdapterView.O
     }
 
     private void submitInformation(){
-<<<<<<< HEAD
+
         DBAsyncTask.waitResponse("profession_and_bio", this, userInfo);
     }
 
+
     @Override
-    public void doOnResponse(String key) {
+    public void doOnResponse(String key, String childName) {
         user.setProfessionAndInfoId(key);
     }
 
     @Override
     public void  doForResponse(String str, Object obj) {
         DBAccess.createChild("profession_and_bio", userInfo);
-=======
-       user.setProfessionAndInfoId(DBAccess.createChild("profession_and_bio", userInfo));
-       CurrentUser.setCurrentUser(user);
->>>>>>> add posts and comments layouts and classes, comments recycler view and adapters
+
     }
 }
 

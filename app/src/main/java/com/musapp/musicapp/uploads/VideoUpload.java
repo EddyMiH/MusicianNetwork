@@ -6,4 +6,5 @@ public class VideoUpload extends BaseUpload {
     public VideoUpload(String url){
         super(url);
     }
+
 }

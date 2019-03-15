@@ -78,6 +78,7 @@ public class HomePageFragment extends Fragment {
                         list.add(post);
                     }
                 }
+                posts.clear();
                 posts.addAll(list);
                 feedRecyclerAdapter.setData(posts);
             }

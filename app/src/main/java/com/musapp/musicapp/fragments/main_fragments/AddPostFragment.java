@@ -5,10 +5,8 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,7 +29,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -41,21 +37,18 @@ import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.firebase.DBAsyncTask;
+import com.musapp.musicapp.firebase.DBAsyncTaskResponse;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.ProfessionAndInfo;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.uploads.AttachedFile;
-import com.musapp.musicapp.uploads.BaseUpload;
-import com.musapp.musicapp.uploads.ImageUpload;
-import com.musapp.musicapp.utils.GlideUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-public class AddPostFragment extends Fragment {
+public class AddPostFragment extends Fragment implements DBAsyncTaskResponse {
 
     private Post mNewPost;
     private EditText mPostText;
@@ -69,10 +62,14 @@ public class AddPostFragment extends Fragment {
     private String selectedFiles = "selected";
 
     private boolean isStoragePermissionAccepted = false;
-    private final int SELECT_FILE_1 = 12;
+    private final int SELECT_IMAGE = 12;
+    private final int SELECT_VIDEO = 13;
+    private final int SELECT_AUDIO = 14;
 
     private AttachedFile mAttachedFile;
     private BaseUploadsAdapter mUploadsAdapter;
+
+    private User user = CurrentUser.getCurrentUser();
 
 
     public AddPostFragment() {
@@ -81,19 +78,6 @@ public class AddPostFragment extends Fragment {
         mNewPost.setUserName(CurrentUser.getCurrentUser().getNickName());
         //get image url from profession and bio database
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-//        Query query = mDatabaseReference.child("profession_and_bio").equalTo(CurrentUser.getCurrentUser().getPrimaryKey());
-//        query.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                ProfessionAndInfo info = dataSnapshot.getValue(ProfessionAndInfo.class);
-//                mNewPost.setProfileImage(info.getImageUri());
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Log.d("EVENT_LISTENER ", "onCancelled: something wrong !!");
-//            }
-//        });
         mDatabaseReference.child("profession_and_bio").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -114,6 +98,7 @@ public class AddPostFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mAttachedFile = new AttachedFile();
         setHasOptionsMenu(true);
     }
 
@@ -137,11 +122,25 @@ public class AddPostFragment extends Fragment {
 
                 }
                 mType = PostUploadType.IMAGE;
-                mAttachedFile = new AttachedFile();
                 mAttachedFile.setFileType(PostUploadType.IMAGE);
 
                 if (isStoragePermissionAccepted){
                     selectImage();
+                }
+            }
+        });
+
+        mAddVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED){
+                    isStoragePermissionAccepted = true;
+                }
+                mType = PostUploadType.VIDEO;
+                mAttachedFile.setFileType(PostUploadType.VIDEO);
+                if (isStoragePermissionAccepted){
+                    selectVideo();
                 }
             }
         });
@@ -153,11 +152,19 @@ public class AddPostFragment extends Fragment {
       if (isStoragePermissionAccepted){
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        startActivityForResult(intent, SELECT_FILE_1);
+        startActivityForResult(intent, SELECT_IMAGE);
           Log.d("DODO", "onActivityResult: zero here");
 
       }
 
+    }
+
+    private void selectVideo(){
+        if(isStoragePermissionAccepted){
+            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+            intent.setType("video/*");
+            startActivityForResult(intent, SELECT_VIDEO);
+        }
     }
 
 
@@ -167,7 +174,9 @@ public class AddPostFragment extends Fragment {
         Log.d("DODO", "onActivityResult: firs here");
 
         if(resultCode == Activity.RESULT_OK){
-            if(requestCode == SELECT_FILE_1){
+            if(requestCode == SELECT_IMAGE){
+                mAddVideo.setEnabled(false);
+                mAddMusic.setEnabled(false);
                 Log.d("DODO", "onActivityResult: I'm here, in if!!");
                 final Uri selectedImageUri = data.getData();
                 final StorageReference fileReference = DBAccess.creatStorageChild("image/", System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
@@ -180,6 +189,26 @@ public class AddPostFragment extends Fragment {
                                     public void onSuccess(Uri uri) {
                                         mAttachedFile.addFile(uri.toString());
                                         selectedFiles += "image\n";
+
+                                    }
+                                });
+                            }
+                        });
+                mSelectedFilesName.setText(selectedFiles);
+            }else if(requestCode == SELECT_VIDEO){
+                mAddMusic.setEnabled(false);
+                mAddImage.setEnabled(false);
+                final Uri selectedVideoUri = data.getData();
+                final StorageReference fileReference = DBAccess.creatStorageChild("video/", System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri));
+                fileReference.putFile(selectedVideoUri).addOnSuccessListener(
+                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        mAttachedFile.addFile(uri.toString());
+                                        selectedFiles += "video\n";
 
                                     }
                                 });
@@ -203,14 +232,10 @@ public class AddPostFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.save_and_publish_post:
                 //TODO save into Firebase and close fragment
+                if(mAttachedFile.getFileType() != PostUploadType.NONE){
+                    DBAsyncTask.waitResponse("attachments", this, mAttachedFile);
+                }
                 savePost();
-                String postId = DBAccess.createChild("posts", mNewPost);
-                FirebaseDatabase.getInstance().getReference().child("posts").child(postId)
-                        .child("primaryKey").setValue(postId);
-                User user = CurrentUser.getCurrentUser();
-                user.addPostId(postId);
-                CurrentUser.setCurrentUser(user);
-                getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, new HomePageFragment()).addToBackStack(null).commit();
 
         }
         return true;
@@ -221,12 +246,41 @@ public class AddPostFragment extends Fragment {
         DateFormat simple = new SimpleDateFormat("dd MMM HH:mm");
         Date date = new Date(System.currentTimeMillis());
         mNewPost.setPublishedTime( simple.format(date));
-        mNewPost.setAttachmentId(DBAccess.createChild("attachments", mAttachedFile));
+        DBAsyncTask.waitResponse("posts", this, mNewPost);
+
     }
 
     private String getFileExtension(Uri uri) {
         ContentResolver cR = getActivity().getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
+    }
+
+    @Override
+    public void doOnResponse(String str, String type) {
+        if(type.equals("posts")){
+            FirebaseDatabase.getInstance().getReference().child("posts").child(str)
+                    .child("primaryKey").setValue(str);
+            FirebaseDatabase.getInstance().getReference().child("posts").child(str)
+                    .child("attachmentsId").setValue(mAttachedFile.getPrimaryKey());
+            user.addPostId(str);
+            CurrentUser.setCurrentUser(user);
+            getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, new HomePageFragment()).addToBackStack(null).commit();
+        }else if(type.equals("attachments")){
+            FirebaseDatabase.getInstance().getReference().child("attachments").child(str)
+                    .child("primaryKey").setValue(str);
+            mAttachedFile.setPrimaryKey(str);
+            mNewPost.setAttachmentId(str);
+        }
+    }
+
+    @Override
+    public void doForResponse(String str, Object obj) {
+        if(str.equals("posts")){
+            DBAccess.createChild("posts", mNewPost);
+
+        }else if(str.equals("attachments")){
+            DBAccess.createChild("attachments", mAttachedFile);
+        }
     }
 }

@@ -11,26 +11,16 @@ import com.musapp.musicapp.uploads.BaseUpload;
 import java.util.ArrayList;
 import java.util.List;
 
-public  class BaseUploadsAdapter<T, Y extends RecyclerView.ViewHolder > extends RecyclerView.Adapter<Y> {
+public abstract class BaseUploadsAdapter<T, Y extends RecyclerView.ViewHolder > extends RecyclerView.Adapter<Y> {
 
     protected List<T> uploads;
-    @NonNull
-    @Override
-    public Y onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return null;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull Y y, int i) {
-
-    }
 
     @Override
     public int getItemCount() {
         return uploads == null ? 0 : uploads.size();
     }
 
-    public void setUploads(List<T> data) {
+    public void setUploads(@NonNull List<T> data) {
         if(uploads != null)
             uploads.clear();
         uploads = new ArrayList<>(data);
