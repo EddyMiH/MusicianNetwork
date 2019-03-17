@@ -159,14 +159,6 @@ public class SignInFragment extends Fragment {
         return checkEditTextField();
     }
 
-<<<<<<< HEAD
-    @Override
-    public void doOnResponse(String str, String childName) {
-        if(str.equals("Done")){
-            match = true;
-        }
-    }
-=======
     private void getUserByEmailPassword(final String email, final String password) {
         FirebaseRepository.getUser(new ValueEventListener() {
             @Override
@@ -187,7 +179,6 @@ public class SignInFragment extends Fragment {
                     Toast.makeText(getActivity().getBaseContext(), "Email or password is wrong", Toast.LENGTH_LONG).show();
                 }
             }
->>>>>>> 5519084eb727b46b743525f3c68170412757bc9f
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {

@@ -24,6 +24,7 @@ import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
 
 import java.util.ArrayList;
@@ -37,6 +38,11 @@ public class HomePageFragment extends Fragment {
     private List<Post> posts = new ArrayList<Post>();
     public static final String ARG_POST = "current_post";
     private OpenUserFragment mOpenUserFragment;
+    private SetToolBarTitle mSetToolBarTitle;
+
+    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
+        mSetToolBarTitle = setToolBarTitle;
+    }
 
     private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
         @Override
@@ -55,6 +61,7 @@ public class HomePageFragment extends Fragment {
                     bundle.putParcelable(HomePageFragment.ARG_POST, post);
                     OpenedPostFragment fragment = new OpenedPostFragment();
                     fragment.setArguments(bundle);
+                    fragment.setSetToolBarTitle(mSetToolBarTitle);
                     beginTransaction(fragment);
                 }
             };
@@ -155,7 +162,9 @@ public class HomePageFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.action_add_home_fragment_menu_item:
                 //TODO open new fragment for add new post
-                beginTransaction(new AddPostFragment());
+                AddPostFragment fragment = new AddPostFragment();
+                fragment.setSetToolBarTitle(mSetToolBarTitle);
+                beginTransaction(fragment);
         }
         return true;
     }

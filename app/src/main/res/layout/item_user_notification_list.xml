@@ -1,34 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_marginBottom="5dp"
+    android:background="@color/colorGreyCards">
 
-    <android.support.v7.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        app:cardBackgroundColor="@color/darkPurple"
-        app:cardCornerRadius="@dimen/card_view_corner_radius"
-        app:cardElevation="@dimen/elevation"
-        app:cardUseCompatPadding="true"
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
         <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/image_item_user_notification_others_pic"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@drawable/icon_profile"
-            android:id="@+id/image_item_user_notification_others_pic"
-         />
-        <TextView
+            android:layout_gravity="center_vertical"
+            android:layout_margin="15sp"/>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/text_item_user_notification_description"
-            android:text="@string/action_notification"
-            />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/text_item_user_notification_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_notification"
+                android:layout_marginStart="20dp"
+                android:textColor="@color/colorDarkPrimaryText"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/text_item_user_notification_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_notification"
+                android:layout_marginStart="20dp"
+                android:textColor="@color/colorDarkSecondaryText"/>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+
+
+    </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>

@@ -11,6 +11,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:id="@+id/relative_layout_music_play_button_container">
+
         <Button
             android:id="@+id/action_music_view_play_pause_button"
             android:layout_width="70dp"

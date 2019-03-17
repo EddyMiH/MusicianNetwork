@@ -3,7 +3,9 @@ package com.musapp.musicapp.fragments.main_fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,7 +18,9 @@ import android.widget.TextView;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.activities.StartActivity;
+import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.adapters.PostRecyclerViewAdapter;
+import com.musapp.musicapp.adapters.UserPostViewPagerAdapter;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
 
@@ -38,12 +42,13 @@ public class ProfileFragment extends Fragment {
     TextView moreInfo;
     @BindView(R.id.text_fragment_user_profile_info_box)
     TextView infoBox;
-    @BindView(R.id.recycler_fragment_profile_user_posts)
-    RecyclerView postsRecyclerView;
+    @BindView(R.id.tab_layout_user_profile_fragment)
+    TabLayout mTabLayout;
+    @BindView(R.id.view_pager_user_profile_fragment)
+    ViewPager mViewPager;
+
     private SetToolBarTitle setToolBarTitle;
     private ChangeActivity changeActivity;
-
-    private PostRecyclerViewAdapter postRecyclerViewAdapter = new PostRecyclerViewAdapter();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,12 +73,37 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        mTabLayout.addTab(mTabLayout.newTab().setText("My Posts"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("Favorites"));
+        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        Post[] posts = new Post[10];
-        Arrays.fill(posts, new Post());
-        postRecyclerViewAdapter.setData(Arrays.asList(posts));
-        postsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        postsRecyclerView.setAdapter(postRecyclerViewAdapter);
+        UserPostViewPagerAdapter pagerAdapter = new UserPostViewPagerAdapter(getActivity(), getChildFragmentManager(), mTabLayout.getTabCount());
+        mViewPager.setAdapter(pagerAdapter);
+
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+//        Post[] posts = new Post[10];
+//        Arrays.fill(posts, new Post());
+//        postRecyclerAdapter.setData(Arrays.asList(posts));
+//        postRecyclerViewAdapter.setData(Arrays.asList(posts));
+//        postsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        postsRecyclerView.setAdapter(postRecyclerAdapter);
         setToolBarTitle.setTitle(R.string.toolbar_title_profile);
 
     }

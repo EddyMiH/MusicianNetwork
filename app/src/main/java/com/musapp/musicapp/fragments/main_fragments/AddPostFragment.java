@@ -39,6 +39,7 @@ import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase.DBAsyncTask;
 import com.musapp.musicapp.firebase.DBAsyncTaskResponse;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.Info;
 import com.musapp.musicapp.model.User;
@@ -61,6 +62,7 @@ public class AddPostFragment extends Fragment {
     DatabaseReference mDatabaseReference;
     private PostUploadType mType;
     private String selectedFiles = "selected";
+    private SetToolBarTitle mSetToolBarTitle;
 
     private boolean isStoragePermissionAccepted = false;
     private final int SELECT_IMAGE = 12;
@@ -146,7 +148,7 @@ public class AddPostFragment extends Fragment {
                 }
             }
         });
-
+        mSetToolBarTitle.setTitle(R.string.add_post_action_bar_title_menu);
         return view;
     }
 
@@ -302,4 +304,7 @@ public class AddPostFragment extends Fragment {
 //        }
 //    }
 
+    public void setSetToolBarTitle(SetToolBarTitle toolBarTitle){
+        mSetToolBarTitle = toolBarTitle;
+    }
 }

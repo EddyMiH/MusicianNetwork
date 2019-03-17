@@ -101,9 +101,11 @@ public class AppMainActivity extends AppCompatActivity {
         mNotificationFragment = new NotificationFragment();
         mProfileFragment = new ProfileFragment();
         mHomePageFragment = new HomePageFragment();
+        mHomePageFragment.setSetToolBarTitle(mToolBarTitle);
         mMessagesFragment = new MessagesFragment();
         mProfileFragment.setSetToolBarTitle(mToolBarTitle);
         mNotificationFragment.setSetToolBarTitle(mToolBarTitle);
+
         mProfileFragment.setChangeActivity(mChangeActivity);
         mHomePageFragment.setOpenUserFragment(mOpenUserFragment);
     }

@@ -4,7 +4,9 @@
 
     <item android:id="@+id/save_and_publish_post"
         android:title="@string/save"
-        app:showAsAction="ifRoom">
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_done_white_24dp"
+        >
 
     </item>
 

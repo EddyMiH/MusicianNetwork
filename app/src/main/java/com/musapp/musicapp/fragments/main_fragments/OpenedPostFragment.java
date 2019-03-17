@@ -23,6 +23,7 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.CommentRecyclerViewAdapter;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
@@ -51,6 +52,11 @@ public class OpenedPostFragment extends Fragment {
     private RecyclerView mPostCommentsRecyclerView;
     private CommentRecyclerViewAdapter mCommentAdapter;
     private Post mCurrentPost;
+    private SetToolBarTitle mSetToolBarTitle;
+
+    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
+        mSetToolBarTitle = setToolBarTitle;
+    }
 
     private User mCurrentUser = CurrentUser.getCurrentUser();
     private String mCurrentUserImage;
@@ -150,16 +156,10 @@ public class OpenedPostFragment extends Fragment {
 
                         }
                     });
-                  /*  FirebaseDatabase.getInstance().getReference().child("comments").child(commentId)
-                            .child("primaryKey").setValue(commentId);
-                    mCurrentPost.addCommentId(commentId);
-                    FirebaseDatabase.getInstance().getReference().child("posts").child(mCurrentPost.getPrimaryKey())
-                            .setValue(mCurrentPost);
-                    mCommentAdapter.notifyDataSetChanged();*/
                 }
             }
         });
-
+        mSetToolBarTitle.setTitle(R.string.title_activity_opened_post);
         return view;
     }
 
@@ -236,10 +236,6 @@ public class OpenedPostFragment extends Fragment {
         mPublishedTime.setText(mCurrentPost.getPublishedTime());
         mPostText.setText(mCurrentPost.getPostText());
         mCommentCount.setText(String.valueOf(mCurrentPost.getCommentsQuantity()));
-        //Log.d("ERROR!!!", "comment 0 is: " + mCurrentPost.getCommentsId().get(0));
-
-
-
     }
 
     @Override
@@ -271,5 +267,6 @@ public class OpenedPostFragment extends Fragment {
 //        if(!str.equals("posts"))
 //            DBAccess.createChild(str, obj);
 //    }
+
 
 }
