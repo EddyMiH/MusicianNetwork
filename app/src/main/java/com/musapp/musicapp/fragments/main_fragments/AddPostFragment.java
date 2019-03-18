@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -61,7 +62,7 @@ public class AddPostFragment extends Fragment {
     private TextView mSelectedFilesName;
     DatabaseReference mDatabaseReference;
     private PostUploadType mType;
-    private String selectedFiles = "selected";
+    private int selectedFiles;
     private SetToolBarTitle mSetToolBarTitle;
 
     private boolean isStoragePermissionAccepted = false;
@@ -119,11 +120,7 @@ public class AddPostFragment extends Fragment {
         mAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED){
-                            isStoragePermissionAccepted = true;
-
-                }
+                isStoragePermissionAccepted();
                 mType = PostUploadType.IMAGE;
 
                 mAttachedFile = new AttachedFile();
@@ -137,14 +134,24 @@ public class AddPostFragment extends Fragment {
         mAddVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED){
-                    isStoragePermissionAccepted = true;
-                }
+                isStoragePermissionAccepted();
                 mType = PostUploadType.VIDEO;
+                mAttachedFile = new AttachedFile();
                 mAttachedFile.setFileType(PostUploadType.VIDEO);
                 if (isStoragePermissionAccepted){
                     selectVideo();
+                }
+            }
+        });
+        mAddMusic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isStoragePermissionAccepted();
+                mType = PostUploadType.MUSIC;
+                mAttachedFile = new AttachedFile();
+                mAttachedFile.setFileType(PostUploadType.MUSIC);
+                if(isStoragePermissionAccepted){
+                    selectAudio();
                 }
             }
         });
@@ -173,6 +180,12 @@ public class AddPostFragment extends Fragment {
         }
     }
 
+    private void selectAudio(){
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("audio/*");
+        startActivityForResult(Intent.createChooser(intent,"Gallery"), SELECT_AUDIO);
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -195,7 +208,7 @@ public class AddPostFragment extends Fragment {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         mAttachedFile.addFile(uri.toString());
-                                        selectedFiles += "image\n";
+                                        selectedFiles++;
 
                                     }
                                 });
@@ -216,7 +229,7 @@ public class AddPostFragment extends Fragment {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         mAttachedFile.addFile(uri.toString());
-                                        selectedFiles += "video\n";
+                                        selectedFiles++;
 
                                     }
                                 });
@@ -224,6 +237,28 @@ public class AddPostFragment extends Fragment {
                         });
                 mSelectedFilesName.setText(selectedFiles);
 
+            }else if(requestCode == SELECT_AUDIO){
+                mAddVideo.setEnabled(false);
+                mAddImage.setEnabled(false);
+
+                Uri selectedAudioUri = data.getData();
+                Log.d("URL AUDIO", "onActivityResult: " + selectedAudioUri.toString());
+                //TODO send url to firebase storage
+//                final StorageReference fileReference = DBAccess.creatStorageChild("audio/", System.currentTimeMillis() + "." + getFileExtension(selectedAudioUri));
+//                fileReference.putFile(selectedAudioUri).addOnSuccessListener(
+//                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                            @Override
+//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                                    @Override
+//                                    public void onSuccess(Uri uri) {
+//                                        mAttachedFile.addFile(uri.toString());
+//                                        selectedFiles++;
+//
+//                                    }
+//                                });
+//                            }
+//                        });
             }
 
         }
@@ -306,5 +341,15 @@ public class AddPostFragment extends Fragment {
 
     public void setSetToolBarTitle(SetToolBarTitle toolBarTitle){
         mSetToolBarTitle = toolBarTitle;
+    }
+
+    public boolean isStoragePermissionAccepted(){
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED){
+            isStoragePermissionAccepted = true;
+        }else{
+            isStoragePermissionAccepted = false;
+        }
+        return isStoragePermissionAccepted;
     }
 }

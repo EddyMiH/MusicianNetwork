@@ -7,16 +7,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 
-import com.google.firebase.database.FirebaseDatabase;
 import com.musapp.musicapp.R;
-import com.musapp.musicapp.currentinformation.CurrentUser;
-import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.fragments.registration_fragments.GenreGridFragment;
 import com.musapp.musicapp.fragments.registration_fragments.ProfessionAndBioFragment;
 import com.musapp.musicapp.fragments.registration_fragments.RegistrationFragment1;
@@ -25,7 +21,6 @@ import com.musapp.musicapp.fragments.registration_fragments.RegistrationFragment
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegisterFragmentTransaction;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.fragments.sign_in_fragments.SignInFragment;
-import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.preferences.RememberPreferences;
 
@@ -93,15 +88,16 @@ public class StartActivity extends AppCompatActivity {
                     return;
                 }
                 Fragment currentFragment = fragmentManager.getFragments().get(fragmentManager.getFragments().size() - 1);
+
                 if (currentFragment instanceof RegistrationFragment2) {
                     handleLogoVisibility(View.VISIBLE);
+                    handleLayoutVisibility(View.VISIBLE);
                 }
                 else if(currentFragment instanceof GenreGridFragment || currentFragment instanceof ProfessionAndBioFragment){
-                    handleLogoVisibility(View.GONE);
+                    handleLogoVisibility(View.INVISIBLE);
                 }
             }
         });
-
 
     }
 
@@ -131,42 +127,42 @@ public class StartActivity extends AppCompatActivity {
         transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
         if (fragment instanceof GenreGridFragment || fragment instanceof ProfessionAndBioFragment) {
 
-            handleLogoVisibility(View.GONE);
-
-          /*  setLogoVisibility(View.GONE);
-            findViewById(R.id.layout_activity_start_content_main).findViewById(R.id.action_fragment_grid_and_profession_next).setVisibility(View.VISIBLE);*/
-            //TODO call slideContainerToLeft method, see below  |
-            //   transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left
-            //         , R.anim.slide_in_left, R.anim.slide_out_right);
-
-            //findViewById(R.id.container_grid_and_profession_fragment).setVisibility(View.VISIBLE);
+            handleLayoutVisibility(View.GONE);
 
             //TODO clear framelayout from fragment and handle backpressing
             //findViewById(R.id.layout_activity_start_content_main).setVisibility(View.GONE);
-            transaction.replace(R.id.layout_activity_start_content_main, fragment);
+            clearLayoutOne();
+            transaction.replace(R.id.layout_registration_genre_info, fragment);
 
-        } else {
-
-
+        }else{
+            //handleLogoVisibility(View.VISIBLE);
+            //handleLogoVisibility(View.GONE);
+            //handleLayoutVisibility(View.VISIBLE);
+//            setLogoVisibility(View.VISIBLE);
+//            findViewById(R.id.layout_activity_start_content_main).findViewById(R.id.action_fragment_grid_and_profession_next).setVisibility(View.INVISIBLE);
+//
+//
+//            if(previousFragment instanceof RegistrationFragment2){
+//                transaction.remove(previousFragment);
+//                transaction.commit();}
+//
+//             findViewById(R.id.container_grid_and_profession_fragment).setVisibility(View.GONE);
+//            findViewById(R.id.layout_activity_start_content_main).setVisibility(View.VISIBLE);
+            handleLayoutVisibility(View.VISIBLE);
             handleLogoVisibility(View.VISIBLE);
-
-           /* setLogoVisibility(View.VISIBLE);
-            findViewById(R.id.layout_activity_start_content_main).findViewById(R.id.action_fragment_grid_and_profession_next).setVisibility(View.INVISIBLE);
-
-
-           /* if(previousFragment instanceof RegistrationFragment2){
-                transaction.remove(previousFragment);
-                transaction.commit();}
-*/
-
-            // findViewById(R.id.container_grid_and_profession_fragment).setVisibility(View.GONE);
-            //findViewById(R.id.layout_activity_start_content_main).setVisibility(View.VISIBLE);
-
             transaction.replace(R.id.layout_activity_start_content_main, fragment);
+
+
         }
         transaction.addToBackStack(null);
         transaction.commit();
 
+    }
+    private void clearLayoutOne(){
+        if(findViewById(R.id.layout_activity_start_content_main) != null){
+            FrameLayout layout = findViewById(R.id.layout_activity_start_content_main);
+            layout.removeAllViews();
+        }
     }
 
     //for animation fragment visibility
@@ -200,16 +196,36 @@ public class StartActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.layout_activity_start_content_main);
+
         if (f instanceof RegistrationFragment1 || f instanceof SignInFragment) {
             finish();
-        }else{
-            super.onBackPressed();}
+        }else if(f instanceof RegistrationFragment2){
+            handleLayoutVisibility(View.VISIBLE);
+            beginTransaction(register2);
+            super.onBackPressed();
+        }
     }
 
 
     private void handleLogoVisibility(int visibility){
         findViewById(R.id.layout_start_activity_logo).setVisibility(visibility);
-        findViewById(R.id.action_fragment_grid_and_profession_next).setVisibility(visibility == View.GONE ? View.VISIBLE : View.GONE);
+        //findViewById(R.id.action_fragment_grid_and_profession_next).setVisibility(visibility == View.GONE ? View.VISIBLE : View.GONE);
+        //
+        //findViewById(R.id.action_fragment_grid_and_profession_next).setVisibility(visibility == View.INVISIBLE ? View.VISIBLE : View.INVISIBLE);
+
+    }
+    private void handleLayoutVisibility(int visibility){
+        if(visibility == View.GONE){
+
+            findViewById(R.id.layout_1).setVisibility(View.GONE);
+            findViewById(R.id.layout_2).setVisibility(View.VISIBLE);
+            findViewById(R.id.action_fragment_grid_and_profession_next).setVisibility( View.VISIBLE);
+
+        }else{
+            findViewById(R.id.layout_1).setVisibility(View.VISIBLE);
+            findViewById(R.id.layout_2).setVisibility(View.GONE);
+        }
+
     }
 
     private void setRememberSharedPreferenceState(){

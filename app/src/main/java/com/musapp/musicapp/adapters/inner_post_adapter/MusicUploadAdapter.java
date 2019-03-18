@@ -10,6 +10,8 @@ import com.musapp.musicapp.adapters.viewholders.post_viewholder.MusicPostViewHol
 import com.musapp.musicapp.uploads.MusicUpload;
 
 public class MusicUploadAdapter extends BaseUploadsAdapter<MusicUpload, MusicPostViewHolder> {
+
+
     @NonNull
     @Override
     public MusicPostViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
