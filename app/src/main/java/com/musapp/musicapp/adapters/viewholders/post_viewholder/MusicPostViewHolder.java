@@ -41,5 +41,6 @@ public class MusicPostViewHolder extends BasePostViewHolder {
 
     public void setMusic(String url){
         //TODO download music and set all textViews here ...
+
     }
 }

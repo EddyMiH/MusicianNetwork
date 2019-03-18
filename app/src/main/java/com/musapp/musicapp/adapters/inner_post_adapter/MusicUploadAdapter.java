@@ -11,6 +11,8 @@ import com.musapp.musicapp.uploads.MusicUpload;
 
 public class MusicUploadAdapter extends BaseUploadsAdapter<MusicUpload, MusicPostViewHolder> {
 
+    private OnSongSelectedListener mOnSongSelectedListener;
+
 
     @NonNull
     @Override
@@ -23,5 +25,13 @@ public class MusicUploadAdapter extends BaseUploadsAdapter<MusicUpload, MusicPos
     public void onBindViewHolder(@NonNull MusicPostViewHolder musicPostViewHolder, int i) {
         //super.onBindViewHolder(musicPostViewHolder, i);
         musicPostViewHolder.setMusic(uploads.get(i).getUrl());
+    }
+
+    public void setOnSongSelectedListener(OnSongSelectedListener onSongSelectedListener) {
+        mOnSongSelectedListener = onSongSelectedListener;
+    }
+
+    public interface OnSongSelectedListener{
+        void onSongSelected();
     }
 }
