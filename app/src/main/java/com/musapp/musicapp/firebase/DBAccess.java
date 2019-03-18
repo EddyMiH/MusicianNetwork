@@ -77,23 +77,27 @@ public final class DBAccess {
         return res[0];
     }
 
-
     public static void setStorageReference (StorageReference ref){
        mStorageReference = ref;
     }
 
     public static StorageReference creatStorageChild(String path, String childName){
        StorageReference ref = mStorageReference.child(path + childName);
-       return ref;}
+
+       return ref;
+    }
 
     public static DatabaseReference getUserReference(String childPath){
         return databaseReference.child(childPath);
     }
     public static DatabaseReference getDatabaseReference(){
         return databaseReference;
+<<<<<<< HEAD
     }
 
     public static StorageReference getStorageReference(){
         return mStorageReference;
+=======
+>>>>>>> 6eb200476d57252be643a5103f06269f8a7470f2
     }
 }

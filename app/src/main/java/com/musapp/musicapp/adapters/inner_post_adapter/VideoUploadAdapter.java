@@ -16,12 +16,12 @@ public class VideoUploadAdapter extends BaseUploadsAdapter<VideoUpload, VideoPos
     @Override
     public VideoPostViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_post_inner_recycler_view_video_item, viewGroup, false);
-        return new VideoPostViewHolder(view);
+        return new VideoPostViewHolder(view, viewGroup.getContext());
     }
 
     @Override
     public void onBindViewHolder(@NonNull VideoPostViewHolder videoPostViewHolder, int i) {
-        super.onBindViewHolder(videoPostViewHolder, i);
+        //super.onBindViewHolder(videoPostViewHolder, i);
         videoPostViewHolder.setVideo(uploads.get(i).getUrl());
     }
 }

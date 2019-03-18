@@ -7,6 +7,8 @@
     <color name="lightBlue">#71B8F2</color>
     <color name="textBlue">#b7d6ef</color>
     <color name="purple">#664eae</color>
+    <color name="purpleBottomNavigation">#222231</color>
+    <color name="purple_black">#25333A</color>
 
     <color name="dark_purple">#800080</color>
 
@@ -16,4 +18,11 @@
     <color name="colorGenreChecked">#80D81B60</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <color name="colorGreyAppBar">#212121</color>
+    <color name="colorGreyBackground">#303030</color>
+    <color name="colorGreyCards">#424242</color>
+    <color name="colorDarkPrimaryText">#b7d6ef</color>
+    <color name="colorDarkSecondaryText">#70b7d6ef</color>
+    <color name="colorDarkHintText">#30b7d6ef</color>
 </resources>

@@ -32,8 +32,42 @@ public class MainApplication extends Application {
         StorageReference storageReference = storage.getReference();
 
         DBAccess.setDatabaseReference(ref);
+
         DBAccess.setStorageReference(storageReference);
 
+//
+//        DBAsyncTask.setDatabaseReference(ref);
+//
+//
+//        DBAccess.setStorageReference(storageReference);
+//
+//
+//        DatabaseReference childRef = ref.child("genres");
+//
+//        Map<String, Genre> genreHashMap = new HashMap<>();
+//       for(Genre genre: listOfGenres){
+//           genreHashMap.put(genre.getName(), genre);
+//       }
+//
+//       childRef.setValue(genreHashMap);
+//
+//       childRef = ref.child("user");
+//
+//       childRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//           @Override
+//           public void onDataChange(DataSnapshot dataSnapshot) {
+//               ArrayList<User> userList = new ArrayList();
+//               for (DataSnapshot child :
+//                       dataSnapshot.getChildren()) {
+//                   User user = child.getValue(User.class);
+//                   userList.add(user );
+//               }
+//               //Here you have all user you can pass ```userList``` to your method furthur
+//           }
+//           @Override
+//           public void onCancelled(DatabaseError databaseError) {
+//           }
+//       });
         DBAsyncTask.setDatabaseReference(ref);
 
     }

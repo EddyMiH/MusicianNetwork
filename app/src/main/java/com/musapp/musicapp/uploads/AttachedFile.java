@@ -23,6 +23,10 @@ public class AttachedFile  implements Serializable {
         this.primaryKey = primaryKey;
     }
 
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
+
     public List<String> getFilesUrls() {
         return filesUrls;
     }

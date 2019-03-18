@@ -108,8 +108,7 @@ public class GenreGridFragment extends Fragment {
         initRecyclerAdapter(view);
     //    nextButton = rootView.findViewById(R.id.action_fragment_grid_and_profession_next);
         //TODO very bad solution
-        nextButton = UIUtils.getButtonFromView(getActivity().findViewById(R.id.layout_activity_start_content_main), R.id.action_fragment_grid_and_profession_next);
-
+        nextButton = UIUtils.getButtonFromView(getActivity().findViewById(R.id.layout_registration_genre_info), R.id.action_fragment_grid_and_profession_next);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

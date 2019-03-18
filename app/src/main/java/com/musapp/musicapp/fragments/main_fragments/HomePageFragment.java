@@ -27,6 +27,7 @@ import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.utils.ContextUtils;
 
@@ -41,12 +42,17 @@ public class HomePageFragment extends Fragment {
     private FeedRecyclerAdapter feedRecyclerAdapter;
     private final int limit = 5;
 
+
     private ProgressBar mProgressBar;
 
     private List<Post> posts;
     public static final String ARG_POST = "current_post";
-
     private OpenUserFragment mOpenUserFragment;
+    private SetToolBarTitle mSetToolBarTitle;
+
+    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
+        mSetToolBarTitle = setToolBarTitle;
+    }
 
     private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
         @Override
@@ -54,8 +60,6 @@ public class HomePageFragment extends Fragment {
             mOpenUserFragment.openUserFragment();
         }
     };
-
-
 
 
     private FeedRecyclerAdapter.OnItemSelectedListener mOnItemSelectedListener =
@@ -67,6 +71,7 @@ public class HomePageFragment extends Fragment {
                     bundle.putParcelable(HomePageFragment.ARG_POST, post);
                     OpenedPostFragment fragment = new OpenedPostFragment();
                     fragment.setArguments(bundle);
+                    fragment.setSetToolBarTitle(mSetToolBarTitle);
                     beginTransaction(fragment);
                 }
             };
@@ -190,6 +195,7 @@ public class HomePageFragment extends Fragment {
                         list.add(post);
                     }
                 }
+                posts.clear();
                 posts.addAll(list);
                 feedRecyclerAdapter.setData(posts);
             }
@@ -284,7 +290,9 @@ public class HomePageFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.action_add_home_fragment_menu_item:
                 //TODO open new fragment for add new post
-                beginTransaction(new AddPostFragment());
+                AddPostFragment fragment = new AddPostFragment();
+              //  fragment.setSetToolBarTitle(mSetToolBarTitle);
+                beginTransaction(fragment);
         }
         return true;
     }

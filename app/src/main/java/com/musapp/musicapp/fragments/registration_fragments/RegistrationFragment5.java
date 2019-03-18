@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
+import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.User;
@@ -24,6 +25,7 @@ import com.musapp.musicapp.utils.ContextUtils;
 import com.musapp.musicapp.utils.ErrorShowUtils;
 import com.musapp.musicapp.utils.HashUtils;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 import butterknife.BindView;
@@ -103,6 +105,18 @@ public class RegistrationFragment5 extends Fragment {
         }
         return false;
     }
+
+//    @Override
+//    public void doOnResponse(String key, String childName) {
+//        user.setPrimaryKey(key);
+//        user.setPassword(password.getText().toString());
+//     //   DBAccess.createChild("user/" + user.getPrimaryKey() + '/', "primaryKey", user.getPrimaryKey());
+//        HashMap<String, Object> userHashMap = new HashMap<>();
+//        //TODO if nested primaryKey is needed
+//        userHashMap.put("primaryKey", user.getPrimaryKey());
+//        userHashMap.put("password", HashUtils.hash(password.getText().toString()));
+//        DBAccess.createFields(userHashMap, "user/"+user.getPrimaryKey()+'/');
+//    }
 
     private void addUserToFirebase() {
         FirebaseRepository.addCurrentUserToFirebase(new ValueEventListener() {

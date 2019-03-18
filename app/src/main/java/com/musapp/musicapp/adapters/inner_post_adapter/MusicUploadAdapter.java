@@ -10,6 +10,10 @@ import com.musapp.musicapp.adapters.viewholders.post_viewholder.MusicPostViewHol
 import com.musapp.musicapp.uploads.MusicUpload;
 
 public class MusicUploadAdapter extends BaseUploadsAdapter<MusicUpload, MusicPostViewHolder> {
+
+    private OnSongSelectedListener mOnSongSelectedListener;
+
+
     @NonNull
     @Override
     public MusicPostViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -19,7 +23,15 @@ public class MusicUploadAdapter extends BaseUploadsAdapter<MusicUpload, MusicPos
 
     @Override
     public void onBindViewHolder(@NonNull MusicPostViewHolder musicPostViewHolder, int i) {
-        super.onBindViewHolder(musicPostViewHolder, i);
+        //super.onBindViewHolder(musicPostViewHolder, i);
         musicPostViewHolder.setMusic(uploads.get(i).getUrl());
+    }
+
+    public void setOnSongSelectedListener(OnSongSelectedListener onSongSelectedListener) {
+        mOnSongSelectedListener = onSongSelectedListener;
+    }
+
+    public interface OnSongSelectedListener{
+        void onSongSelected();
     }
 }

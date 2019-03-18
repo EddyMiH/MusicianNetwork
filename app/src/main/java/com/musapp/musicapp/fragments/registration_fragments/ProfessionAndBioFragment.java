@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,11 +34,14 @@ import com.google.firebase.storage.UploadTask;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.firebase.DBAsyncTask;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.Info;
 import com.musapp.musicapp.model.Profession;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.UIUtils;
+
+import java.io.File;
 
 
 public class ProfessionAndBioFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -66,7 +70,7 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
         profileImage = rootView.findViewById(R.id.circular_view_profession_fragment_profile_image);
         professionSpinner = rootView.findViewById(R.id.spinner_profession_fragment_profession_drop_down);
         userInfoTextView = rootView.findViewById(R.id.text_profession_fragment_user_info);
-        nextButton = UIUtils.getButtonFromView(getActivity().findViewById(R.id.layout_activity_start_content_main), R.id.action_fragment_grid_and_profession_next);
+        nextButton = UIUtils.getButtonFromView(getActivity().findViewById(R.id.layout_registration_genre_info), R.id.action_fragment_grid_and_profession_next);
         professionSpinner.setOnItemSelectedListener(this);
         ArrayAdapter<CharSequence> spinnerDataAdapter = ArrayAdapter.createFromResource(getContext(), R.array.professions, android.R.layout.simple_spinner_dropdown_item);
         spinnerDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -79,7 +83,7 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
                     selectImage();
                 } else {
                     requestPermission();
-                    //equestCameraPermission();
+                    //requestCameraPermission();
                 }
             }
         });
@@ -177,18 +181,18 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
                 final StorageReference fileReference = DBAccess.creatStorageChild("image/", System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
                 fileReference.putFile(selectedImageUri).addOnSuccessListener(
                         new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
-                            public void onSuccess(Uri uri) {
-                                userInfo.setImageUri(uri.toString());
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        userInfo.setImageUri(uri.toString());
 
+                                    }
+                                });
+                                //userInfo.setImageUri(taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
                             }
                         });
-                        //userInfo.setImageUri(taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
-                    }
-                });
                 //userInfo.setImageUri(selectedImageUri.);
             }
 
@@ -232,11 +236,28 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
+//    private void submitInformation(){
+//
+//        DBAsyncTask.waitResponse("profession_and_bio", this, userInfo);
+//    }
+//
+//
+//    @Override
+//    public void doOnResponse(String key, String childName) {
+//        user.setProfessionAndInfoId(key);
+//    }
+//
+//    @Override
+//    public void  doForResponse(String str, Object obj) {
+//        DBAccess.createChild("profession_and_bio", userInfo);
+
+
     private void submitInformation() {
 
         user.setProfession(profession);
         user.setUserInfo(userInfo);
+
     }
-    }
+}
 
 

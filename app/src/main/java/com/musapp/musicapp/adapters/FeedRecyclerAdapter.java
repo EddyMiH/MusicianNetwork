@@ -64,19 +64,22 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         this.mOnItemSelectedListener = onItemSelectedListener;
     }
 
-    @NonNull    @Override
 
+
+    private View view;
+
+    @NonNull    @Override
     public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_post_recycler_view_item, viewGroup, false);
+        view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_post_recycler_view_item, viewGroup, false);
         context = viewGroup.getContext();
         final FeedViewHolder viewHolder = new FeedViewHolder(view);
+
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mOnItemSelectedListener != null) {
                     mOnItemSelectedListener.onItemSelected(mData.get(viewHolder.getAdapterPosition()));
-                    //TODO implement this interface in homePageFragment
                 }
             }
         });
@@ -89,7 +92,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final FeedViewHolder feedViewHolder, int i) {
         Post post = mData.get(i);
-
+        post.setInnerRecyclerView(view);
+        post.initializeInnerRecyclerAndAdapter(context);
         //feedViewHolder.setOnSettingClickListener(mOnClickListener);
         feedViewHolder.setUserName(post.getUserName());
         feedViewHolder.setFeedProfileImage(post.getProfileImage());
@@ -131,7 +135,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
                 //TODO
         }*/
 
-
     }
 
     @Override
@@ -142,6 +145,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     public void setOnUserImageListener(OnUserImageListener onUserImageListener) {
         mOnUserImageListener = onUserImageListener;
     }
+
 
     public interface OnItemSelectedListener{
         void onItemSelected(Post post);

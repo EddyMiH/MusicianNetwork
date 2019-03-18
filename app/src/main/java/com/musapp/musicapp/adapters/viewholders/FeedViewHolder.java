@@ -21,8 +21,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     private ImageView mPostSetting;
     private TextView mPostText;
     //image and video are placed in innner  recyclerview
- //   private ImageView mPostImage;
- //   private VideoView mPostVideo;
+
     private ImageView mCommentIcon;
     private TextView mCommentCount;
 

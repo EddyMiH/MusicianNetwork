@@ -7,6 +7,11 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.musapp.musicapp.R;
+
+import java.net.URL;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import java.net.URL;
 
@@ -21,8 +26,13 @@ public final class GlideUtil {
     }
 
     public static void setImageGlide(String src, ImageView view){
-        //.transform(new RoundedCornersTransformation(radius, margin))
-        Glide.with(context).load(src)
+
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(R.drawable.ic_person_black_24dp);
+
+        Glide.with(context)
+                .setDefaultRequestOptions(requestOptions)
+                .load(src)
                 .apply(RequestOptions.circleCropTransform())
                 .into(view);
     }

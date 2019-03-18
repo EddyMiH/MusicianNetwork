@@ -7,8 +7,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:elevation="@dimen/elevation"
     app:cardElevation="@dimen/elevation"
-    android:layout_marginBottom="10dp"
-    app:cardBackgroundColor="@android:color/white"
+    android:layout_marginBottom="5dp"
+    app:cardBackgroundColor="@color/colorGreyCards"
     app:cardCornerRadius="@dimen/card_view_corner_radius"
     xmlns:tools="http://schemas.android.com/tools">
 
