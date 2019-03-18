@@ -4,10 +4,11 @@ import android.arch.persistence.room.Ignore;
 
 import com.musapp.musicapp.enums.PostUploadType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AttachedFile {
+public class AttachedFile  implements Serializable {
     @Ignore
     private String primaryKey;
 
@@ -43,5 +44,9 @@ public class AttachedFile {
 
     public void setFileType(PostUploadType fileType) {
         this.fileType = fileType;
+    }
+
+    public String getPrimaryKey() {
+        return primaryKey;
     }
 }

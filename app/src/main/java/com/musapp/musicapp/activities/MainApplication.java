@@ -32,6 +32,7 @@ public class MainApplication extends Application {
         StorageReference storageReference = storage.getReference();
 
         DBAccess.setDatabaseReference(ref);
+        DBAccess.setStorageReference(storageReference);
 
         DBAsyncTask.setDatabaseReference(ref);
 

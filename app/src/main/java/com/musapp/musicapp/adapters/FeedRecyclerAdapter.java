@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.viewholders.FeedViewHolder;
@@ -29,28 +31,41 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     };
     private Context context;
 
+    public FeedRecyclerAdapter(){
+        mData = new ArrayList<>();
+    }
+
     public void setData(List<Post> mData) {
         if(this.mData == null){
             this.mData = new ArrayList<>();
         }else{
-            this.mData.clear();
+        //    this.mData.clear();
         }
         this.mData.addAll(mData);
         notifyDataSetChanged();
     }
 
-    public void addPostItem(Post post){
-        if (mData != null) {
-            mData.add(post);
-        }
+    public void addPostItem(Post post, int index){
+        if(mData == null)
+            mData = new ArrayList<>();
+            mData.add(index, post);
+           notifyItemInserted(index);
+
+    }
+
+
+    public List<Post> getData(){
+        if(mData == null)
+            mData = new ArrayList<>();
+        return mData;
     }
 
     public void setOnItemSelectedListener(OnItemSelectedListener onItemSelectedListener) {
         this.mOnItemSelectedListener = onItemSelectedListener;
     }
 
-    @NonNull
-    @Override
+    @NonNull    @Override
+
     public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_post_recycler_view_item, viewGroup, false);
         context = viewGroup.getContext();

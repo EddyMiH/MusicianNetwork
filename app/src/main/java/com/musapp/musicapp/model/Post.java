@@ -18,15 +18,16 @@ import com.musapp.musicapp.uploads.BaseUpload;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Post implements Parcelable {
+public class Post implements Parcelable{
     //instead of userName & ProfileImage fields must be User class field
     //private User mUser;
     @Ignore
     private String primaryKey;
-    private String mUserName;
+    private String mUserId;
     private String mPublishedTime;
     private String mPostText;
     private String mProfileImage;
+    private String mUserName;
     private int mCommentCount;
 
     private PostUploadType type;
@@ -86,7 +87,7 @@ public class Post implements Parcelable {
 
     public Post(String mUserName, String mPublishedTime, String mPostText, String mProfileImageUri
             , String attachmentId, List<String> commentsId, PostUploadType type, int mCommentCount) {
-        this.mUserName = mUserName;
+        this.mUserId = mUserName;
         this.mPublishedTime = mPublishedTime;
         this.mPostText = mPostText;
         this.mProfileImage = mProfileImageUri;
@@ -96,8 +97,8 @@ public class Post implements Parcelable {
         this.mCommentCount = mCommentCount;
     }
 
-    public String getUserName() {
-        return mUserName;
+    public String getUserId() {
+        return mUserId;
     }
 
     public String getPublishedTime() {
@@ -112,8 +113,8 @@ public class Post implements Parcelable {
         return mProfileImage;
     }
 
-    public void setUserName(String mUserName) {
-        this.mUserName = mUserName;
+    public void setUserId(String mUserId) {
+        this.mUserId = mUserId;
     }
 
     public void setPublishedTime(String mPublishedTime) {
@@ -158,23 +159,26 @@ public class Post implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
             dest.writeString(primaryKey);
-            dest.writeString(mUserName);
+            dest.writeString(mUserId);
             dest.writeString(mPublishedTime);
             dest.writeString(mPostText);
             dest.writeString(mProfileImage);
             dest.writeStringList(commentsId);
             dest.writeString(attachmentId);
+            dest.writeString(mUserName);
     }
 
     private static Post createFromParcel(Parcel source){
         Post post = new Post();
         post.primaryKey = source.readString();
-        post.mUserName = source.readString();
+        post.mUserId = source.readString();
         post.mPublishedTime = source.readString();
         post.mPostText = source.readString();
         post.mProfileImage = source.readString();
         post.commentsId = new ArrayList<String>();
         source.writeStringList(post.commentsId);
+        post.attachmentId = source.readString();
+        post.mUserName = source.readString();
         return post;
     }
 
@@ -189,4 +193,19 @@ public class Post implements Parcelable {
             return new Post[size];
         }
     };
+
+    public String getUserName() {
+        return mUserName;
+    }
+
+    public void setUserName(String userName) {
+        mUserName = userName;
+    }
+
+    @Override
+    public boolean equals( Object obj) {
+        if(obj instanceof Post)
+            return primaryKey.equals(((Post) obj).getPrimaryKey());
+        return false;
+    }
 }

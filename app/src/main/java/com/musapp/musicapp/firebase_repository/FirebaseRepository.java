@@ -1,11 +1,23 @@
 package com.musapp.musicapp.firebase_repository;
 
+import android.net.Uri;
+import android.renderscript.Sampler;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.annotations.NotNull;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Post;
+import com.musapp.musicapp.uploads.AttachedFile;
+
+import java.util.Date;
 
 public class FirebaseRepository {
 
@@ -28,25 +40,76 @@ public class FirebaseRepository {
         DBAccess.createField(password, "users/" + CurrentUser.getCurrentUser().getPrimaryKey() + "/password");
 
     }
-    //TODO do in service maybe
-    public static void createComment(Object comment, ValueEventListener valueEventListener){
-        DBAccess.createChild( "comments" , comment);
-        DBAccess.getDatabaseReference().child("comments").addListenerForSingleValueEvent(valueEventListener);
+
+    private static void createObject(Object object, String childname,  ValueEventListener valueEventListener){
+        DBAccess.createChild(childname, object);
+        DBAccess.getDatabaseReference().child(childname).addListenerForSingleValueEvent(valueEventListener);
     }
 
-    public static void setCommentInnerPrimaryKey(ValueEventListener valueEventListener){
-        Query lastQuery = DBAccess.getDatabaseReference().child("comments").limitToLast(1);
+    private static void setObjectInnerPrimaryKey(String childname, ValueEventListener valueEventListener){
+        Query lastQuery = DBAccess.getDatabaseReference().child(childname).limitToLast(1);
         lastQuery.addListenerForSingleValueEvent(valueEventListener);
     }
 
-    public static void setCommentInnerPrimaryKeyToFirebase(Comment comment){
-        DBAccess.createField(comment.getPrimaryKey(), "comments/" + comment.getPrimaryKey() + "/primaryKey");
+    private static void setObjectInnerPrimaryKeyToFirebase(String childname, String primaryKeyToFirebase){
+        DBAccess.createField(primaryKeyToFirebase, childname + '/' + primaryKeyToFirebase + "/primaryKey");
+    }
 
+
+    public static void createComment(Object comment, ValueEventListener valueEventListener){
+      createObject(comment,"comments", valueEventListener);
+    }
+
+    public static void setCommentInnerPrimaryKey(ValueEventListener valueEventListener){
+        setObjectInnerPrimaryKey("comments",valueEventListener);
+    }
+
+    public static void setCommentInnerPrimaryKeyToFirebase(String primaryKeyToFirebase){
+       setObjectInnerPrimaryKeyToFirebase("comments", primaryKeyToFirebase);
     }
 
     public static void setCommentInnerPrimaryKeyToFirebasePost(Post post){
        DBAccess.getDatabaseReference().child("posts").child(post.getPrimaryKey()).child("commentsId").setValue(post.getCommentsId());
+    }
 
+
+    public static void createPost(Object post, ValueEventListener valueEventListener){
+        createObject(post,"posts", valueEventListener);
+    }
+
+    public static void setPostInnerPrimaryKey(ValueEventListener valueEventListener){
+        setObjectInnerPrimaryKey("posts",valueEventListener);
+    }
+
+    public static void setPostInnerPrimaryKeyToFirebase(String primaryKeyToFirebase){
+        setObjectInnerPrimaryKeyToFirebase("posts", primaryKeyToFirebase);
+        DBAccess.createField(CurrentUser.getCurrentUser().getPrimaryKey(), "posts/" + primaryKeyToFirebase + "/userId") ;
+    }
+
+
+    public static StorageReference createImageStorageChild(String childname){
+        DBAccess.creatStorageChild("image/", childname);
+        return DBAccess.getStorageReference().child("image/" + childname);
+    }
+
+    public static void putFileInStorage( StorageReference reference, Uri file, OnSuccessListener<UploadTask.TaskSnapshot> onSuccessListener){
+       reference.putFile(file).addOnSuccessListener(onSuccessListener);
+    }
+
+    public static void getDownloadUrl(StorageReference storageReference, OnSuccessListener<Uri> onSuccessListener){
+        storageReference.getDownloadUrl().addOnSuccessListener(onSuccessListener);
+    }
+
+    public static void createAttachment(AttachedFile file, ValueEventListener valueEventListener){
+        createObject(file, "attachments", valueEventListener);
+    }
+
+    public static void setInnerAttachmentKey(ValueEventListener valueEventListener){
+        setObjectInnerPrimaryKey("attachments", valueEventListener);
+    }
+
+    public static void setInnerAtachmentKeyToFirebase(String primaryKey){
+        setObjectInnerPrimaryKeyToFirebase("attachments", primaryKey);
     }
 
 
@@ -54,18 +117,37 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users").addValueEventListener(valueEventListener);
     }
 
-    public static void getPosts(String userPrimaryKey, int limit, int offset, ValueEventListener valueEventListener) {
-       Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("userId").equalTo(userPrimaryKey);
+    public static void getCurrentUser(ValueEventListener valueEventListener){
+        DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).addListenerForSingleValueEvent(valueEventListener);
+    }
+
+
+
+    public static void getPosts( int limit, @NotNull String lastDateRetrivered, ValueEventListener valueEventListener) {
+       Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").endAt(lastDateRetrivered).limitToFirst(limit);
        postQuery.addValueEventListener(valueEventListener);
     }
 
-    public static void getAllPosts(ValueEventListener valueEventListener){
-        DBAccess.getDatabaseReference().child("posts").addValueEventListener(valueEventListener);
+    public static void getAllPosts(int limit, ValueEventListener valueEventListener){
+        DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").limitToLast(limit).addValueEventListener(valueEventListener);
     }
+
+    public static void getNewPost(ChildEventListener childEventListener){
+        DBAccess.getDatabaseReference().child("posts").addChildEventListener(childEventListener);
+    }
+
+
 
     public static void getGenres(String userPrimaryKey, ValueEventListener valueEventListener){
         Query genreQuery = DBAccess.getUserReference("users/" + userPrimaryKey).child("genreId");
         genreQuery.addListenerForSingleValueEvent(valueEventListener);
     }
+
+    public static void setCurrentUser(String primaryKey,ValueEventListener valueEventListener){
+        DBAccess.getUserReference("users/" + primaryKey).addListenerForSingleValueEvent(valueEventListener);
+    }
+
+
+
 
 }

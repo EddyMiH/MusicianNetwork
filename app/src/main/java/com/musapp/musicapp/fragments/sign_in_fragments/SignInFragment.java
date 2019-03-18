@@ -72,6 +72,7 @@ public class SignInFragment extends Fragment {
                 } else {
                     RegistrationTransactionWrapper.registerForNextFragment((int) signIn.getTag());
                     RememberPreferences.saveState(getActivity().getBaseContext(), remembered.isChecked());
+                    RememberPreferences.saveUser(getActivity().getBaseContext(), CurrentUser.getCurrentUser().getPrimaryKey());
                 }
 
             }

@@ -104,7 +104,7 @@ public class OpenedPostFragment extends Fragment {
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Iterator<DataSnapshot> lastChild = dataSnapshot.getChildren().iterator();
                                     newComment.setPrimaryKey(lastChild.next().getKey());
-                                    FirebaseRepository.setCommentInnerPrimaryKeyToFirebase(newComment);
+                                    FirebaseRepository.setCommentInnerPrimaryKeyToFirebase(newComment.getPrimaryKey());
                                     mCurrentPost.addCommentId(newComment.getPrimaryKey());
                                     FirebaseRepository.setCommentInnerPrimaryKeyToFirebasePost(mCurrentPost);
                                     mCommentAdapter.notifyDataSetChanged();

@@ -30,6 +30,8 @@
             android:name=".activities.AppMainActivity"
             android:label="@string/title_activity_app" />
         <activity android:name=".activities.StartActivity" />
+
+        <service android:name=".service.UploadForegroundService" />
     </application>
 
 </manifest>

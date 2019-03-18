@@ -91,6 +91,9 @@ public final class DBAccess {
     }
     public static DatabaseReference getDatabaseReference(){
         return databaseReference;
+    }
 
+    public static StorageReference getStorageReference(){
+        return mStorageReference;
     }
 }
