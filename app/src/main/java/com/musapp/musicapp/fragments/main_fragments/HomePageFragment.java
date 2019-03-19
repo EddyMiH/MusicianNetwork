@@ -30,12 +30,15 @@ import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.utils.ContextUtils;
+import com.musapp.musicapp.utils.FragmentShowUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 public class HomePageFragment extends Fragment {
 
@@ -49,6 +52,7 @@ public class HomePageFragment extends Fragment {
     public static final String ARG_POST = "current_post";
     private OpenUserFragment mOpenUserFragment;
     private SetToolBarTitle mSetToolBarTitle;
+    private RecyclerView recyclerView;
 
     public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
         mSetToolBarTitle = setToolBarTitle;
@@ -80,15 +84,16 @@ public class HomePageFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView  = inflater.inflate(R.layout.fragment_home_page, container, false);
-        RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view_fragment_home_page_posts);
+        recyclerView = rootView.findViewById(R.id.recycler_view_fragment_home_page_posts);
         mProgressBar = rootView.findViewById(R.id.progressbar);
         mProgressBar.getIndeterminateDrawable().setColorFilter(getActivity().getResources().getColor(R.color.darkPurple), android.graphics.PorterDuff.Mode.MULTIPLY);
      //   loadPostsFromDatabase();
         posts = new ArrayList<>();
-        if(savedInstanceState == null){
         initRecyclerView(recyclerView);
-        loadFirstPosts(limit);}
-        updateRecyclerView();
+        loadFirstPosts(limit);
+
+
+
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -102,39 +107,48 @@ public class HomePageFragment extends Fragment {
                         setProgressBarVisibility(View.VISIBLE);
                         loadPostsFromDatabase(feedRecyclerAdapter.getData().get(feedRecyclerAdapter.getData().size() - limit + 1).getPublishedTime(), limit);}
                 }
+
+                else if(firstVisibleItemPosition == 0)
+                    updateRecyclerView();
             }});
+
         return rootView;
     }
 
-
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(ArrayList.class.getSimpleName(), (Serializable) feedRecyclerAdapter.getData());
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if(savedInstanceState != null)
-        feedRecyclerAdapter.setData((List<Post>) savedInstanceState.getSerializable(ArrayList.class.getSimpleName()));
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     private void initRecyclerView(RecyclerView view){
         feedRecyclerAdapter = new FeedRecyclerAdapter();
         feedRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
         feedRecyclerAdapter.setOnUserImageListener(mOnUserImageListener);
-        feedRecyclerAdapter.setData(posts);
+      //  feedRecyclerAdapter.setData(posts);
         view.setLayoutManager(new LinearLayoutManager(getContext()));
         view.setAdapter(feedRecyclerAdapter);
     }
 
     private void updateRecyclerView(){
-        FirebaseRepository.getNewPost(new ChildEventListener() {
+        FirebaseRepository.getNewPost(new ValueEventListener() {
             @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue(Post.class) != null){
+                    if(!feedRecyclerAdapter.getData().contains(dataSnapshot.getValue(Post.class)))
+                        feedRecyclerAdapter.addPostItem(dataSnapshot.getValue(Post.class), 0);}
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+       /*     @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if(dataSnapshot.getValue(Post.class) != null){
+                if(!feedRecyclerAdapter.getData().contains(dataSnapshot.getValue(Post.class)))
                 feedRecyclerAdapter.addPostItem(dataSnapshot.getValue(Post.class), 0);
-                //posts.set(0, dataSnapshot.getValue(Post.class));
+               }
             }
 
             @Override
@@ -156,7 +170,7 @@ public class HomePageFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
     }
 
     private void loadFirstPosts(int limit){
@@ -171,10 +185,11 @@ public class HomePageFragment extends Fragment {
                     }
                 }
                Collections.reverse(list);
-                posts.addAll(list);
-                feedRecyclerAdapter.setData(posts);
+              //  posts.addAll(list);
+                //feedRecyclerAdapter.setData(posts);
+                feedRecyclerAdapter.setData(list);
                 feedRecyclerAdapter.notifyDataSetChanged();
-                posts.clear();
+           //     posts.clear();
             }
 
             @Override
@@ -245,10 +260,10 @@ public class HomePageFragment extends Fragment {
               Collections.reverse(list);
               posts.addAll(list);
               if(list.size() > 0) {
-                  feedRecyclerAdapter.setData(posts);
+                  feedRecyclerAdapter.setData(list);
                   feedRecyclerAdapter.notifyItemRangeChanged(feedRecyclerAdapter.getItemCount() - limit + 1, limit);
               } setProgressBarVisibility(View.GONE);
-              posts.clear();
+             // posts.clear();
 
           }
 
@@ -305,13 +320,9 @@ public class HomePageFragment extends Fragment {
     }
 
     public void beginTransaction(Fragment fragment){
-       /* getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, fragment)
-                .addToBackStack(null).commit();*/
-        FragmentManager fm = getFragmentManager();
-        fm.beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .replace(R.id.layout_activity_app_container, fragment)
-                .commit();
+
+        FragmentShowUtils.hideAndGoToNext(this, fragment, getFragmentManager(), R.id.layout_activity_app_container);
+                //.add(R.id.layout_activity_app_container, fragment).commit();
 
     }
 
@@ -330,4 +341,15 @@ public class HomePageFragment extends Fragment {
     private void setProgressBarVisibility(int visibility){
         mProgressBar.setVisibility(visibility);
     }
+
+
+   /* private  class ObserveData implements Observer{
+
+        @Override
+        public void update(Observable o, Object arg) {
+            if(o.hasChanged()){
+                updateRecyclerView();
+            }
+        }
+    }*/
 }

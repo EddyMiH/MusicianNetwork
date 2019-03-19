@@ -104,6 +104,8 @@ public class OpenedPostFragment extends Fragment {
 
         if(getArguments() != null && !getArguments().isEmpty()){
             mCurrentPost = getArguments().getParcelable(HomePageFragment.ARG_POST);
+            mCurrentPost.setInnerRecyclerView(view);
+            mCurrentPost.initializeInnerRecyclerAndAdapter(getContext());
             setPostPage();
         }
 
@@ -129,7 +131,6 @@ public class OpenedPostFragment extends Fragment {
                     newComment.setCreatorId(CurrentUser.getCurrentUser().getPrimaryKey());
                     newComment.setUserCreatorNickName(mCurrentPost.getUserName());
                     newComment.setUserProfileImageUrl(mCurrentPost.getProfileImage());
-                    String commentId = "";//DBAccess.createChild("comments", newComment);
                     FirebaseRepository.createComment(newComment, new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -139,7 +140,8 @@ public class OpenedPostFragment extends Fragment {
                                     Iterator<DataSnapshot> lastChild = dataSnapshot.getChildren().iterator();
                                     newComment.setPrimaryKey(lastChild.next().getKey());
                                     FirebaseRepository.setCommentInnerPrimaryKeyToFirebase(newComment.getPrimaryKey());
-                                    mCurrentPost.addCommentId(newComment.getPrimaryKey());
+                                    //TODO what the fuck
+                                    mCurrentPost.addCommentId(lastChild.next().getKey());
                                     FirebaseRepository.setCommentInnerPrimaryKeyToFirebasePost(mCurrentPost);
                                     mCommentAdapter.notifyDataSetChanged();
                                 }

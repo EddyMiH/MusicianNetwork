@@ -50,7 +50,4 @@ public class AttachedFile  implements Serializable {
         this.fileType = fileType;
     }
 
-    public String getPrimaryKey() {
-        return primaryKey;
-    }
 }

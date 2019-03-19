@@ -20,6 +20,7 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
+import com.musapp.musicapp.fragments.BlankFragment;
 import com.musapp.musicapp.fragments.main_fragments.HomePageFragment;
 import com.musapp.musicapp.fragments.main_fragments.MessagesFragment;
 import com.musapp.musicapp.fragments.main_fragments.NotificationFragment;
@@ -35,7 +36,7 @@ public class AppMainActivity extends AppCompatActivity {
     private NotificationFragment mNotificationFragment;
     private ProfileFragment mProfileFragment;
     private HomePageFragment mHomePageFragment;
-    private MessagesFragment mMessagesFragment;
+    private BlankFragment mMessagesFragment;
     private SetToolBarTitle mToolBarTitle = new SetToolBarTitle() {
         @Override
         public void setTitle(int titleId) {
@@ -65,6 +66,7 @@ public class AppMainActivity extends AppCompatActivity {
               //     mTextMessage.setText(R.string.title_home);
                     beginTransaction(mHomePageFragment);
                     return true;
+
                 case R.id.navigation_mail:
                 //    mTextMessage.setText(R.string.title_dashboard);
                     beginTransaction(mMessagesFragment);
@@ -108,7 +110,7 @@ public class AppMainActivity extends AppCompatActivity {
         mProfileFragment = new ProfileFragment();
         mHomePageFragment = new HomePageFragment();
         mHomePageFragment.setSetToolBarTitle(mToolBarTitle);
-        mMessagesFragment = new MessagesFragment();
+        mMessagesFragment = new BlankFragment();
         mProfileFragment.setSetToolBarTitle(mToolBarTitle);
         mNotificationFragment.setSetToolBarTitle(mToolBarTitle);
 

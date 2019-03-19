@@ -20,6 +20,7 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
 import com.musapp.musicapp.enums.PostUploadType;
+import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.pattern.UploadsAdapterFactory;
 import com.musapp.musicapp.pattern.UploadTypeFactory;
 import com.musapp.musicapp.uploads.AttachedFile;
@@ -164,30 +165,29 @@ public class Post implements Parcelable{
         //innerAdapter.setUploads(uploads);
         innerRecyclerView.setLayoutManager(new GridLayoutManager(context, 2));
         innerRecyclerView.setAdapter(innerAdapter);
+        innerAdapter.setUploads(uploads);
     }
 
     //old version
     private void loadAttachedFiles(){
         if(type != PostUploadType.NONE){
             if(attachmentId != null) {
-                FirebaseDatabase.getInstance().getReference().child("attachments").child(attachmentId).addValueEventListener(
-                        new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                attachedFile = dataSnapshot.getValue(AttachedFile.class);
-                                for (String url : attachedFile.getFilesUrls()) {
-                                    uploads.add(UploadTypeFactory.setUploadByType(attachedFile.getFileType(), url));
-                                }
-                                innerAdapter.setUploads(uploads);
-                                innerAdapter.notifyDataSetChanged();
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
+                FirebaseRepository.getAttachment(attachmentId, new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        uploads.clear();
+                        attachedFile = dataSnapshot.getValue(AttachedFile.class);
+                        for (String url : attachedFile.getFilesUrls()) {
+                            uploads.add(UploadTypeFactory.setUploadByType(attachedFile.getFileType(), url));
                         }
-                );
+                        innerAdapter.setUploads(uploads);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         }
     }
@@ -208,6 +208,7 @@ public class Post implements Parcelable{
             dest.writeStringList(commentsId);
             dest.writeString(attachmentId);
             dest.writeString(mUserName);
+            dest.writeString(type.name());
     }
 
     private static Post createFromParcel(Parcel source){
@@ -221,6 +222,22 @@ public class Post implements Parcelable{
         source.writeStringList(post.commentsId);
         post.attachmentId = source.readString();
         post.mUserName = source.readString();
+
+        final String name = source.readString();
+        switch (name){
+            case "NONE" : {
+                post.type = PostUploadType.NONE;
+            }break;
+            case "IMAGE" : {
+                post.type = PostUploadType.IMAGE;
+            }break;
+            case "VIDEO" : {
+                post.type = PostUploadType.VIDEO;
+            }break;
+            case "MUSIC" : {
+                post.type = PostUploadType.MUSIC;
+            }break;
+        }
         return post;
     }
 
@@ -248,7 +265,7 @@ public class Post implements Parcelable{
     @Override
     public boolean equals( Object obj) {
         if(obj instanceof Post)
-            return primaryKey.equals(((Post) obj).getPrimaryKey());
+            return primaryKey != null && primaryKey.equals(((Post) obj).getPrimaryKey());
         return false;
     }
 }

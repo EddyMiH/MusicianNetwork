@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -41,6 +42,7 @@ import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.service.UploadForegroundService;
 import com.musapp.musicapp.uploads.AttachedFile;
+import com.musapp.musicapp.utils.FragmentShowUtils;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -74,6 +76,8 @@ public class AddPostFragment extends Fragment {
     private User user = CurrentUser.getCurrentUser();
 
     private Map<String, Uri> fileUri  = new HashMap<>();
+
+    private Bundle bundle;
 
 
 
@@ -187,7 +191,7 @@ public class AddPostFragment extends Fragment {
                 }
             }
         });
-        mSetToolBarTitle.setTitle(R.string.add_post_action_bar_title_menu);
+//        mSetToolBarTitle.setTitle(R.string.add_post_action_bar_title_menu);
         return view;
     }
 
@@ -206,15 +210,15 @@ public class AddPostFragment extends Fragment {
 
     private void selectVideo(){
         if(isStoragePermissionAccepted){
-            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-            intent.setType("video/*");
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setDataAndType(android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI, "video/*");
             startActivityForResult(intent, SELECT_VIDEO);
         }
     }
 
     private void selectAudio(){
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("audio/*");
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setDataAndType( MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "audio/*");
         startActivityForResult(Intent.createChooser(intent,"Gallery"), SELECT_AUDIO);
     }
 
@@ -267,14 +271,19 @@ public class AddPostFragment extends Fragment {
                                 });
                             }
                         });*/
-                mSelectedFilesName.setText(selectedFiles);
+//                mSelectedFilesName.setText(selectedFiles);
 
 
             }else if(requestCode == SELECT_VIDEO){
                 mAddMusic.setEnabled(false);
                 mAddImage.setEnabled(false);
                 final Uri selectedVideoUri = data.getData();
-                final StorageReference fileReference = DBAccess.creatStorageChild("video/", System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri));
+
+
+                fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri), selectedVideoUri);
+
+
+              /*  final StorageReference fileReference = DBAccess.creatStorageChild("video/", System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri));
                 fileReference.putFile(selectedVideoUri).addOnSuccessListener(
                         new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -288,8 +297,11 @@ public class AddPostFragment extends Fragment {
                                     }
                                 });
                             }
-                        });
-                mSelectedFilesName.setText(selectedFiles);
+                        });*/
+
+
+
+//                mSelectedFilesName.setText(selectedFiles);
 
             }else if(requestCode == SELECT_AUDIO){
                 mAddVideo.setEnabled(false);
@@ -297,6 +309,9 @@ public class AddPostFragment extends Fragment {
 
                 Uri selectedAudioUri = data.getData();
                 Log.d("URL AUDIO", "onActivityResult: " + selectedAudioUri.toString());
+
+                fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedAudioUri), selectedAudioUri);
+
                 //TODO send url to firebase storage
 //                final StorageReference fileReference = DBAccess.creatStorageChild("audio/", System.currentTimeMillis() + "." + getFileExtension(selectedAudioUri));
 //                fileReference.putFile(selectedAudioUri).addOnSuccessListener(
@@ -332,9 +347,10 @@ public class AddPostFragment extends Fragment {
                 //TODO save into Firebase and close fragment
 //                if(mAttachedFile.getFileType() != PostUploadType.NONE){
 //                    DBAsyncTask.waitResponse("attachments", this, mAttachedFile);
-//                }
-//                savePost();
+//
                 savePost();
+
+
               //  getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, new HomePageFragment()).addToBackStack(null).commit();
 
 
@@ -412,17 +428,11 @@ public class AddPostFragment extends Fragment {
     }
 
     private void quitFragment() {
-       /* FragmentManager manager = getFragmentManager();
-        FragmentTransaction trans = manager.beginTransaction();
-        trans.remove(this);
-        trans.commit();
-        manager.popBackStack();*/
-        FragmentManager fm = getFragmentManager();
-        fm.beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .hide(this)
-                .commit();
+
+            FragmentShowUtils.goBack(getFragmentManager(), R.id.layout_activity_app_container);
     }
+
+
 
     public boolean isStoragePermissionAccepted(){
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
