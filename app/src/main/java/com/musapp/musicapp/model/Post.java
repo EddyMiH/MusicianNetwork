@@ -179,8 +179,14 @@ public class Post implements Parcelable{
         }
         //TODO select attached file from firebase by id and set here
         loadAttachedFiles();
-        innerAdapter.setUploads(uploads);
-        innerRecyclerView.setLayoutManager(new GridLayoutManager(context, 2));
+        //innerAdapter.setUploads(uploads);
+        if(type ==PostUploadType.VIDEO || type == PostUploadType.MUSIC){
+            innerRecyclerView.setLayoutManager(new GridLayoutManager(context, 1));
+
+        }else{
+            innerRecyclerView.setLayoutManager(new GridLayoutManager(context, 2));
+
+        }
         innerRecyclerView.setAdapter(innerAdapter);
     }
 
