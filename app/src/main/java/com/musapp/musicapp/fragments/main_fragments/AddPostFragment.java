@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -47,6 +48,7 @@ import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.service.UploadForegroundService;
 import com.musapp.musicapp.uploads.AttachedFile;
+import com.musapp.musicapp.utils.FragmentShowUtils;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -80,6 +82,8 @@ public class AddPostFragment extends Fragment {
     private User user = CurrentUser.getCurrentUser();
 
     private Map<String, Uri> fileUri  = new HashMap<>();
+
+    private Bundle bundle;
 
     public AddPostFragment() {
 
@@ -178,7 +182,7 @@ public class AddPostFragment extends Fragment {
                 }
             }
         });
-        mSetToolBarTitle.setTitle(R.string.add_post_action_bar_title_menu);
+//        mSetToolBarTitle.setTitle(R.string.add_post_action_bar_title_menu);
         return view;
     }
 
@@ -252,50 +256,80 @@ public class AddPostFragment extends Fragment {
 //                                });
 //                            }
 //                        });
-                mSelectedFilesName.setText(String.valueOf(selectedFiles));
+                //mSelectedFilesName.setText(String.valueOf(selectedFiles));
+
+
+           /*     fileReference.putFile(selectedImageUri).addOnSuccessListener(
+                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        mAttachedFile.addFile(uri.toString());
+                                        selectedFiles++;
+
+                                    }
+                                });
+                            }
+                        });*/
+//                mSelectedFilesName.setText(selectedFiles);
+
+
             }else if(requestCode == SELECT_VIDEO){
                 mAddMusic.setEnabled(false);
                 mAddImage.setEnabled(false);
                 final Uri selectedVideoUri = data.getData();
                 fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri), selectedVideoUri);
-                final StorageReference fileReference = FirebaseRepository.createVideoStorageChild(System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri));
-                FirebaseRepository.putFileInStorage(fileReference, selectedVideoUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
+
+
+              /*  final StorageReference fileReference = DBAccess.creatStorageChild("video/", System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri));
+                fileReference.putFile(selectedVideoUri).addOnSuccessListener(
+                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
+>>>>>>> 51e6f4793d53a75954b5f56bbbd089850f21cd29
                             @Override
                             public void onSuccess(Uri uri) {
                                 mAttachedFile.addFile(uri.toString());
                                 selectedFiles++;
                             }
+<<<<<<< HEAD
                         });
                     }
                 });
 
                 mSelectedFilesName.setText(String.valueOf(selectedFiles));
+=======
+                        });*/
 
+
+
+//                mSelectedFilesName.setText(selectedFiles);
             }else if(requestCode == SELECT_AUDIO){
                 mAddVideo.setEnabled(false);
                 mAddImage.setEnabled(false);
 
                 Uri selectedAudioUri = data.getData();
-                String audioCustomName = getAudioCustomName(selectedAudioUri);
-                fileUri.put(audioCustomName + "." + getFileExtension(selectedAudioUri), selectedAudioUri);
-                final StorageReference fileReference = FirebaseRepository.createAudioStorageChild(audioCustomName + "." + getFileExtension(selectedAudioUri));
-                FirebaseRepository.putFileInStorage(fileReference, selectedAudioUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                mAttachedFile.addFile(uri.toString());
-                                selectedFiles++;
-                            }
-                        });
-                    }
-                });
+//                String audioCustomName = getAudioCustomName(selectedAudioUri);
+//                fileUri.put(audioCustomName + "." + getFileExtension(selectedAudioUri), selectedAudioUri);
+//                final StorageReference fileReference = FirebaseRepository.createAudioStorageChild(audioCustomName + "." + getFileExtension(selectedAudioUri));
+//                FirebaseRepository.putFileInStorage(fileReference, selectedAudioUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                    @Override
+//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                        FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
+//                            @Override
+//                            public void onSuccess(Uri uri) {
+//                                mAttachedFile.addFile(uri.toString());
+//                                selectedFiles++;
+//                            }
+//                        });
+//                    }
+//                });
+//
+//                mSelectedFilesName.setText(String.valueOf(selectedFiles));
+                Log.d("URL AUDIO", "onActivityResult: " + selectedAudioUri.toString());
 
-                mSelectedFilesName.setText(String.valueOf(selectedFiles));
+                fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedAudioUri), selectedAudioUri);
+
                 //TODO send url to firebase storage
 //                final StorageReference fileReference = DBAccess.creatStorageChild("audio/", System.currentTimeMillis() + "." + getFileExtension(selectedAudioUri));
 //                fileReference.putFile(selectedAudioUri).addOnSuccessListener(
@@ -360,9 +394,10 @@ public class AddPostFragment extends Fragment {
                 //TODO save into Firebase and close fragment
 //                if(mAttachedFile.getFileType() != PostUploadType.NONE){
 //                    DBAsyncTask.waitResponse("attachments", this, mAttachedFile);
-//                }
-//                savePost();
+//
                 savePost();
+
+
               //  getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, new HomePageFragment()).addToBackStack(null).commit();
 
 
@@ -440,17 +475,11 @@ public class AddPostFragment extends Fragment {
     }
 
     private void quitFragment() {
-       /* FragmentManager manager = getFragmentManager();
-        FragmentTransaction trans = manager.beginTransaction();
-        trans.remove(this);
-        trans.commit();
-        manager.popBackStack();*/
-        FragmentManager fm = getFragmentManager();
-        fm.beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .hide(this)
-                .commit();
+
+            FragmentShowUtils.goBack(getFragmentManager(), R.id.layout_activity_app_container);
     }
+
+
 
     public boolean isStoragePermissionAccepted(){
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)

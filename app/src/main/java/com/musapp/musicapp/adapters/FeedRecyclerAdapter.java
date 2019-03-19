@@ -39,17 +39,18 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         if(this.mData == null){
             this.mData = new ArrayList<>();
         }else{
-        //    this.mData.clear();
+         //  this.mData.clear();
         }
         this.mData.addAll(mData);
         notifyDataSetChanged();
     }
 
     public void addPostItem(Post post, int index){
-        if(mData == null)
+        if(mData == null) {
             mData = new ArrayList<>();
+        }
             mData.add(index, post);
-           notifyItemInserted(index);
+        notifyItemInserted(index);
 
     }
 
@@ -92,14 +93,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final FeedViewHolder feedViewHolder, int i) {
         Post post = mData.get(i);
-        post.setInnerRecyclerView(view);
-        post.initializeInnerRecyclerAndAdapter(context);
+        mData.get(i).setInnerRecyclerView(view);
+        mData.get(i).initializeInnerRecyclerAndAdapter(context);
         //feedViewHolder.setOnSettingClickListener(mOnClickListener);
         feedViewHolder.setUserName(post.getUserName());
         feedViewHolder.setFeedProfileImage(post.getProfileImage());
         feedViewHolder.setPostText(post.getPostText());
         feedViewHolder.setPostTime(post.getPublishedTime());
         feedViewHolder.setCommentCount(String.valueOf(post.getCommentsQuantity()));
+
 
         /*switch (post.getType()){
             case NONE:

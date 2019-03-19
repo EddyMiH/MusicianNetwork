@@ -188,21 +188,22 @@ public class Post implements Parcelable{
 
         }
         innerRecyclerView.setAdapter(innerAdapter);
+        innerAdapter.setUploads(uploads);
     }
 
     //old version
     private void loadAttachedFiles(){
         if(type != PostUploadType.NONE){
             if(attachmentId != null) {
-                FirebaseRepository.getAttachmentId(attachmentId, new ValueEventListener() {
+                FirebaseRepository.getAttachment(attachmentId, new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        uploads.clear();
                         attachedFile = dataSnapshot.getValue(AttachedFile.class);
                         for (String url : attachedFile.getFilesUrls()) {
                             uploads.add(UploadTypeFactory.setUploadByType(attachedFile.getFileType(), url));
                         }
                         innerAdapter.setUploads(uploads);
-                        innerAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -230,6 +231,7 @@ public class Post implements Parcelable{
             dest.writeStringList(commentsId);
             dest.writeString(attachmentId);
             dest.writeString(mUserName);
+            dest.writeString(type.name());
     }
 
     private static Post createFromParcel(Parcel source){
@@ -243,6 +245,22 @@ public class Post implements Parcelable{
         source.writeStringList(post.commentsId);
         post.attachmentId = source.readString();
         post.mUserName = source.readString();
+
+        final String name = source.readString();
+        switch (name){
+            case "NONE" : {
+                post.type = PostUploadType.NONE;
+            }break;
+            case "IMAGE" : {
+                post.type = PostUploadType.IMAGE;
+            }break;
+            case "VIDEO" : {
+                post.type = PostUploadType.VIDEO;
+            }break;
+            case "MUSIC" : {
+                post.type = PostUploadType.MUSIC;
+            }break;
+        }
         return post;
     }
 
@@ -270,7 +288,7 @@ public class Post implements Parcelable{
     @Override
     public boolean equals( Object obj) {
         if(obj instanceof Post)
-            return primaryKey.equals(((Post) obj).getPrimaryKey());
+            return primaryKey != null && primaryKey.equals(((Post) obj).getPrimaryKey());
         return false;
     }
 }

@@ -3,10 +3,8 @@ package com.musapp.musicapp.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.widget.LinearLayout;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -19,12 +17,8 @@ import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.uploads.AttachedFile;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class UploadForegroundService extends IntentService {
@@ -93,10 +87,47 @@ public class UploadForegroundService extends IntentService {
                }
            });
 
-       }
+       }}
 
+       else if(attachedFile.getFileType() == PostUploadType.VIDEO){
+            for(Map.Entry<String, Uri> entry: filesUri.entrySet()){
+                final StorageReference fileReference = FirebaseRepository.createVideoStorageChild(entry.getKey());
 
+                FirebaseRepository.putFileInStorage(fileReference, entry.getValue(), new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                attachedFile.addFile(uri.toString());
+                                if(attachedFile.getFilesUrls().size() == filesUri.size())
+                                    sentAttachmentAndPostToFirebase();
 
+                            }
+                        });
+                    }
+                });
+        }}
+
+        else if(attachedFile.getFileType() == PostUploadType.MUSIC){
+            for(Map.Entry<String, Uri> entry: filesUri.entrySet()){
+                final StorageReference fileReference = FirebaseRepository.createMusicStorageChild(entry.getKey());
+
+                FirebaseRepository.putFileInStorage(fileReference, entry.getValue(), new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                attachedFile.addFile(uri.toString());
+                                if(attachedFile.getFilesUrls().size() == filesUri.size())
+                                    sentAttachmentAndPostToFirebase();
+
+                            }
+                        });
+                    }
+                });
+            }
         }
     }
 
