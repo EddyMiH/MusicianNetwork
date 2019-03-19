@@ -47,6 +47,10 @@
             android:layout_marginStart="30dp"
             android:textSize="20sp"
             android:textStyle="italic"/>
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/seek_bar_music_view_post_inner_recycler_view"/>
     </LinearLayout>
 
     <TextView

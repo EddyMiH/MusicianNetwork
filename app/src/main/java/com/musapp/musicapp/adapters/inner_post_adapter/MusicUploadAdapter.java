@@ -11,27 +11,22 @@ import com.musapp.musicapp.uploads.MusicUpload;
 
 public class MusicUploadAdapter extends BaseUploadsAdapter<MusicUpload, MusicPostViewHolder> {
 
-    private OnSongSelectedListener mOnSongSelectedListener;
-
-
     @NonNull
     @Override
-    public MusicPostViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public MusicPostViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,final int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_post_inner_recycler_view_music_item, viewGroup, false);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mOnItemSelectedListener != null)
+                    mOnItemSelectedListener.onItemSelected(uploads.get(i).getUrl());
+            }
+        });
         return new MusicPostViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MusicPostViewHolder musicPostViewHolder, int i) {
-        //super.onBindViewHolder(musicPostViewHolder, i);
         musicPostViewHolder.setMusic(uploads.get(i).getUrl());
-    }
-
-    public void setOnSongSelectedListener(OnSongSelectedListener onSongSelectedListener) {
-        mOnSongSelectedListener = onSongSelectedListener;
-    }
-
-    public interface OnSongSelectedListener{
-        void onSongSelected();
     }
 }

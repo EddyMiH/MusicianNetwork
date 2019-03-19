@@ -1,23 +1,22 @@
-package com.musapp.musicapp.services;
+package com.musapp.musicapp.service;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class MusicPlayerService extends IntentService {
 
     private MediaPlayer mMediaPlayer;
-    private LocalBunder mLocalBunder;
-    //maybe don't need
-    private List<String> mSongsDataUrls;
-    private int mCurrentSongIndex;
+    private LocalBinder mLocalBinder;
+    private String currentSongUrl;
+    Handler mHandler;
 
     private MediaPlayer.OnPreparedListener mOnPreparedListener =
             new MediaPlayer.OnPreparedListener() {
@@ -31,16 +30,22 @@ public class MusicPlayerService extends IntentService {
             new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    //TODO play next song of post(or the same song)
-                    //LocalBinder.playNext()
+                    mLocalBinder.repeatSong();
                 }
             };
+    private MediaPlayer.OnErrorListener mOnErrorListener = new MediaPlayer.OnErrorListener() {
+        @Override
+        public boolean onError(MediaPlayer mp, int what, int extra) {
+            return false;
+        }
+    };
+
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mSongsDataUrls = new ArrayList<>();
         initMediaPlayer();
+
     }
 
 
@@ -52,10 +57,6 @@ public class MusicPlayerService extends IntentService {
         super("MusicPlayerService");
     }
 
-    public void setSongsDataUrls(List<String> songsDataUrls) {
-        mSongsDataUrls = songsDataUrls;
-    }
-
     @Override
     protected void onHandleIntent(Intent intent) {
 
@@ -65,15 +66,30 @@ public class MusicPlayerService extends IntentService {
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnPreparedListener(mOnPreparedListener);
         mMediaPlayer.setOnCompletionListener(mOnCompletionListener);
+        mMediaPlayer.setOnErrorListener(mOnErrorListener);
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
 
     }
+    private void release(){
+        if(mMediaPlayer != null){
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+    }
+
     private void playSong(String url){
         try{
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(url);
             mMediaPlayer.prepareAsync();
+            currentSongUrl = url;
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                }
+            }, 1000);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -114,27 +130,24 @@ public class MusicPlayerService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mMediaPlayer != null){
-            mMediaPlayer.release();
-        }
+        release();
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        if(mLocalBunder == null){
-            mLocalBunder = new LocalBunder();
+        if(mLocalBinder == null){
+            mLocalBinder = new LocalBinder();
         }
-        return mLocalBunder;
+        return mLocalBinder;
     }
 
-    public class LocalBunder extends Binder{
+    public class LocalBinder extends Binder{
         public void play(String path){
             playSong(path);
 
         }
         public void pause(){
             MusicPlayerService.this.pause();
-
 
         }
         public void resume(){
@@ -146,16 +159,18 @@ public class MusicPlayerService extends IntentService {
         public void seekTo(int position){
             MusicPlayerService.this.seekTo(position);
         }
-        public void setSongDataUrl(List<String> url){
-            setSongsDataUrls(url);
+        public void repeatSong(){
+            playSong(currentSongUrl);
         }
-
 
         public boolean isPlaying(){
             return isPlayerPlaying();
         }
         public int getCurrentDuration(){
             return getDuration();
+        }
+        public int getPlayerDuration(){
+            return getMediaPlayerDuration();
         }
 
 

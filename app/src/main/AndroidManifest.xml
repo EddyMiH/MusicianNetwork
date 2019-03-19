@@ -33,7 +33,7 @@
         <activity android:name=".activities.StartActivity" />
 
         <service android:name=".service.UploadForegroundService" />
-        <service android:name=".services.MusicPlayerService" />
+        <service android:name=".service.MusicPlayerService" />
     </application>
 
 </manifest>

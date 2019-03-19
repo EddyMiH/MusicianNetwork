@@ -3,8 +3,13 @@ package com.musapp.musicapp.fragments.main_fragments;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.CharArrayBuffer;
+import android.database.ContentObserver;
+import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -36,6 +41,7 @@ import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
@@ -75,27 +81,12 @@ public class AddPostFragment extends Fragment {
 
     private Map<String, Uri> fileUri  = new HashMap<>();
 
-
-
     public AddPostFragment() {
 
         mNewPost = new Post();
         //get image url from profession and bio database
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-//        Query query = mDatabaseReference.child("profession_and_bio").equalTo(CurrentUser.getCurrentUser().getPrimaryKey());
-//        query.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                ProfessionAndInfo info = dataSnapshot.getValue(ProfessionAndInfo.class);
-//                mNewPost.setProfileImage(info.getImageUri());
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Log.d("EVENT_LISTENER ", "onCancelled: something wrong !!");
-//            }
-//        });
      /*   mDatabaseReference.child("profession_and_bio").addValueEventListener(new ValueEventListener() {
 =======
 
@@ -206,15 +197,15 @@ public class AddPostFragment extends Fragment {
 
     private void selectVideo(){
         if(isStoragePermissionAccepted){
-            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-            intent.setType("video/*");
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setDataAndType(android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI, "video/*");
             startActivityForResult(intent, SELECT_VIDEO);
         }
     }
 
     private void selectAudio(){
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("audio/*");
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setDataAndType(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "audio/*");
         startActivityForResult(Intent.createChooser(intent,"Gallery"), SELECT_AUDIO);
     }
 
@@ -229,15 +220,12 @@ public class AddPostFragment extends Fragment {
                 mAddVideo.setEnabled(false);
                 mAddMusic.setEnabled(false);
 
-                Log.d("DODO", "onActivityResult: I'm here, in if!!");
                 final Uri selectedImageUri = data.getData();
              //   final StorageReference fileReference = FirebaseRepository.cre
                //         DBAccess.creatStorageChild("image/", System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
 
                 fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedImageUri), selectedImageUri);
-           //     selectedFiles += "image\n";
 
-/*
                 final StorageReference fileReference = FirebaseRepository.createImageStorageChild(System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
                 FirebaseRepository.putFileInStorage(fileReference, selectedImageUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -246,57 +234,68 @@ public class AddPostFragment extends Fragment {
                             @Override
                             public void onSuccess(Uri uri) {
                                 mAttachedFile.addFile(uri.toString());
-                                selectedFiles += "image\n";
+                                        selectedFiles++;
+                            }
+                        });
+                    }
+                });
+//               fileReference.putFile(selectedImageUri).addOnSuccessListener(
+//                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                            @Override
+//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                                    @Override
+//                                    public void onSuccess(Uri uri) {
+//                                        mAttachedFile.addFile(uri.toString());
+//
+//                                    }
+//                                });
+//                            }
+//                        });
+                mSelectedFilesName.setText(String.valueOf(selectedFiles));
+            }else if(requestCode == SELECT_VIDEO){
+                mAddMusic.setEnabled(false);
+                mAddImage.setEnabled(false);
+                final Uri selectedVideoUri = data.getData();
+                fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri), selectedVideoUri);
+                final StorageReference fileReference = FirebaseRepository.createVideoStorageChild(System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri));
+                FirebaseRepository.putFileInStorage(fileReference, selectedVideoUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                mAttachedFile.addFile(uri.toString());
+                                selectedFiles++;
                             }
                         });
                     }
                 });
 
-
-           /*     fileReference.putFile(selectedImageUri).addOnSuccessListener(
-                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        mAttachedFile.addFile(uri.toString());
-                                        selectedFiles++;
-
-                                    }
-                                });
-                            }
-                        });*/
-                mSelectedFilesName.setText(selectedFiles);
-
-
-            }else if(requestCode == SELECT_VIDEO){
-                mAddMusic.setEnabled(false);
-                mAddImage.setEnabled(false);
-                final Uri selectedVideoUri = data.getData();
-                final StorageReference fileReference = DBAccess.creatStorageChild("video/", System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri));
-                fileReference.putFile(selectedVideoUri).addOnSuccessListener(
-                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        mAttachedFile.addFile(uri.toString());
-                                        selectedFiles++;
-
-                                    }
-                                });
-                            }
-                        });
-                mSelectedFilesName.setText(selectedFiles);
+                mSelectedFilesName.setText(String.valueOf(selectedFiles));
 
             }else if(requestCode == SELECT_AUDIO){
                 mAddVideo.setEnabled(false);
                 mAddImage.setEnabled(false);
 
                 Uri selectedAudioUri = data.getData();
-                Log.d("URL AUDIO", "onActivityResult: " + selectedAudioUri.toString());
+                String audioCustomName = getAudioCustomName(selectedAudioUri);
+                fileUri.put(audioCustomName + "." + getFileExtension(selectedAudioUri), selectedAudioUri);
+                final StorageReference fileReference = FirebaseRepository.createAudioStorageChild(audioCustomName + "." + getFileExtension(selectedAudioUri));
+                FirebaseRepository.putFileInStorage(fileReference, selectedAudioUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                mAttachedFile.addFile(uri.toString());
+                                selectedFiles++;
+                            }
+                        });
+                    }
+                });
+
+                mSelectedFilesName.setText(String.valueOf(selectedFiles));
                 //TODO send url to firebase storage
 //                final StorageReference fileReference = DBAccess.creatStorageChild("audio/", System.currentTimeMillis() + "." + getFileExtension(selectedAudioUri));
 //                fileReference.putFile(selectedAudioUri).addOnSuccessListener(
@@ -316,6 +315,35 @@ public class AddPostFragment extends Fragment {
             }
 
         }
+    }
+
+    public String getAudioCustomName(Uri uri){
+        String result = "";
+        ContentResolver resolver = getActivity().getContentResolver();
+        //String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String[] proj = {
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.DATA
+        };
+        Cursor cursor = resolver.query(uri, proj, null, null, null);
+        if(cursor != null && cursor.getCount() > 0){
+            while(cursor.moveToNext()){
+                //if(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)).equals(uri)){
+                    result += cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                    result += "_";
+                    result += cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                    result += "_";
+                    result += cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+               // }
+
+            }
+
+            cursor.close();
+        }
+        return result;
     }
 
     @Override
@@ -432,5 +460,8 @@ public class AddPostFragment extends Fragment {
             isStoragePermissionAccepted = false;
         }
         return isStoragePermissionAccepted;
+    }
+    public void setSetToolBarTitle(SetToolBarTitle toolBarTitle){
+        mSetToolBarTitle = toolBarTitle;
     }
 }

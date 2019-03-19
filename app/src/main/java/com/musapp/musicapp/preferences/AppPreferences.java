@@ -12,6 +12,10 @@ public final class AppPreferences {
 
     }
 
+    public static void clearGenreState(Context context){
+        getSharedPreferences(context).edit().remove(GENRES).apply();
+    }
+
     public static void saveGenreState(Context context, String genre) {
         getSharedPreferences(context)
                 .edit()

@@ -6,8 +6,8 @@
         <shape android:shape="oval">
             <solid android:color="@color/dark_purple"/>
             <gradient
-                android:endColor="@color/dark_purple"
-                android:startColor="@color/dark_purple" />
+                android:endColor="@color/lightBlue"
+                android:startColor="@color/lightBlue" />
         </shape>
 
 

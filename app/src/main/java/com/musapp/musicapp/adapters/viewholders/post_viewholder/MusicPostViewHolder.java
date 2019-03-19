@@ -3,6 +3,7 @@ package com.musapp.musicapp.adapters.viewholders.post_viewholder;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.musapp.musicapp.R;
@@ -13,6 +14,7 @@ public class MusicPostViewHolder extends BasePostViewHolder {
     private TextView mSongTitle;
     private TextView mArtistName;
     private TextView mSongDuration;
+    private SeekBar mDurationSeekBar;
 
 
     public MusicPostViewHolder(@NonNull View itemView) {
@@ -21,6 +23,7 @@ public class MusicPostViewHolder extends BasePostViewHolder {
         mSongTitle = itemView.findViewById(R.id.text_music_title);
         mArtistName = itemView.findViewById(R.id.text_music_author);
         mSongDuration = itemView.findViewById(R.id.text_music_duration);
+        mDurationSeekBar = itemView.findViewById(R.id.seek_bar_music_view_post_inner_recycler_view);
     }
 
     public void setPlayButton(Button playButton) {
@@ -35,8 +38,12 @@ public class MusicPostViewHolder extends BasePostViewHolder {
         mArtistName.setText(artistName);
     }
 
-    public void setSongDuration(String songDuration) {
+    public void setSongDuration(int songDuration) {
         mSongDuration.setText(songDuration);
+    }
+
+    public SeekBar getSeekBar(){
+        return mDurationSeekBar;
     }
 
     public void setMusic(String url){

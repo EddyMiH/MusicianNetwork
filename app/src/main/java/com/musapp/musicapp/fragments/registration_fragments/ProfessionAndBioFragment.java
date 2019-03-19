@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -35,13 +36,17 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase.DBAsyncTask;
+import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
+import com.musapp.musicapp.image_generator.RandomGradientGenerator;
 import com.musapp.musicapp.model.Info;
 import com.musapp.musicapp.model.Profession;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.UIUtils;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ProfessionAndBioFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -61,6 +66,7 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
     public boolean isPermissionAccepted = false;
     private boolean isCameraPermissionAccepted = false;
     private boolean isStoragePermissionAccepted = false;
+    private Uri path;
 
     @Nullable
     @Override
@@ -93,11 +99,19 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
             public void onClick(View v) {
                 userInfo.setAdditionalInfo(userInfoTextView.getText().toString());
                 RegistrationTransactionWrapper.registerForNextFragment((int) nextButton.getTag());
+                setImage();
                 submitInformation();
                 //CurrentUser.setCurrentUser(user);
             }
         });
         return rootView;
+    }
+    private void setImage(){
+        if(userInfo.getImageUri() == null){
+            Drawable generateImage = RandomGradientGenerator.getRandomGradient();
+            //TODO get uri of generated drawable
+            //putImageToStorage(generateImage.get);
+        }
     }
 
     private void requestPermission() {
@@ -145,6 +159,7 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
                 if (items[i].equals("Camera")) {
                     if (isCameraPermissionAccepted) {
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, path);
                         startActivityForResult(intent, REQUEST_CAMERA);
                     }
                 } else if (items[i].equals("Gallery")) {
@@ -173,30 +188,59 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
                 Bundle bundle = data.getExtras();
                 final Bitmap bmp = (Bitmap) bundle.get("data");
                 profileImage.setImageBitmap(bmp);
+                putImageToStorage(path);
 
             } else if (requestCode == SELECT_FILE) {
 
                 final Uri selectedImageUri = data.getData();
                 profileImage.setImageURI(selectedImageUri);
-                final StorageReference fileReference = DBAccess.creatStorageChild("image/", System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
-                fileReference.putFile(selectedImageUri).addOnSuccessListener(
-                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        userInfo.setImageUri(uri.toString());
-
-                                    }
-                                });
-                                //userInfo.setImageUri(taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
-                            }
-                        });
+                putImageToStorage(selectedImageUri);
+//                final StorageReference fileReference = FirebaseRepository.createImageStorageChild(System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
+//                FirebaseRepository.putFileInStorage(fileReference, selectedImageUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                    @Override
+//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                        FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
+//                            @Override
+//                            public void onSuccess(Uri uri) {
+//                                userInfo.setImageUri(uri.toString());
+//                            }
+//                        });
+//                    }
+//                });
+//                final StorageReference fileReference = DBAccess.creatStorageChild("image/", System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
+//                fileReference.putFile(selectedImageUri).addOnSuccessListener(
+//                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                            @Override
+//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                                    @Override
+//                                    public void onSuccess(Uri uri) {
+//                                        userInfo.setImageUri(uri.toString());
+//
+//                                    }
+//                                });
+//                                //userInfo.setImageUri(taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+//                            }
+//                        });
                 //userInfo.setImageUri(selectedImageUri.);
             }
 
         }
+    }
+
+    private void putImageToStorage(Uri selectedImageUri){
+        final StorageReference fileReference = FirebaseRepository.createImageStorageChild(System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
+        FirebaseRepository.putFileInStorage(fileReference, selectedImageUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        userInfo.setImageUri(uri.toString());
+                    }
+                });
+            }
+        });
     }
 
     private String getFileExtension(Uri uri) {
@@ -236,24 +280,7 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
-//    private void submitInformation(){
-//
-//        DBAsyncTask.waitResponse("profession_and_bio", this, userInfo);
-//    }
-//
-//
-//    @Override
-//    public void doOnResponse(String key, String childName) {
-//        user.setProfessionAndInfoId(key);
-//    }
-//
-//    @Override
-//    public void  doForResponse(String str, Object obj) {
-//        DBAccess.createChild("profession_and_bio", userInfo);
-
-
     private void submitInformation() {
-
         user.setProfession(profession);
         user.setUserInfo(userInfo);
 

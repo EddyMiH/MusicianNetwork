@@ -1,6 +1,12 @@
 package com.musapp.musicapp.fragments.main_fragments;
 
+import android.arch.persistence.room.Entity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,7 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,20 +25,17 @@ import android.widget.ProgressBar;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.enums.PostUploadType;
-import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
-import com.musapp.musicapp.utils.ContextUtils;
-
+import com.musapp.musicapp.service.MusicPlayerService;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -103,6 +105,7 @@ public class HomePageFragment extends Fragment {
                         loadPostsFromDatabase(feedRecyclerAdapter.getData().get(feedRecyclerAdapter.getData().size() - limit + 1).getPublishedTime(), limit);}
                 }
             }});
+        Post.setLocalBinder(mLocalBinder);
         return rootView;
     }
 
@@ -291,7 +294,7 @@ public class HomePageFragment extends Fragment {
             case R.id.action_add_home_fragment_menu_item:
                 //TODO open new fragment for add new post
                 AddPostFragment fragment = new AddPostFragment();
-              //  fragment.setSetToolBarTitle(mSetToolBarTitle);
+                fragment.setSetToolBarTitle(mSetToolBarTitle);
                 beginTransaction(fragment);
         }
         return true;
@@ -303,6 +306,35 @@ public class HomePageFragment extends Fragment {
         setHasOptionsMenu(true);
 
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Intent intent = new Intent(getContext(), MusicPlayerService.class);
+        getActivity().bindService(intent,mServiceConnection, Context.BIND_AUTO_CREATE);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mLocalBinder.stop();
+        getActivity().unbindService(mServiceConnection);
+    }
+
+    private MusicPlayerService.LocalBinder mLocalBinder;
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mLocalBinder = (MusicPlayerService.LocalBinder) service;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mLocalBinder = null;
+        }
+    };
 
     public void beginTransaction(Fragment fragment){
        /* getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, fragment)

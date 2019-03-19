@@ -1,13 +1,10 @@
 package com.musapp.musicapp.model;
 
-import android.arch.persistence.room.Ignore;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -20,8 +17,10 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
 import com.musapp.musicapp.enums.PostUploadType;
+import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.pattern.UploadsAdapterFactory;
 import com.musapp.musicapp.pattern.UploadTypeFactory;
+import com.musapp.musicapp.service.MusicPlayerService;
 import com.musapp.musicapp.uploads.AttachedFile;
 import com.musapp.musicapp.uploads.BaseUpload;
 
@@ -30,8 +29,6 @@ import java.util.List;
 
 
 public class Post implements Parcelable{
-    //instead of userName & ProfileImage fields must be User class field
-    //private User mUser;
 
     private String primaryKey;
     private String mUserId;
@@ -45,6 +42,11 @@ public class Post implements Parcelable{
     private List<String> commentsId;
 
     private String attachmentId;
+    @Exclude
+    private static MusicPlayerService.LocalBinder mLocalBinder;
+    public static void setLocalBinder(MusicPlayerService.LocalBinder binder){
+        mLocalBinder = binder;
+    }
 
     public List<String> getCommentsId() {
         return commentsId;
@@ -151,7 +153,20 @@ public class Post implements Parcelable{
     private AttachedFile attachedFile;
     @Exclude
     private List<BaseUpload> uploads = new ArrayList<>();
-
+    @Exclude
+    private BaseUploadsAdapter.OnItemSelectedListener mOnSongItemSelectedListener =
+            new BaseUploadsAdapter.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(String uri) {
+                    if(mLocalBinder != null){
+                        if(mLocalBinder.isPlaying()){
+                            mLocalBinder.pause();
+                        }else{
+                            mLocalBinder.play(uri);
+                        }
+                    }
+                }
+            };
 
     public void setInnerRecyclerView(View view){
         innerRecyclerView = view.findViewById(R.id.inner_recycler_view_post_item_container);
@@ -159,9 +174,12 @@ public class Post implements Parcelable{
 
     public void initializeInnerRecyclerAndAdapter(Context context){
         innerAdapter = UploadsAdapterFactory.setAdapterTypeByInputType(type);
+        if(type == PostUploadType.MUSIC){
+            innerAdapter.setOnItemSelectedListener(mOnSongItemSelectedListener);
+        }
         //TODO select attached file from firebase by id and set here
         loadAttachedFiles();
-        //innerAdapter.setUploads(uploads);
+        innerAdapter.setUploads(uploads);
         innerRecyclerView.setLayoutManager(new GridLayoutManager(context, 2));
         innerRecyclerView.setAdapter(innerAdapter);
     }
@@ -170,24 +188,22 @@ public class Post implements Parcelable{
     private void loadAttachedFiles(){
         if(type != PostUploadType.NONE){
             if(attachmentId != null) {
-                FirebaseDatabase.getInstance().getReference().child("attachments").child(attachmentId).addValueEventListener(
-                        new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                attachedFile = dataSnapshot.getValue(AttachedFile.class);
-                                for (String url : attachedFile.getFilesUrls()) {
-                                    uploads.add(UploadTypeFactory.setUploadByType(attachedFile.getFileType(), url));
-                                }
-                                innerAdapter.setUploads(uploads);
-                                innerAdapter.notifyDataSetChanged();
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
+                FirebaseRepository.getAttachmentId(attachmentId, new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        attachedFile = dataSnapshot.getValue(AttachedFile.class);
+                        for (String url : attachedFile.getFilesUrls()) {
+                            uploads.add(UploadTypeFactory.setUploadByType(attachedFile.getFileType(), url));
                         }
-                );
+                        innerAdapter.setUploads(uploads);
+                        innerAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         }
     }

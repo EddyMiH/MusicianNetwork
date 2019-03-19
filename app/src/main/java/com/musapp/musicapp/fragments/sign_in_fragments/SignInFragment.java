@@ -25,6 +25,7 @@ import com.musapp.musicapp.firebase.DBAsyncTaskResponse;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.User;
+import com.musapp.musicapp.preferences.AppPreferences;
 import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.preferences.RememberPreferences;
 import com.musapp.musicapp.utils.CheckUtils;
@@ -106,6 +107,7 @@ public class SignInFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppPreferences.clearGenreState(getContext());
     }
 
     @Override

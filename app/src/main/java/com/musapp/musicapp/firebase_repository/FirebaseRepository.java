@@ -1,5 +1,6 @@
 package com.musapp.musicapp.firebase_repository;
 
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.renderscript.Sampler;
 
@@ -91,6 +92,14 @@ public class FirebaseRepository {
         DBAccess.creatStorageChild("image/", childname);
         return DBAccess.getStorageReference().child("image/" + childname);
     }
+    public static StorageReference createVideoStorageChild(String childname){
+        DBAccess.creatStorageChild("video/", childname);
+        return DBAccess.getStorageReference().child("video/" + childname);
+    }
+    public static StorageReference createAudioStorageChild(String childname){
+        DBAccess.creatStorageChild("audio/", childname);
+        return DBAccess.getStorageReference().child("audio/" + childname);
+    }
 
     public static void putFileInStorage( StorageReference reference, Uri file, OnSuccessListener<UploadTask.TaskSnapshot> onSuccessListener){
        reference.putFile(file).addOnSuccessListener(onSuccessListener);
@@ -136,8 +145,6 @@ public class FirebaseRepository {
         DBAccess.getDatabaseReference().child("posts").addChildEventListener(childEventListener);
     }
 
-
-
     public static void getGenres(String userPrimaryKey, ValueEventListener valueEventListener){
         Query genreQuery = DBAccess.getUserReference("users/" + userPrimaryKey).child("genreId");
         genreQuery.addListenerForSingleValueEvent(valueEventListener);
@@ -147,7 +154,8 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users/" + primaryKey).addListenerForSingleValueEvent(valueEventListener);
     }
 
-
-
+    public static void getAttachmentId(String primaryKey, ValueEventListener valueEventListener){
+        DBAccess.getDatabaseReference().child("attachments").child(primaryKey).addValueEventListener(valueEventListener);
+    }
 
 }
