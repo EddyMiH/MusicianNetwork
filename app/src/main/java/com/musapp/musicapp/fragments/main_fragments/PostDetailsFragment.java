@@ -158,6 +158,7 @@ public class PostDetailsFragment extends Fragment {
                                     mCurrentPost.addCommentId(newComment.getPrimaryKey());
                                     FirebaseRepository.setCommentInnerPrimaryKeyToFirebasePost(mCurrentPost);
                                     mCommentAdapter.addComment(newComment);
+                                    mPostCommentsRecyclerView.scrollToPosition(mCommentAdapter.getItemCount() - 1);
   //                                  int count  = Integer.getInteger(mCommentCount.getText().toString());
 //                                    mCommentCount.setText(++count);
                                     //   mCommentAdapter.notifyDataSetChanged();
