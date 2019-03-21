@@ -49,8 +49,5 @@ public class AttachedFile  implements Serializable {
     public void setFileType(PostUploadType fileType) {
         this.fileType = fileType;
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> 51e6f4793d53a75954b5f56bbbd089850f21cd29
 }

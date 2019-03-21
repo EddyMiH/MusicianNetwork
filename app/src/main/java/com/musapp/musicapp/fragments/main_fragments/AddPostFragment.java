@@ -10,6 +10,7 @@ import android.database.CharArrayBuffer;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -89,7 +90,7 @@ public class AddPostFragment extends Fragment {
 
         mNewPost = new Post();
         //get image url from profession and bio database
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        //mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
      /*   mDatabaseReference.child("profession_and_bio").addValueEventListener(new ValueEventListener() {
 =======
@@ -129,7 +130,7 @@ public class AddPostFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        //mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         setHasOptionsMenu(true);
     }
 
@@ -190,11 +191,8 @@ public class AddPostFragment extends Fragment {
 
       if (isStoragePermissionAccepted){
         Intent intent = new Intent(Intent.ACTION_PICK);
-
         intent.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         startActivityForResult(intent, SELECT_IMAGE);
-
-
       }
 
     }
@@ -225,9 +223,6 @@ public class AddPostFragment extends Fragment {
                 mAddMusic.setEnabled(false);
 
                 final Uri selectedImageUri = data.getData();
-             //   final StorageReference fileReference = FirebaseRepository.cre
-               //         DBAccess.creatStorageChild("image/", System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
-
                 fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedImageUri), selectedImageUri);
 
                 final StorageReference fileReference = FirebaseRepository.createImageStorageChild(System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
@@ -309,6 +304,8 @@ public class AddPostFragment extends Fragment {
                 mAddImage.setEnabled(false);
 
                 Uri selectedAudioUri = data.getData();
+                String[] metadata = getSongMetaData(selectedAudioUri);
+
 //                String audioCustomName = getAudioCustomName(selectedAudioUri);
 //                fileUri.put(audioCustomName + "." + getFileExtension(selectedAudioUri), selectedAudioUri);
 //                final StorageReference fileReference = FirebaseRepository.createAudioStorageChild(audioCustomName + "." + getFileExtension(selectedAudioUri));
@@ -351,33 +348,48 @@ public class AddPostFragment extends Fragment {
         }
     }
 
-    public String getAudioCustomName(Uri uri){
+    public String[] getSongMetaData(Uri uri){
         String result = "";
-        ContentResolver resolver = getActivity().getContentResolver();
-        //String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
-        Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[] proj = {
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.DURATION,
-                MediaStore.Audio.Media.DATA
-        };
-        Cursor cursor = resolver.query(uri, proj, null, null, null);
-        if(cursor != null && cursor.getCount() > 0){
-            while(cursor.moveToNext()){
-                //if(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)).equals(uri)){
-                    result += cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                    result += "_";
-                    result += cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                    result += "_";
-                    result += cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-               // }
-
-            }
-
-            cursor.close();
+        String[] metadata = new String[3];
+//        ContentResolver resolver = getActivity().getContentResolver();
+//        //String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+//        Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+//        String[] proj = {
+//                MediaStore.Audio.Media.TITLE,
+//                MediaStore.Audio.Media.ARTIST,
+//                MediaStore.Audio.Media.DURATION,
+//                MediaStore.Audio.Media.DATA
+//        };
+//        Cursor cursor = resolver.query(uri, proj, null, null, null);
+//        if(cursor != null && cursor.getCount() > 0){
+//            while(cursor.moveToNext()){
+//                //if(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)).equals(uri)){
+//                    result += cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+//                    result += "_";
+//                    result += cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+//                    result += "_";
+//                    result += cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+//               // }
+//
+//            }
+//
+//            cursor.close();
+//        }
+        MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
+        metadataRetriever.setDataSource(getContext(), uri);
+        try{
+            //get artist name
+           metadata[0]= metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+           //get song title
+           metadata[1] = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+           //get song duration
+           metadata[2] = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        }catch (Exception ex){
+            metadata = new String[] {"Unknown", "Unknown", "Unknown"};
+            ex.printStackTrace();
         }
-        return result;
+
+        return metadata;
     }
 
     @Override

@@ -168,5 +168,4 @@ public class FirebaseRepository {
         DBAccess.getDatabaseReference().child("attachments").child(primaryKey).addValueEventListener(valueEventListener);
     }
 
-
 }
