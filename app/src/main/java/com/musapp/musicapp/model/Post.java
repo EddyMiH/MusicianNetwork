@@ -1,29 +1,13 @@
 package com.musapp.musicapp.model;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.musapp.musicapp.R;
-import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
-import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
 import com.musapp.musicapp.enums.PostUploadType;
-import com.musapp.musicapp.firebase_repository.FirebaseRepository;
-import com.musapp.musicapp.pattern.UploadsAdapterFactory;
-import com.musapp.musicapp.pattern.UploadTypeFactory;
-import com.musapp.musicapp.service.MusicPlayerService;
 import com.musapp.musicapp.uploads.AttachedFile;
-import com.musapp.musicapp.uploads.BaseUpload;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,18 +20,18 @@ public class Post implements Parcelable{
     private String mPostText;
     private String mProfileImage;
     private String mUserName;
-    private int mCommentCount;
 
     private PostUploadType type;
     private List<String> commentsId;
 
-    private String attachmentId;
+    private AttachedFile attachment;
+ /*  private String attachmentId;
     @Exclude
     private static MusicPlayerService.LocalBinder mLocalBinder;
     public static void setLocalBinder(MusicPlayerService.LocalBinder binder){
         mLocalBinder = binder;
     }
-
+*/
     public List<String> getCommentsId() {
         return commentsId;
     }
@@ -60,24 +44,19 @@ public class Post implements Parcelable{
         this.commentsId = commentsId;
     }
 
+    @Exclude
     public int getCommentsQuantity(){
         return commentsId == null ? 0 : commentsId.size();
     }
 
     public void addCommentId(String id){
-        if(commentsId == null){
+        /*if(commentsId == null){
             commentsId = new ArrayList<>();
-        }
+        }*/
         commentsId.add(id);
+
     }
 
-    public String getAttachmentId() {
-        return attachmentId;
-    }
-
-    public void setAttachmentId(String attachmentId) {
-        this.attachmentId = attachmentId;
-    }
 
     public void setType(PostUploadType type) {
         this.type = type;
@@ -90,8 +69,8 @@ public class Post implements Parcelable{
     public Post() {
         //temporary hardcode
         mPostText = "Post";
-        mCommentCount = 0;
         commentsId = new ArrayList<>();
+        attachment = new AttachedFile();
         type = PostUploadType.NONE;
 
     }
@@ -101,15 +80,14 @@ public class Post implements Parcelable{
     }
 
     public Post(String mUserName, String mPublishedTime, String mPostText, String mProfileImageUri
-            , String attachmentId, List<String> commentsId, PostUploadType type, int mCommentCount) {
+            ,AttachedFile attachedFile, List<String> commentsId, PostUploadType type) {
         this.mUserId = mUserName;
         this.mPublishedTime = mPublishedTime;
         this.mPostText = mPostText;
         this.mProfileImage = mProfileImageUri;
-        this.attachmentId = attachmentId;
         this.commentsId = commentsId;
         this.type = type;
-        this.mCommentCount = mCommentCount;
+        this.attachment = attachedFile;
     }
 
     public String getUserId() {
@@ -144,7 +122,7 @@ public class Post implements Parcelable{
         this.mProfileImage = mProfileImageUri;
     }
 
-
+/*
     @Exclude
     private RecyclerView innerRecyclerView;
     @Exclude
@@ -179,7 +157,7 @@ public class Post implements Parcelable{
         }
         //TODO select attached file from firebase by id and set here
         loadAttachedFiles();
-        //innerAdapter.setUploads(uploads);
+        innerAdapter.setUploads(uploads);
         if(type ==PostUploadType.VIDEO || type == PostUploadType.MUSIC){
             innerRecyclerView.setLayoutManager(new GridLayoutManager(context, 1));
 
@@ -188,17 +166,22 @@ public class Post implements Parcelable{
 
         }
         innerRecyclerView.setAdapter(innerAdapter);
+<<<<<<< HEAD
         //innerAdapter.setUploads(uploads);
+=======
+
+>>>>>>> f227bbc78a9ac682e425daf2ff0fa8e144071708
     }
 
     //old version
     private void loadAttachedFiles(){
+        uploads.clear();
         if(type != PostUploadType.NONE){
             if(attachmentId != null) {
                 FirebaseRepository.getAttachment(attachmentId, new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        uploads.clear();
+
                         attachedFile = dataSnapshot.getValue(AttachedFile.class);
                         for (String url : attachedFile.getFilesUrls()) {
                             uploads.add(UploadTypeFactory.setUploadByType(attachedFile.getFileType(), url));
@@ -214,7 +197,7 @@ public class Post implements Parcelable{
             }
         }
     }
-
+*/
     @Override
     public int describeContents() {
         return 0;
@@ -229,9 +212,10 @@ public class Post implements Parcelable{
             dest.writeString(mPostText);
             dest.writeString(mProfileImage);
             dest.writeStringList(commentsId);
-            dest.writeString(attachmentId);
             dest.writeString(mUserName);
             dest.writeString(type.name());
+            dest.writeSerializable(attachment);
+
     }
 
     private static Post createFromParcel(Parcel source){
@@ -243,7 +227,6 @@ public class Post implements Parcelable{
         post.mProfileImage = source.readString();
         post.commentsId = new ArrayList<String>();
         source.writeStringList(post.commentsId);
-        post.attachmentId = source.readString();
         post.mUserName = source.readString();
 
         final String name = source.readString();
@@ -261,6 +244,8 @@ public class Post implements Parcelable{
                 post.type = PostUploadType.MUSIC;
             }break;
         }
+
+        post.attachment = (AttachedFile) source.readSerializable();
         return post;
     }
 
@@ -284,6 +269,9 @@ public class Post implements Parcelable{
     public void setUserName(String userName) {
         mUserName = userName;
     }
+
+    public AttachedFile getAttachment(){return attachment;}
+    public void setAttachment(AttachedFile attachment){this.attachment = attachment;}
 
     @Override
     public boolean equals( Object obj) {

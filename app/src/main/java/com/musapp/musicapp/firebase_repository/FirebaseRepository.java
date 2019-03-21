@@ -115,21 +115,6 @@ public class FirebaseRepository {
         storageReference.getDownloadUrl().addOnSuccessListener(onSuccessListener);
     }
 
-    public static void createAttachment(AttachedFile file, ValueEventListener valueEventListener) {
-        createObject(file, "attachments", valueEventListener);
-    }
-
-    public static void setInnerAttachmentKey(ValueEventListener valueEventListener) {
-        setObjectInnerPrimaryKey("attachments", valueEventListener);
-    }
-
-    public static void setInnerAtachmentKeyToFirebase(String primaryKey) {
-        setObjectInnerPrimaryKeyToFirebase("attachments", primaryKey);
-    }
-
-    public static void getAttachment(String childname, ValueEventListener valueEventListener){
-        DBAccess.getDatabaseReference().child("attachments").child(childname).addListenerForSingleValueEvent(valueEventListener);
-    }
 
 
     public static void getUser(ValueEventListener valueEventListener) {
@@ -150,8 +135,9 @@ public class FirebaseRepository {
         DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").limitToLast(limit).addListenerForSingleValueEvent(valueEventListener);
     }
 
-    public static void getNewPost(ValueEventListener valueEventListener) {
-        DBAccess.getDatabaseReference().child("posts").limitToLast(1).addListenerForSingleValueEvent(valueEventListener);
+    public static void getNewPost(@NotNull String lastDateRetrivered,ValueEventListener valueEventListener) {
+        Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").startAt(lastDateRetrivered);
+        postQuery.addListenerForSingleValueEvent(valueEventListener);
     }
 
     public static void getGenres(String userPrimaryKey, ValueEventListener valueEventListener){
@@ -160,12 +146,16 @@ public class FirebaseRepository {
         genreQuery.addListenerForSingleValueEvent(valueEventListener);
     }
 
+
+    public static void getPost(String primaryKey, ValueEventListener valueEventListener){
+        DBAccess.getDatabaseReference().child("posts").child(primaryKey).addListenerForSingleValueEvent(valueEventListener);
+    }
+
     public static void setCurrentUser(String primaryKey, ValueEventListener valueEventListener) {
         DBAccess.getUserReference("users/" + primaryKey).addListenerForSingleValueEvent(valueEventListener);
     }
 
-    public static void getAttachmentId(String primaryKey, ValueEventListener valueEventListener){
-        DBAccess.getDatabaseReference().child("attachments").child(primaryKey).addValueEventListener(valueEventListener);
-    }
+
+
 
 }

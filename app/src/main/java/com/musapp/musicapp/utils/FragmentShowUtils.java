@@ -11,23 +11,21 @@ public final class FragmentShowUtils {
     private static Fragment previousFragment;
     private static Fragment currentFragment;
 
-    public static void hideAndGoToNext(Fragment firstFragment, Fragment secondFragment, FragmentManager fragmentManager, @IdRes int frame){
-        previousFragment = firstFragment;
-        currentFragment = secondFragment;
-        fragmentManager.beginTransaction().replace(frame, secondFragment).commit();
-    }
-
-    public static void goBack(FragmentManager fragmentManager, @IdRes int frame){
-        fragmentManager.beginTransaction().replace(frame, previousFragment).commit();
-    }
-
-    public static void goBack(FragmentManager fragmentManager, @IdRes int frame, Bundle bundle){
-        previousFragment.setArguments(bundle);
-        fragmentManager.beginTransaction().replace(frame, previousFragment).commit();
-    }
 
 
     public static Fragment getPreviousFragment() {
         return previousFragment;
+    }
+
+    public static void setPreviousFragment(Fragment previousFragment) {
+        FragmentShowUtils.previousFragment = previousFragment;
+    }
+
+    public static void setCurrentFragment(Fragment currentFragment) {
+        FragmentShowUtils.currentFragment = currentFragment;
+    }
+
+    public static Fragment getCurrentFragment() {
+        return currentFragment;
     }
 }

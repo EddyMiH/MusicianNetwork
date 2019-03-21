@@ -1,19 +1,22 @@
 package com.musapp.musicapp.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.ScrollView;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.adapters.viewholders.FeedViewHolder;
+import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
+import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.model.Post;
+import com.musapp.musicapp.pattern.UploadTypeFactory;
+import com.musapp.musicapp.pattern.UploadsAdapterFactory;
+import com.musapp.musicapp.uploads.BaseUpload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.List;
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
     private List<Post> mData;
+    private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> innerAdapter;
     private OnItemSelectedListener mOnItemSelectedListener;
     private OnUserImageListener mOnUserImageListener;
     private FeedViewHolder.OnUserProfileImageListener mOnUserProfileImageListener = new FeedViewHolder.OnUserProfileImageListener() {
@@ -31,32 +35,40 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     };
     private Context context;
 
-    public FeedRecyclerAdapter(){
+
+    public FeedRecyclerAdapter() {
         mData = new ArrayList<>();
     }
 
     public void setData(List<Post> mData) {
-        if(this.mData == null){
+        if (this.mData == null) {
             this.mData = new ArrayList<>();
-        }else{
-         //  this.mData.clear();
         }
         this.mData.addAll(mData);
         notifyDataSetChanged();
     }
 
-    public void addPostItem(Post post, int index){
-        if(mData == null) {
+    public void setData(List<Post> mData, int index) {
+        if (this.mData == null) {
+            this.mData = new ArrayList<>();
+        }
+        this.mData.addAll(index, mData);
+        notifyDataSetChanged();
+    }
+
+
+    public void addPostItem(Post post, int index) {
+        if (mData == null) {
             mData = new ArrayList<>();
         }
-            mData.add(index, post);
+        mData.add(index, post);
         notifyItemInserted(index);
 
     }
 
 
-    public List<Post> getData(){
-        if(mData == null)
+    public List<Post> getData() {
+        if (mData == null)
             mData = new ArrayList<>();
         return mData;
     }
@@ -66,10 +78,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     }
 
 
-
     private View view;
 
-    @NonNull    @Override
+    @NonNull
+    @Override
     public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_post_recycler_view_item, viewGroup, false);
         context = viewGroup.getContext();
@@ -79,7 +91,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mOnItemSelectedListener != null) {
+                if (mOnItemSelectedListener != null) {
                     mOnItemSelectedListener.onItemSelected(mData.get(viewHolder.getAdapterPosition()));
                 }
             }
@@ -93,14 +105,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final FeedViewHolder feedViewHolder, int i) {
         Post post = mData.get(i);
-        mData.get(i).setInnerRecyclerView(view);
-        mData.get(i).initializeInnerRecyclerAndAdapter(context);
         //feedViewHolder.setOnSettingClickListener(mOnClickListener);
         feedViewHolder.setUserName(post.getUserName());
         feedViewHolder.setFeedProfileImage(post.getProfileImage());
         feedViewHolder.setPostText(post.getPostText());
         feedViewHolder.setPostTime(post.getPublishedTime());
         feedViewHolder.setCommentCount(String.valueOf(post.getCommentsQuantity()));
+        Log.i("BINDING", i + "");
+        feedViewHolder.initializeRecyclerView(post, context);
+
 
 
         /*switch (post.getType()){
@@ -139,9 +152,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
     }
 
+
     @Override
     public int getItemCount() {
-        return mData ==  null ? 0 : mData.size();
+        return mData == null ? 0 : mData.size();
     }
 
     public void setOnUserImageListener(OnUserImageListener onUserImageListener) {
@@ -149,11 +163,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     }
 
 
-    public interface OnItemSelectedListener{
+    public interface OnItemSelectedListener {
         void onItemSelected(Post post);
     }
 
-    public interface OnUserImageListener{
+    public interface OnUserImageListener {
         void onProfileImageClickListener();
     }
+
+
 }

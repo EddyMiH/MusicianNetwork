@@ -140,8 +140,18 @@ public class AppMainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-      finish();
-    }
+
+
+            int count = getSupportFragmentManager().getBackStackEntryCount();
+
+            if (count == 0 || count == 1) {
+                finish();
+                //additional code
+            } else {
+                getSupportFragmentManager().popBackStack();
+            }
+
+        }
 
     private void setCurrentUser(){
         FirebaseRepository.setCurrentUser(RememberPreferences.getUser(this), new ValueEventListener() {

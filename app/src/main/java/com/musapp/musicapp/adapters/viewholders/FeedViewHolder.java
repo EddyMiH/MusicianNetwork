@@ -1,7 +1,10 @@
 package com.musapp.musicapp.adapters.viewholders;
 
+import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -10,7 +13,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
+import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
+import com.musapp.musicapp.enums.PostUploadType;
+import com.musapp.musicapp.model.Post;
+import com.musapp.musicapp.pattern.UploadTypeFactory;
+import com.musapp.musicapp.pattern.UploadsAdapterFactory;
+import com.musapp.musicapp.uploads.BaseUpload;
 import com.musapp.musicapp.utils.GlideUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FeedViewHolder extends RecyclerView.ViewHolder {
@@ -20,11 +33,12 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     private TextView mPostTime;
     private ImageView mPostSetting;
     private TextView mPostText;
-    //image and video are placed in innner  recyclerview
+    private RecyclerView mRecyclerView;
 
     private ImageView mCommentIcon;
     private TextView mCommentCount;
 
+    private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> mUploadsAdapter;
     private OnUserProfileImageListener userProfileImageListener;
     //add field for inflate music view
 
@@ -36,7 +50,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem) {
-                    switch (menuItem.getItemId()){
+                    switch (menuItem.getItemId()) {
                         case R.id.favorite_pop_up_menu_item:
                             //TODO add to favorites
                             return true;
@@ -67,17 +81,19 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         mCommentIcon = itemView.findViewById(R.id.image_comment_icon);
         mCommentCount = itemView.findViewById(R.id.text_post_item_comment_count);
 
+        mRecyclerView = itemView.findViewById(R.id.inner_recycler_view_post_item_container);
         mPostSetting.setOnClickListener(onClickListener);
     }
 
-    public void setOnSettingClickListener(View.OnClickListener listener){
+    public void setOnSettingClickListener(View.OnClickListener listener) {
         onClickListener = listener;
     }
 
-    public void setPostImageVisible(){
-   //     mPostImage.setVisibility(View.VISIBLE);
+    public void setPostImageVisible() {
+        //     mPostImage.setVisibility(View.VISIBLE);
     }
-    public void setPostVideoVisible(){
+
+    public void setPostVideoVisible() {
         //mPostVideo.setVisibility(View.VISIBLE);
     }
 
@@ -106,7 +122,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setPostVideo(Uri videoFilePath) {
-      //  mPostVideo.setVideoURI(videoFilePath);
+        //  mPostVideo.setVideoURI(videoFilePath);
         //TODO set video into YouTubeVideoView
         //VideoViewInitUtil.setVideoView(mPostVideo);
     }
@@ -119,12 +135,39 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         this.mCommentCount.setText(mCommentCount);
     }
 
-    public ImageView getPostSettingView(){
+    public ImageView getPostSettingView() {
         return mPostSetting;
     }
 
     public void setUserProfileImageListener(OnUserProfileImageListener userProfileImageListener) {
         this.userProfileImageListener = userProfileImageListener;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return mRecyclerView;
+    }
+
+    public void setRecyclerView(RecyclerView recyclerView) {
+        mRecyclerView = recyclerView;
+    }
+
+    public void initializeRecyclerView(Post post, Context context) {
+        List<BaseUpload> uploads = new ArrayList<>();
+        if (post.getType() == PostUploadType.NONE) {
+            if (mUploadsAdapter != null) {
+                mUploadsAdapter.clearData();
+                mRecyclerView.setAdapter(mUploadsAdapter);
+            }
+            return;
+        }
+
+        mUploadsAdapter = UploadsAdapterFactory.setAdapterTypeByInputType(post.getType());
+        for (String url : post.getAttachment().getFilesUrls()) {
+            uploads.add(UploadTypeFactory.setUploadByType(post.getType(), url));
+        }
+        mUploadsAdapter.setUploads(uploads);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(context, post.getType() == PostUploadType.IMAGE ? 2 : 1));
+        mRecyclerView.setAdapter(mUploadsAdapter);
     }
 
     public interface OnUserProfileImageListener {

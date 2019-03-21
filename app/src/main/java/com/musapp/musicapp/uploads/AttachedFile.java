@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AttachedFile  implements Serializable {
-    @Ignore
-    private String primaryKey;
+
 
     private List<String> filesUrls;
     private PostUploadType fileType;
@@ -19,13 +18,6 @@ public class AttachedFile  implements Serializable {
         fileType = PostUploadType.NONE;
     }
 
-    public void setPrimaryKey(String primaryKey) {
-        this.primaryKey = primaryKey;
-    }
-
-    public String getPrimaryKey() {
-        return primaryKey;
-    }
 
     public List<String> getFilesUrls() {
         return filesUrls;

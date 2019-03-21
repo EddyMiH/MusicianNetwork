@@ -85,6 +85,7 @@ public class AddPostFragment extends Fragment {
     private Map<String, Uri> fileUri  = new HashMap<>();
 
     private Bundle bundle;
+    private boolean typeIsChoosed = false;
 
     public AddPostFragment() {
 
@@ -130,7 +131,8 @@ public class AddPostFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        getFragmentManager().beginTransaction().hide(FragmentShowUtils.getPreviousFragment()).commit();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         setHasOptionsMenu(true);
     }
 
@@ -145,9 +147,11 @@ public class AddPostFragment extends Fragment {
         mAddVideo = view.findViewById(R.id.image_fragment_add_post_attach_video);
         mSelectedFilesName = view.findViewById(R.id.text_add_post_fragment_selected_file_names);
 
+        mType = PostUploadType.NONE;
         mAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 isStoragePermissionAccepted();
                 mType = PostUploadType.IMAGE;
 
@@ -393,6 +397,12 @@ public class AddPostFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        getFragmentManager().beginTransaction().show(FragmentShowUtils.getPreviousFragment()).commit();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_add_post_fragment_publish_post, menu);
 
@@ -488,7 +498,11 @@ public class AddPostFragment extends Fragment {
 
     private void quitFragment() {
 
-            FragmentShowUtils.goBack(getFragmentManager(), R.id.layout_activity_app_container);
+           getFragmentManager().beginTransaction()
+                   .show(FragmentShowUtils.getPreviousFragment())
+                   .remove(FragmentShowUtils.getCurrentFragment())
+                   .commit();
+           getFragmentManager().popBackStack();
     }
 
 
