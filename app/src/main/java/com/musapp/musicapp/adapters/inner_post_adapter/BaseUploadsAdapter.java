@@ -17,9 +17,11 @@ public abstract class BaseUploadsAdapter<T, Y extends RecyclerView.ViewHolder > 
     }
 
     public void setUploads(@NonNull List<T> data) {
-        if(uploads != null)
-            uploads.clear();
+        if(uploads == null)
         uploads = new ArrayList<>(data);
+
+        uploads.clear();
+        uploads.addAll(data);
       notifyDataSetChanged();
     }
 
@@ -28,6 +30,11 @@ public abstract class BaseUploadsAdapter<T, Y extends RecyclerView.ViewHolder > 
             uploads = new ArrayList<>();
         uploads.add(newUpload);
         notifyItemChanged(uploads.size() - 1);
+    }
+
+    public  void clearData(){
+        if(uploads!=null)
+            uploads.clear();
     }
 
     @NonNull

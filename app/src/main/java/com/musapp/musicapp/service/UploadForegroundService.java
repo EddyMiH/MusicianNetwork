@@ -66,10 +66,12 @@ public class UploadForegroundService extends IntentService {
     }
 
     private void uploadFilesToStorage(final HashMap<String, Uri> filesUri){
-        if(attachedFile.getFileType() == PostUploadType.IMAGE)
+        if(attachedFile == null)
+           sentPostToFirebase();
+       else if(attachedFile.getFileType() == PostUploadType.IMAGE)
         {
 
-       for(Map.Entry<String, Uri> entry: filesUri.entrySet()){
+      for(Map.Entry<String, Uri> entry: filesUri.entrySet()){
            final StorageReference fileReference = FirebaseRepository.createImageStorageChild(entry.getKey());
 
            FirebaseRepository.putFileInStorage(fileReference, entry.getValue(), new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -79,8 +81,12 @@ public class UploadForegroundService extends IntentService {
                       @Override
                       public void onSuccess(Uri uri) {
                           attachedFile.addFile(uri.toString());
-                          if(attachedFile.getFilesUrls().size() == filesUri.size())
-                              sentAttachmentAndPostToFirebase();
+                          if(attachedFile.getFilesUrls().size() == filesUri.size()) {
+                              post.setAttachment(attachedFile);
+                              sentPostToFirebase();
+
+                          }
+
 
                       }
                   });
@@ -100,8 +106,9 @@ public class UploadForegroundService extends IntentService {
                             @Override
                             public void onSuccess(Uri uri) {
                                 attachedFile.addFile(uri.toString());
-                                if(attachedFile.getFilesUrls().size() == filesUri.size())
-                                    sentAttachmentAndPostToFirebase();
+                                if(attachedFile.getFilesUrls().size() == filesUri.size()){
+                                    post.setAttachment(attachedFile);
+                                    sentPostToFirebase();}
 
                             }
                         });
@@ -120,8 +127,9 @@ public class UploadForegroundService extends IntentService {
                             @Override
                             public void onSuccess(Uri uri) {
                                 attachedFile.addFile(uri.toString());
-                                if(attachedFile.getFilesUrls().size() == filesUri.size())
-                                    sentAttachmentAndPostToFirebase();
+                                if(attachedFile.getFilesUrls().size() == filesUri.size()){
+                                    post.setAttachment(attachedFile);
+                                    sentPostToFirebase();}
 
                             }
                         });
@@ -129,11 +137,12 @@ public class UploadForegroundService extends IntentService {
                 });
             }
         }
+
     }
 
 
 
-    private void sentAttachmentAndPostToFirebase(){
+    /*private void sentAttachmentAndPostToFirebase(){
         FirebaseRepository.createAttachment(attachedFile, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -160,7 +169,7 @@ public class UploadForegroundService extends IntentService {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });}
+        });}*/
 
     private void sentPostToFirebase(){
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,14 +22,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.CommentRecyclerViewAdapter;
+import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
+import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 
+import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 
+import com.musapp.musicapp.pattern.UploadTypeFactory;
+import com.musapp.musicapp.pattern.UploadsAdapterFactory;
+import com.musapp.musicapp.uploads.BaseUpload;
+import com.musapp.musicapp.utils.FragmentShowUtils;
 import com.musapp.musicapp.utils.GlideUtil;
 
 import java.text.DateFormat;
@@ -39,7 +47,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-public class OpenedPostFragment extends Fragment {
+public class PostDetailsFragment extends Fragment {
 
     private ImageView mProfileImage;
     private TextView mFullName;
@@ -47,12 +55,14 @@ public class OpenedPostFragment extends Fragment {
     private TextView mPostText;
     private EditText mCommentText;
     private Button mPublishCommentButton;
-    private TextView mCommentCount;
+//    private TextView mCommentCount;
     private RecyclerView mPostAttachmentsRecyclerView;
     private RecyclerView mPostCommentsRecyclerView;
     private CommentRecyclerViewAdapter mCommentAdapter;
     private Post mCurrentPost;
     private SetToolBarTitle mSetToolBarTitle;
+    private RecyclerView mRecyclerView;
+    private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> mAdapter;
 
     public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
         mSetToolBarTitle = setToolBarTitle;
@@ -92,20 +102,25 @@ public class OpenedPostFragment extends Fragment {
 
         //loadUserProfileImage();
 
+        getFragmentManager().beginTransaction().hide(FragmentShowUtils.getPreviousFragment()).commit();
         View view  = inflater.inflate(R.layout.fragment_post_single_opened_post, container, false);
         mProfileImage = view.findViewById(R.id.image_profile_image_post);
         mFullName = view.findViewById(R.id.text_post_item_user_name);
         mPublishedTime = view.findViewById(R.id.text_post_item_published_time);
         mPostText = view.findViewById(R.id.text_post_item_post_text);
-        mCommentCount = view.findViewById(R.id.text_post_item_comment_count);
+ //       mCommentCount = view.findViewById(R.id.text_post_item_comment_count);
         mCommentText = view.findViewById(R.id.edit_text_write_comment_opened_post);
         mPublishCommentButton = view.findViewById(R.id.action_comment_view_send_comment);
         mPostCommentsRecyclerView = view.findViewById(R.id.recycler_view_comments_in_post);
+        mRecyclerView = view.findViewById(R.id.recycler_view_post_uploads);
+        return view;
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         if(getArguments() != null && !getArguments().isEmpty()){
             mCurrentPost = getArguments().getParcelable(HomePageFragment.ARG_POST);
-            mCurrentPost.setInnerRecyclerView(view);
-            mCurrentPost.initializeInnerRecyclerAndAdapter(getContext());
             setPostPage();
         }
 
@@ -126,8 +141,8 @@ public class OpenedPostFragment extends Fragment {
 //                    newComment.setCreatorId(mCurrentUser.getPrimaryKey());
 //                    newComment.setUserCreatorNickName(mCurrentUser.getNickName());
 //                    newComment.setUserProfileImageUrl(mCurrentUserImage);/////
-//                    DBAsyncTask.waitResponse("comments",OpenedPostFragment.this, newComment);
-//                    DBAsyncTask.waitResponse("posts",OpenedPostFragment.this, mCurrentPost);
+//                    DBAsyncTask.waitResponse("comments",PostDetailsFragment.this, newComment);
+//                    DBAsyncTask.waitResponse("posts",PostDetailsFragment.this, mCurrentPost);
                     newComment.setCreatorId(CurrentUser.getCurrentUser().getPrimaryKey());
                     newComment.setUserCreatorNickName(mCurrentPost.getUserName());
                     newComment.setUserProfileImageUrl(mCurrentPost.getProfileImage());
@@ -140,10 +155,12 @@ public class OpenedPostFragment extends Fragment {
                                     Iterator<DataSnapshot> lastChild = dataSnapshot.getChildren().iterator();
                                     newComment.setPrimaryKey(lastChild.next().getKey());
                                     FirebaseRepository.setCommentInnerPrimaryKeyToFirebase(newComment.getPrimaryKey());
-                                    //TODO what the fuck
-                                    mCurrentPost.addCommentId(lastChild.next().getKey());
+                                    mCurrentPost.addCommentId(newComment.getPrimaryKey());
                                     FirebaseRepository.setCommentInnerPrimaryKeyToFirebasePost(mCurrentPost);
-                                    mCommentAdapter.notifyDataSetChanged();
+                                    mCommentAdapter.addComment(newComment);
+  //                                  int count  = Integer.getInteger(mCommentCount.getText().toString());
+//                                    mCommentCount.setText(++count);
+                                    //   mCommentAdapter.notifyDataSetChanged();
                                 }
 
                                 @Override
@@ -161,8 +178,7 @@ public class OpenedPostFragment extends Fragment {
                 }
             }
         });
-        mSetToolBarTitle.setTitle(R.string.title_activity_opened_post);
-        return view;
+//        mSetToolBarTitle.setTitle(R.string.title_activity_opened_post);
     }
 
     private void initCommentsRecyclerView(){
@@ -188,7 +204,6 @@ public class OpenedPostFragment extends Fragment {
                     list.add(comment);
                     if(comment != null){
                         mCommentAdapter.addComment(comment);
-
                     }
                 }
 
@@ -197,29 +212,6 @@ public class OpenedPostFragment extends Fragment {
 
                 }
             });
-//            FirebaseDatabase.getInstance().getReference().child("comments").addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                    for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-//                        Comment comment = snapshot.getValue(Comment.class);
-//
-//                        if(comment.getPrimaryKey() != null){
-//                            if(comment.getPrimaryKey().equals(temp)){
-//                                //mComments.add(comment);
-//                                list.add(comment);
-//                                //mCommentAdapter.addComment(comment);
-//
-//                            }
-//                        }
-//                    }
-//                    setCommentsToAdapter(list);
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError databaseError) {
-//                    Log.d("ERROR!!!", "onCancelled: cannot load comments");
-//                }
-//            });
         }
     }
 
@@ -232,12 +224,22 @@ public class OpenedPostFragment extends Fragment {
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        Fragment previous = FragmentShowUtils.getPreviousFragment();
+        FragmentShowUtils.setCurrentFragment(previous);
+        FragmentShowUtils.setPreviousFragment(this);
+        getFragmentManager().beginTransaction().show(previous).commit();
+    }
+
     private void setPostPage(){
         mFullName.setText(mCurrentPost.getUserName());
         GlideUtil.setImageGlide(mCurrentPost.getProfileImage(), mProfileImage);
         mPublishedTime.setText(mCurrentPost.getPublishedTime());
         mPostText.setText(mCurrentPost.getPostText());
-        mCommentCount.setText(String.valueOf(mCurrentPost.getCommentsQuantity()));
+        initRecyclerView();
+     //   mCommentCount.setText(String.valueOf(mCurrentPost.getCommentsQuantity()));
     }
 
     @Override
@@ -246,29 +248,27 @@ public class OpenedPostFragment extends Fragment {
 
     }
 
-    public OpenedPostFragment() {
+    public PostDetailsFragment() {
         mComments = new ArrayList<>();
     }
 
-//    @Override
-//    public void doOnResponse(String str, String type) {
-//        if(type.equals("comments")){
-//            FirebaseDatabase.getInstance().getReference().child("comments").child(str)
-//                    .child("primaryKey").setValue(str);
-//            mCurrentPost.addCommentId(str);
-//            mCommentCount.setText(String.valueOf(mCurrentPost.getCommentsQuantity()));
-//            loadCommentsFromDatabase();
-//        }else if(type.equals("posts")){
-//            FirebaseDatabase.getInstance().getReference().child("posts").child(mCurrentPost.getPrimaryKey())
-//                    .setValue(mCurrentPost);
-//        }
-//    }
-//
-//    @Override
-//    public void doForResponse(String str, Object obj) {
-//        if(!str.equals("posts"))
-//            DBAccess.createChild(str, obj);
-//    }
+    private void initUploadsAdapter(){
+        mAdapter = UploadsAdapterFactory.setAdapterTypeByInputType(mCurrentPost.getType());
+        List<BaseUpload> uploads = new ArrayList<>();
+        if(mCurrentPost.getType() == PostUploadType.NONE)
+            return;
+        for(String url: mCurrentPost.getAttachment().getFilesUrls()){
+            uploads.add(UploadTypeFactory.setUploadByType(mCurrentPost.getType(), url));
+        }
+        mAdapter.setUploads(uploads);
+    }
+
+    private void initRecyclerView(){
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), mCurrentPost.getType() == PostUploadType.IMAGE ? 2 : 1));
+        initUploadsAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
 
 
 }
