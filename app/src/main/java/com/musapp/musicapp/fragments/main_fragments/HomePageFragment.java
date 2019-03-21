@@ -48,7 +48,6 @@ public class HomePageFragment extends Fragment {
 
     private List<Post> posts;
     public static final String ARG_POST = "current_post";
-    private OpenUserFragment mOpenUserFragment;
     private SetToolBarTitle mSetToolBarTitle;
     private RecyclerView recyclerView;
 
@@ -59,8 +58,13 @@ public class HomePageFragment extends Fragment {
 
     private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
         @Override
-        public void onProfileImageClickListener() {
-            mOpenUserFragment.openUserFragment();
+        public void onProfileImageClickListener(Post post) {
+           OtherUserProfileFragment otherUserProfileFragment = new OtherUserProfileFragment();
+           Bundle args = new Bundle();
+           args.putString(String.class.getSimpleName(), post.getUserId());
+           otherUserProfileFragment.setArguments(args);
+           beginTransaction(otherUserProfileFragment);
+
         }
     };
 
@@ -280,13 +284,7 @@ public class HomePageFragment extends Fragment {
         //Required
     }
 
-    public void setOpenUserFragment(OpenUserFragment openUserFragment) {
-        mOpenUserFragment = openUserFragment;
-    }
 
-    public interface OpenUserFragment{
-        void openUserFragment();
-    }
 
     private void setProgressBarVisibility(int visibility){
         mProgressBar.setVisibility(visibility);

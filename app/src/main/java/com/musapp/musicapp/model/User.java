@@ -22,7 +22,13 @@ public class User {
 
     private String primaryKey;
 
-    public User(){}
+    private List<String> favouritePostId;
+
+    public User(){
+        genresId = new ArrayList<>();
+        postId = new ArrayList<>();
+       favouritePostId = new ArrayList<>();
+    }
 
     public List<String> getPostId() {
         return postId;
@@ -37,20 +43,20 @@ public class User {
     }
 
     public void addGenreId(String genre){
-        if(genresId == null){
-            genresId = new ArrayList<>();
-        }
         genresId.add(genre);
     }
+
+    public void addFavouritePostId(String postId){
+        favouritePostId.add(postId);
+    }
+
+
 
     public void setPostId(List<String> postId) {
         this.postId = postId;
     }
 
     public void addPostId(String id){
-        if (postId == null) {
-            postId = new ArrayList<>();
-        }
         postId.add(id);
     }
 
@@ -122,5 +128,13 @@ public class User {
 
     public void setUserInfo(Info userInfo) {
         this.userInfo = userInfo;
+    }
+
+    public void setFavouritePostId(List<String> favouritePostId) {
+        this.favouritePostId = favouritePostId;
+    }
+
+    public List<String> getFavouritePostId() {
+        return favouritePostId;
     }
 }

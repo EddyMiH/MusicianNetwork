@@ -29,8 +29,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     private OnUserImageListener mOnUserImageListener;
     private FeedViewHolder.OnUserProfileImageListener mOnUserProfileImageListener = new FeedViewHolder.OnUserProfileImageListener() {
         @Override
-        public void onUserImageClickListener() {
-            mOnUserImageListener.onProfileImageClickListener();
+        public void onUserImageClickListener(int position) {
+            mOnUserImageListener.onProfileImageClickListener(mData.get(position));
         }
     };
     private Context context;
@@ -168,7 +168,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     }
 
     public interface OnUserImageListener {
-        void onProfileImageClickListener();
+        void onProfileImageClickListener(Post post);
     }
 
 

@@ -121,8 +121,16 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users").addValueEventListener(valueEventListener);
     }
 
+    public static void getUserByPrimaryKey(String primaryKey, ValueEventListener valueEventListener) {
+        DBAccess.getUserReference("users").child(primaryKey).addValueEventListener(valueEventListener);
+    }
+
     public static void getCurrentUser(ValueEventListener valueEventListener) {
         DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    public static void updateCurrentUserPostsInFirebase(){
+        DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).child("postId").setValue(CurrentUser.getCurrentUser().getPostId());
     }
 
 
@@ -135,6 +143,9 @@ public class FirebaseRepository {
         DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").limitToLast(limit).addListenerForSingleValueEvent(valueEventListener);
     }
 
+    public static void getPostById(String id, ValueEventListener valueEventListener){
+        DBAccess.getDatabaseReference().child("posts/" + id).addListenerForSingleValueEvent(valueEventListener);
+    }
     public static void getNewPost(@NotNull String lastDateRetrivered,ValueEventListener valueEventListener) {
         Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").startAt(lastDateRetrivered);
         postQuery.addListenerForSingleValueEvent(valueEventListener);

@@ -65,7 +65,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     private View.OnClickListener onImageViewClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            userProfileImageListener.onUserImageClickListener();
+            userProfileImageListener.onUserImageClickListener(getAdapterPosition());
         }
     };
 
@@ -171,6 +171,6 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     }
 
     public interface OnUserProfileImageListener {
-        void onUserImageClickListener();
+        void onUserImageClickListener(int position);
     }
 }
