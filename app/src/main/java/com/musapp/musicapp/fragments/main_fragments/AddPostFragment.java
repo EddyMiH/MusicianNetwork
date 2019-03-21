@@ -78,7 +78,6 @@ public class AddPostFragment extends Fragment {
     private final int SELECT_AUDIO = 14;
 
     private AttachedFile mAttachedFile;
-    private BaseUploadsAdapter mUploadsAdapter;
     private User user = CurrentUser.getCurrentUser();
 
     private Map<String, Uri> fileUri  = new HashMap<>();
@@ -89,48 +88,13 @@ public class AddPostFragment extends Fragment {
     public AddPostFragment() {
 
         mNewPost = new Post();
-        //get image url from profession and bio database
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
-     /*   mDatabaseReference.child("profession_and_bio").addValueEventListener(new ValueEventListener() {
-=======
-
-        mDatabaseReference.child("profession_and_bio").addValueEventListener(new ValueEventListener() {
->>>>>>> 6eb200476d57252be643a5103f06269f8a7470f2
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()){
-
-                    if (data.getKey().equals(CurrentUser.getCurrentUser().getUserInfo())){
-                        mNewPost.setProfileImage(data.getValue(Info.class).getImageUri());
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });*/
      mNewPost.setProfileImage(CurrentUser.getCurrentUser().getUserInfo().getImageUri());
-
-
-     /* FirebaseRepository.getCurrentUser(new ValueEventListener() {
-          @Override
-          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-              mNewPost.setProfileImage(dataSnapshot.getValue(Info.class).getImageUri());
-          }
-
-          @Override
-          public void onCancelled(@NonNull DatabaseError databaseError) {
-
-          }
-      });*/
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFragmentManager().beginTransaction().hide(FragmentShowUtils.getPreviousFragment()).commit();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         setHasOptionsMenu(true);
     }
@@ -140,7 +104,7 @@ public class AddPostFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_post, container, false);
         mPostText = view.findViewById(R.id.text_fragment_add_post_text);
-        mPostAttachment = view.findViewById(R.id.recycler_view_fragment_add_post_file);
+ //       mPostAttachment = view.findViewById(R.id.recycler_view_fragment_add_post_file);
         mAddImage = view.findViewById(R.id.image_fragment_add_post_attach_image);
         mAddMusic = view.findViewById(R.id.image_fragment_add_post_attach_music);
         mAddVideo = view.findViewById(R.id.image_fragment_add_post_attach_video);
@@ -229,9 +193,6 @@ public class AddPostFragment extends Fragment {
                 mAddMusic.setEnabled(false);
 
                 final Uri selectedImageUri = data.getData();
-             //   final StorageReference fileReference = FirebaseRepository.cre
-               //         DBAccess.creatStorageChild("image/", System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
-
                 fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedImageUri), selectedImageUri);
 
                 final StorageReference fileReference = FirebaseRepository.createImageStorageChild(System.currentTimeMillis() + "." + getFileExtension(selectedImageUri));
@@ -247,109 +208,20 @@ public class AddPostFragment extends Fragment {
                         });
                     }
                 });
-//               fileReference.putFile(selectedImageUri).addOnSuccessListener(
-//                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                            @Override
-//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                                    @Override
-//                                    public void onSuccess(Uri uri) {
-//                                        mAttachedFile.addFile(uri.toString());
-//
-//                                    }
-//                                });
-//                            }
-//                        });
-                //mSelectedFilesName.setText(String.valueOf(selectedFiles));
-
-
-           /*     fileReference.putFile(selectedImageUri).addOnSuccessListener(
-                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        mAttachedFile.addFile(uri.toString());
-                                        selectedFiles++;
-
-                                    }
-                                });
-                            }
-                        });*/
-//                mSelectedFilesName.setText(selectedFiles);
-
-
             }else if(requestCode == SELECT_VIDEO){
                 mAddMusic.setEnabled(false);
                 mAddImage.setEnabled(false);
                 final Uri selectedVideoUri = data.getData();
                 fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri), selectedVideoUri);
 
-
-              /*  final StorageReference fileReference = DBAccess.creatStorageChild("video/", System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri));
-                fileReference.putFile(selectedVideoUri).addOnSuccessListener(
-                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
->>>>>>> 51e6f4793d53a75954b5f56bbbd089850f21cd29
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                mAttachedFile.addFile(uri.toString());
-                                selectedFiles++;
-                            }
-<<<<<<< HEAD
-                        });
-                    }
-                });
-
-                mSelectedFilesName.setText(String.valueOf(selectedFiles));
-=======
-                        });*/
-
-
-
-//                mSelectedFilesName.setText(selectedFiles);
             }else if(requestCode == SELECT_AUDIO){
                 mAddVideo.setEnabled(false);
                 mAddImage.setEnabled(false);
 
                 Uri selectedAudioUri = data.getData();
-//                String audioCustomName = getAudioCustomName(selectedAudioUri);
-//                fileUri.put(audioCustomName + "." + getFileExtension(selectedAudioUri), selectedAudioUri);
-//                final StorageReference fileReference = FirebaseRepository.createAudioStorageChild(audioCustomName + "." + getFileExtension(selectedAudioUri));
-//                FirebaseRepository.putFileInStorage(fileReference, selectedAudioUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                        FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
-//                            @Override
-//                            public void onSuccess(Uri uri) {
-//                                mAttachedFile.addFile(uri.toString());
-//                                selectedFiles++;
-//                            }
-//                        });
-//                    }
-//                });
-//
-//                mSelectedFilesName.setText(String.valueOf(selectedFiles));
                 Log.d("URL AUDIO", "onActivityResult: " + selectedAudioUri.toString());
 
                 fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedAudioUri), selectedAudioUri);
-
-                //TODO send url to firebase storage
-//                final StorageReference fileReference = DBAccess.creatStorageChild("audio/", System.currentTimeMillis() + "." + getFileExtension(selectedAudioUri));
-//                fileReference.putFile(selectedAudioUri).addOnSuccessListener(
-//                        new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                            @Override
-//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                                    @Override
-//                                    public void onSuccess(Uri uri) {
-//                                        mAttachedFile.addFile(uri.toString());
-//                                        selectedFiles++;
-//
-//                                    }
-//                                });
-//                            }
-//                        });
             }
 
         }
@@ -384,11 +256,6 @@ public class AddPostFragment extends Fragment {
         return result;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        getFragmentManager().beginTransaction().show(FragmentShowUtils.getPreviousFragment()).commit();
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -401,26 +268,8 @@ public class AddPostFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.save_and_publish_post: {
-                //TODO save into Firebase and close fragment
-//                if(mAttachedFile.getFileType() != PostUploadType.NONE){
-//                    DBAsyncTask.waitResponse("attachments", this, mAttachedFile);
-//
                 savePost();
-
-
-              //  getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, new HomePageFragment()).addToBackStack(null).commit();
-
-
             }break;
-                //TODO call UploadForegroundService
-            /*    DBAccess.createChild("posts", mNewPost);
-                FirebaseDatabase.getInstance().getReference().child("posts").child(postId)
-                        .child("primaryKey").setValue(postId);
-                User user = CurrentUser.getCurrentUser();
-                user.addPostId(postId);
-                CurrentUser.setCurrentUser(user);
-               */
-
         }
         return true;
     }
@@ -434,39 +283,7 @@ public class AddPostFragment extends Fragment {
         mNewPost.setUserName(CurrentUser.getCurrentUser().getNickName());
         startService();
         quitFragment();
-        //TODO
-      //  mNewPost.setAttachmentId(DBAccess.createChild("attachments", mAttachedFile));
-      /*  FirebaseRepository.createAttachment(mAttachedFile, new ValueEventListener() {
 
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                FirebaseRepository.setInnerAttachmentKey(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Iterator<DataSnapshot> lastChild = dataSnapshot.getChildren().iterator();
-                        String attachmentId  = (lastChild.next().getKey());
-                        mAttachedFile.setPrimaryKey(attachmentId);
-                        mNewPost.setAttachmentId(attachmentId);
-                        mNewPost.setUserId(CurrentUser.getCurrentUser().getPrimaryKey());
-                        mNewPost.setUserName(CurrentUser.getCurrentUser().getNickName());
-                        FirebaseRepository.setInnerAtachmentKeyToFirebase(attachmentId);
-                        startService();
-                        quitFragment();
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
     }
 
     private void startService(){
@@ -487,8 +304,7 @@ public class AddPostFragment extends Fragment {
     private void quitFragment() {
 
            getFragmentManager().beginTransaction()
-                   .show(FragmentShowUtils.getPreviousFragment())
-                   .remove(FragmentShowUtils.getCurrentFragment())
+                   .remove(this)
                    .commit();
            getFragmentManager().popBackStack();
     }

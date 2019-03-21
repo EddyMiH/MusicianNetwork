@@ -77,6 +77,7 @@ public class HomePageFragment extends Fragment {
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(HomePageFragment.ARG_POST, post);
                     PostDetailsFragment fragment = new PostDetailsFragment();
+
                     fragment.setArguments(bundle);
                     fragment.setSetToolBarTitle(mSetToolBarTitle);
                     beginTransaction(fragment);
@@ -272,12 +273,10 @@ public class HomePageFragment extends Fragment {
     public void beginTransaction(Fragment fragment){
         if(fragment.isAdded())
             return;
-        FragmentShowUtils.setPreviousFragment(this);
-        FragmentShowUtils.setCurrentFragment(fragment);
         getFragmentManager().beginTransaction()
-                .addToBackStack(fragment.getClass().getCanonicalName())
-                .add(R.id.layout_activity_app_container, fragment)
+                .replace(R.id.layout_activity_app_container, fragment)
                 .commit();
+
     }
 
     public HomePageFragment() {

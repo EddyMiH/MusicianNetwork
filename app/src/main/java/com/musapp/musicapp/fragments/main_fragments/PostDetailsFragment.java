@@ -102,7 +102,6 @@ public class PostDetailsFragment extends Fragment {
 
         //loadUserProfileImage();
 
-        getFragmentManager().beginTransaction().hide(FragmentShowUtils.getPreviousFragment()).commit();
         View view  = inflater.inflate(R.layout.fragment_post_single_opened_post, container, false);
         mProfileImage = view.findViewById(R.id.image_profile_image_post);
         mFullName = view.findViewById(R.id.text_post_item_user_name);
@@ -225,14 +224,6 @@ public class PostDetailsFragment extends Fragment {
 
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Fragment previous = FragmentShowUtils.getPreviousFragment();
-        FragmentShowUtils.setCurrentFragment(previous);
-        FragmentShowUtils.setPreviousFragment(this);
-        getFragmentManager().beginTransaction().show(previous).commit();
-    }
 
     private void setPostPage(){
         mFullName.setText(mCurrentPost.getUserName());
