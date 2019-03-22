@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.NotNull;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.musapp.musicapp.currentinformation.CurrentUser;
@@ -96,26 +97,26 @@ public class FirebaseRepository {
         DBAccess.creatStorageChild("video/", childname);
         return DBAccess.getStorageReference().child("video/" + childname);
     }
-    public static StorageReference createAudioStorageChild(String childname){
-        DBAccess.creatStorageChild("audio/", childname);
-        return DBAccess.getStorageReference().child("audio/" + childname);
-    }
-
     public static StorageReference createMusicStorageChild(String childname) {
         DBAccess.creatStorageChild("music/", childname);
         return DBAccess.getStorageReference().child("music/" + childname);
+    }
+
+    public static StorageReference getMusicStorageReference(String childName){
+        return DBAccess.creatStorageChild("music/", childName);
     }
 
 
     public static void putFileInStorage(StorageReference reference, Uri file, OnSuccessListener<UploadTask.TaskSnapshot> onSuccessListener) {
         reference.putFile(file).addOnSuccessListener(onSuccessListener);
     }
+    public static void putFileInStorageWithMetadata(StorageReference reference, Uri file, StorageMetadata metadata, OnSuccessListener<UploadTask.TaskSnapshot> onSuccessListener) {
+        reference.putFile(file, metadata).addOnSuccessListener(onSuccessListener);
+    }
 
     public static void getDownloadUrl(StorageReference storageReference, OnSuccessListener<Uri> onSuccessListener) {
         storageReference.getDownloadUrl().addOnSuccessListener(onSuccessListener);
     }
-
-
 
     public static void getUser(ValueEventListener valueEventListener) {
         DBAccess.getUserReference("users").addValueEventListener(valueEventListener);
@@ -124,7 +125,6 @@ public class FirebaseRepository {
     public static void getCurrentUser(ValueEventListener valueEventListener) {
         DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).addListenerForSingleValueEvent(valueEventListener);
     }
-
 
     public static void getPosts(int limit, @NotNull String lastDateRetrivered, ValueEventListener valueEventListener) {
         Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").endAt(lastDateRetrivered).limitToFirst(limit);

@@ -96,9 +96,6 @@ public final class DBAccess {
 
     public static StorageReference getStorageReference() {
         return mStorageReference;
-<<<<<<< HEAD
 
-=======
->>>>>>> f227bbc78a9ac682e425daf2ff0fa8e144071708
     }
 }

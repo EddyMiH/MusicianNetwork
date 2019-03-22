@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
@@ -33,6 +34,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
             mOnUserImageListener.onProfileImageClickListener();
         }
     };
+    private BaseUploadsAdapter.OnItemSelectedListener mInnerItemClickListener;
     private Context context;
 
 
@@ -66,7 +68,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
     }
 
-
     public List<Post> getData() {
         if (mData == null)
             mData = new ArrayList<>();
@@ -75,6 +76,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
     public void setOnItemSelectedListener(OnItemSelectedListener onItemSelectedListener) {
         this.mOnItemSelectedListener = onItemSelectedListener;
+    }
+
+    public void setInnerItemClickListener(BaseUploadsAdapter.OnItemSelectedListener listener){
+        mInnerItemClickListener = listener;
     }
 
 
@@ -111,44 +116,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         feedViewHolder.setPostText(post.getPostText());
         feedViewHolder.setPostTime(post.getPublishedTime());
         feedViewHolder.setCommentCount(String.valueOf(post.getCommentsQuantity()));
+        feedViewHolder.setInnerItemClickListener(mInnerItemClickListener);
         Log.i("BINDING", i + "");
         feedViewHolder.initializeRecyclerView(post, context);
-
-
-
-        /*switch (post.getType()){
-            case NONE:
-
-                break;
-            case IMAGE:
-<<<<<<< HEAD
-          //      feedViewHolder.setPostImage(post.getPostImage());
-            //    feedViewHolder.setPostImageVisible();
-                break;
-            case VIDEO:
-              //  feedViewHolder.setPostVideo(post.getVideoUri());
-                //feedViewHolder.setPostVideoVisible();
-=======
-                //feedViewHolder.setPostImage(post.getPostImage());
-                feedViewHolder.setPostImageVisible();
-                break;
-            case VIDEO:
-                //feedViewHolder.setPostVideo(post.getVideoUri());
-                feedViewHolder.setPostVideoVisible();
->>>>>>> add posts firebase database
-                break;
-            case MUSIC:
-                //TODO
-                break;
-            case IMAGE_AND_MUSIC:
-                //feedViewHolder.setPostImage(post.getPostImage());
-<<<<<<< HEAD
-                //feedViewHolder.setPostImageVisible();
-=======
-                feedViewHolder.setPostImageVisible();
->>>>>>> add posts firebase database
-                //TODO
-        }*/
 
     }
 
@@ -162,14 +132,14 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         mOnUserImageListener = onUserImageListener;
     }
 
-
     public interface OnItemSelectedListener {
-        void onItemSelected(Post post);
+        void onItemSelected(Post post) ;
     }
 
     public interface OnUserImageListener {
         void onProfileImageClickListener();
     }
+
 
 
 }
