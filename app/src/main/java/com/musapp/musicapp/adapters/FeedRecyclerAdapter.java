@@ -52,6 +52,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         if (this.mData == null) {
             this.mData = new ArrayList<>();
         }
+        mData.removeAll(this.mData);
         this.mData.addAll(index, mData);
         notifyDataSetChanged();
     }

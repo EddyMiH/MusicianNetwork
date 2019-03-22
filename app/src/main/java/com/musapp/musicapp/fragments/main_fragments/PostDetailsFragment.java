@@ -143,8 +143,8 @@ public class PostDetailsFragment extends Fragment {
 //                    DBAsyncTask.waitResponse("comments",PostDetailsFragment.this, newComment);
 //                    DBAsyncTask.waitResponse("posts",PostDetailsFragment.this, mCurrentPost);
                     newComment.setCreatorId(CurrentUser.getCurrentUser().getPrimaryKey());
-                    newComment.setUserCreatorNickName(mCurrentPost.getUserName());
-                    newComment.setUserProfileImageUrl(mCurrentPost.getProfileImage());
+                    newComment.setUserCreatorNickName(CurrentUser.getCurrentUser().getNickName());
+                    newComment.setUserProfileImageUrl(CurrentUser.getCurrentUser().getUserInfo().getImageUri());
                     FirebaseRepository.createComment(newComment, new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

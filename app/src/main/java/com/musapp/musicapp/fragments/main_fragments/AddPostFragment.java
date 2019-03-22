@@ -305,6 +305,7 @@ public class AddPostFragment extends Fragment {
 
            getFragmentManager().beginTransaction()
                    .remove(this)
+                 //  .replace(R.id.layout_activity_app_container, FragmentShowUtils.getPreviousFragment())
                    .commit();
            getFragmentManager().popBackStack();
     }

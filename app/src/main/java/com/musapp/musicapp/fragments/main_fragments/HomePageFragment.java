@@ -121,7 +121,7 @@ public class HomePageFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                 swipeRefreshLayout.setRefreshing(false);
+                loadNewPostsAfterRefresh();
             }
         });
     }
@@ -148,7 +148,7 @@ public class HomePageFragment extends Fragment {
                         list.add(post);
                     }
                 }
-               Collections.reverse(list);
+              Collections.reverse(list);
               //  posts.addAll(list);
                 feedRecyclerAdapter.setData(list);
                 //feedRecyclerAdapter.setData(list, 0);
@@ -195,6 +195,25 @@ public class HomePageFragment extends Fragment {
           }
       });
 
+    }
+
+    private void loadNewPostsAfterRefresh(){
+        FirebaseRepository.getNewPost(feedRecyclerAdapter.getData().get(0).getPublishedTime(), new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Post> posts =  new ArrayList<>();
+                for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
+                    posts.add(postSnapshot.getValue(Post.class));
+                }
+                swipeRefreshLayout.setRefreshing(false);
+                feedRecyclerAdapter.setData(posts, 0);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -273,8 +292,11 @@ public class HomePageFragment extends Fragment {
     public void beginTransaction(Fragment fragment){
         if(fragment.isAdded())
             return;
+        FragmentShowUtils.setPreviousFragment(this);
         getFragmentManager().beginTransaction()
+                .addToBackStack(null)
                 .replace(R.id.layout_activity_app_container, fragment)
+              //  .add(R.id.layout_activity_app_container, fragment)
                 .commit();
 
     }
