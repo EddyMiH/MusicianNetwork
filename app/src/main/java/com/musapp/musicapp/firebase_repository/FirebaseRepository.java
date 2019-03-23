@@ -1,28 +1,17 @@
 package com.musapp.musicapp.firebase_repository;
 
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.renderscript.Sampler;
-import android.support.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.NotNull;
-import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
-import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Post;
-import com.musapp.musicapp.uploads.AttachedFile;
-
-import java.util.Date;
 
 public class FirebaseRepository {
 
@@ -100,26 +89,26 @@ public class FirebaseRepository {
         DBAccess.creatStorageChild("video/", childname);
         return DBAccess.getStorageReference().child("video/" + childname);
     }
-    public static StorageReference createAudioStorageChild(String childname){
-        DBAccess.creatStorageChild("audio/", childname);
-        return DBAccess.getStorageReference().child("audio/" + childname);
-    }
-
     public static StorageReference createMusicStorageChild(String childname) {
         DBAccess.creatStorageChild("music/", childname);
         return DBAccess.getStorageReference().child("music/" + childname);
+    }
+
+    public static StorageReference getMusicStorageReference(String childName){
+        return DBAccess.creatStorageChild("music/", childName);
     }
 
 
     public static void putFileInStorage(StorageReference reference, Uri file, OnSuccessListener<UploadTask.TaskSnapshot> onSuccessListener) {
         reference.putFile(file).addOnSuccessListener(onSuccessListener);
     }
+    public static void putFileInStorageWithMetadata(StorageReference reference, Uri file, StorageMetadata metadata, OnSuccessListener<UploadTask.TaskSnapshot> onSuccessListener) {
+        reference.putFile(file, metadata).addOnSuccessListener(onSuccessListener);
+    }
 
     public static void getDownloadUrl(StorageReference storageReference, OnSuccessListener<Uri> onSuccessListener) {
         storageReference.getDownloadUrl().addOnSuccessListener(onSuccessListener);
     }
-
-
 
     public static void getUser(ValueEventListener valueEventListener) {
         DBAccess.getUserReference("users").addValueEventListener(valueEventListener);
@@ -133,10 +122,10 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).addListenerForSingleValueEvent(valueEventListener);
     }
 
+
     public static void updateCurrentUserPostsInFirebase(){
         DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).child("postId").setValue(CurrentUser.getCurrentUser().getPostId());
     }
-
 
     public static void getPosts(int limit, @NotNull String lastDateRetrivered, ValueEventListener valueEventListener) {
         Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").endAt(lastDateRetrivered).limitToFirst(limit);
@@ -169,7 +158,6 @@ public class FirebaseRepository {
     public static void setCurrentUser(String primaryKey, ValueEventListener valueEventListener) {
         DBAccess.getUserReference("users/" + primaryKey).addListenerForSingleValueEvent(valueEventListener);
     }
-
 
 
 

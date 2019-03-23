@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.adapters.CommentRecyclerViewAdapter;
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
@@ -72,6 +73,19 @@ public class PostDetailsFragment extends Fragment {
     private String mCurrentUserImage;
 
     private List<Comment> mComments;
+
+    private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
+
+    private BaseUploadsAdapter.OnItemSelectedListener mInnerItemOnClickListener = new BaseUploadsAdapter.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(String uri) {
+            mPlayerServiceConnection.play(uri);
+        }
+    };
+
+    public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection connection){
+        mPlayerServiceConnection = connection;
+    }
 
     private CommentRecyclerViewAdapter.OnCommentItemSelectedListener mOnCommentItemSelectedListener =
             new CommentRecyclerViewAdapter.OnCommentItemSelectedListener() {
@@ -246,6 +260,7 @@ public class PostDetailsFragment extends Fragment {
 
     private void initUploadsAdapter(){
         mAdapter = UploadsAdapterFactory.setAdapterTypeByInputType(mCurrentPost.getType());
+        mAdapter.setOnItemSelectedListener(mInnerItemOnClickListener);
         List<BaseUpload> uploads = new ArrayList<>();
         if(mCurrentPost.getType() == PostUploadType.NONE)
             return;

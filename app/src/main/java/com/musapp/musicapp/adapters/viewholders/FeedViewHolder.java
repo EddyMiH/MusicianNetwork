@@ -9,11 +9,13 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
+import com.musapp.musicapp.adapters.inner_post_adapter.MusicUploadAdapter;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.model.Post;
@@ -40,6 +42,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
 
     private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> mUploadsAdapter;
     private OnUserProfileImageListener userProfileImageListener;
+    private BaseUploadsAdapter.OnItemSelectedListener mInnerItemClickListener;
     //add field for inflate music view
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -121,12 +124,6 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         //GlideUtil.setImageGlide(src, this.mPostImage);
     }
 
-    public void setPostVideo(Uri videoFilePath) {
-        //  mPostVideo.setVideoURI(videoFilePath);
-        //TODO set video into YouTubeVideoView
-        //VideoViewInitUtil.setVideoView(mPostVideo);
-    }
-
     public void setCommentIcon(ImageView mCommentIcon) {
         this.mCommentIcon = mCommentIcon;
     }
@@ -141,6 +138,10 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
 
     public void setUserProfileImageListener(OnUserProfileImageListener userProfileImageListener) {
         this.userProfileImageListener = userProfileImageListener;
+    }
+
+    public void setInnerItemClickListener(BaseUploadsAdapter.OnItemSelectedListener listener){
+        mInnerItemClickListener = listener;
     }
 
     public RecyclerView getRecyclerView() {
@@ -166,6 +167,8 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
             uploads.add(UploadTypeFactory.setUploadByType(post.getType(), url));
         }
         mUploadsAdapter.setUploads(uploads);
+        //
+        mUploadsAdapter.setOnItemSelectedListener(mInnerItemClickListener);
         mRecyclerView.setLayoutManager(new GridLayoutManager(context, post.getType() == PostUploadType.IMAGE ? 2 : 1));
         mRecyclerView.setAdapter(mUploadsAdapter);
     }

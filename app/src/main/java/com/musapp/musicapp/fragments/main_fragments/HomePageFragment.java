@@ -1,6 +1,7 @@
 package com.musapp.musicapp.fragments.main_fragments;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -24,7 +25,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
+import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
@@ -42,19 +45,25 @@ public class HomePageFragment extends Fragment {
     private FeedRecyclerAdapter feedRecyclerAdapter;
     private final int limit = 5;
 
-
-
     private ProgressBar mProgressBar;
 
     private List<Post> posts;
     public static final String ARG_POST = "current_post";
     private SetToolBarTitle mSetToolBarTitle;
     private RecyclerView recyclerView;
+    private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
 
     private  SwipeRefreshLayout swipeRefreshLayout;
     public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
         mSetToolBarTitle = setToolBarTitle;
     }
+
+    private BaseUploadsAdapter.OnItemSelectedListener mInnerItemOnClickListener = new BaseUploadsAdapter.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(String uri) {
+            mPlayerServiceConnection.play(uri);
+        }
+    };
 
     private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
         @Override
@@ -68,7 +77,6 @@ public class HomePageFragment extends Fragment {
         }
     };
 
-
     private FeedRecyclerAdapter.OnItemSelectedListener mOnItemSelectedListener =
             new FeedRecyclerAdapter.OnItemSelectedListener() {
                 @Override
@@ -77,12 +85,16 @@ public class HomePageFragment extends Fragment {
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(HomePageFragment.ARG_POST, post);
                     PostDetailsFragment fragment = new PostDetailsFragment();
-
+                    fragment.setPlayerServiceConnection(mPlayerServiceConnection);
                     fragment.setArguments(bundle);
                     fragment.setSetToolBarTitle(mSetToolBarTitle);
                     beginTransaction(fragment);
                 }
             };
+
+    public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection connection){
+        mPlayerServiceConnection = connection;
+    }
 
     @Nullable
     @Override
@@ -116,8 +128,6 @@ public class HomePageFragment extends Fragment {
                 }
 
             }});
-        //    Post.setLocalBinder(mLocalBinder);
-
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -130,6 +140,7 @@ public class HomePageFragment extends Fragment {
         feedRecyclerAdapter = new FeedRecyclerAdapter();
         feedRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
         feedRecyclerAdapter.setOnUserImageListener(mOnUserImageListener);
+        feedRecyclerAdapter.setInnerItemClickListener(mInnerItemOnClickListener);
       //  feedRecyclerAdapter.setData(posts);
         view.setLayoutManager(new LinearLayoutManager(getContext()));
         view.setAdapter(feedRecyclerAdapter);
@@ -263,37 +274,40 @@ public class HomePageFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Intent intent = new Intent(getContext(), MusicPlayerService.class);
-   //     getActivity().bindService(intent,mServiceConnection, Context.BIND_AUTO_CREATE);
-
+//        Intent intent = new Intent(getContext(), MusicPlayerService.class);
+//        getActivity().bindService(intent,mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        mLocalBinder.stop();
-  //      getActivity().unbindService(mServiceConnection);
+//        if (mLocalBinder != null){
+//            mLocalBinder.stop();
+//
+//        }
+//        getActivity().unbindService(mServiceConnection);
     }
 
-    private MusicPlayerService.LocalBinder mLocalBinder;
-
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mLocalBinder = (MusicPlayerService.LocalBinder) service;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mLocalBinder = null;
-        }
-    };
+//    private MusicPlayerService.LocalBinder mLocalBinder;
+//
+//    private ServiceConnection mServiceConnection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            mLocalBinder = (MusicPlayerService.LocalBinder) service;
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            mLocalBinder = null;
+//        }
+//    };
 
     public void beginTransaction(Fragment fragment){
         if(fragment.isAdded())
             return;
         FragmentShowUtils.setPreviousFragment(this);
         getFragmentManager().beginTransaction()
+
                 .addToBackStack(null)
                 .replace(R.id.layout_activity_app_container, fragment)
               //  .add(R.id.layout_activity_app_container, fragment)

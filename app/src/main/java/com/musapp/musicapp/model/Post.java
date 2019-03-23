@@ -166,7 +166,11 @@ public class Post implements Parcelable{
 
         }
         innerRecyclerView.setAdapter(innerAdapter);
+<<<<<<< HEAD
+        //innerAdapter.setUploads(uploads);
+=======
 
+>>>>>>> f227bbc78a9ac682e425daf2ff0fa8e144071708
     }
 
     //old version

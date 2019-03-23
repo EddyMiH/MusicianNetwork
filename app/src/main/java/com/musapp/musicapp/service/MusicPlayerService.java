@@ -84,6 +84,7 @@ public class MusicPlayerService extends IntentService {
             mMediaPlayer.setDataSource(url);
             mMediaPlayer.prepareAsync();
             currentSongUrl = url;
+            mHandler = new Handler();
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -143,7 +144,11 @@ public class MusicPlayerService extends IntentService {
 
     public class LocalBinder extends Binder{
         public void play(String path){
-            playSong(path);
+            if (mMediaPlayer.isLooping()){
+                resume();
+            }else{
+                playSong(path);
+            }
 
         }
         public void pause(){
