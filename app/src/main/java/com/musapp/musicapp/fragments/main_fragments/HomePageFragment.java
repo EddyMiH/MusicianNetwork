@@ -59,13 +59,6 @@ public class HomePageFragment extends Fragment {
         mSetToolBarTitle = setToolBarTitle;
     }
 
-    private BaseUploadsAdapter.OnItemSelectedListener mInnerItemOnClickListener = new BaseUploadsAdapter.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(String uri) {
-            mPlayerServiceConnection.play(uri);
-        }
-    };
-
     private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
         @Override
         public void onProfileImageClickListener() {
@@ -136,8 +129,8 @@ public class HomePageFragment extends Fragment {
         feedRecyclerAdapter = new FeedRecyclerAdapter();
         feedRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
         feedRecyclerAdapter.setOnUserImageListener(mOnUserImageListener);
-        feedRecyclerAdapter.setInnerItemClickListener(mInnerItemOnClickListener);
-      //  feedRecyclerAdapter.setData(posts);
+        //feedRecyclerAdapter.setInnerItemClickListener(mInnerItemOnClickListener);
+        feedRecyclerAdapter.setPlayerServiceConnection(mPlayerServiceConnection);
         view.setLayoutManager(new LinearLayoutManager(getContext()));
         view.setAdapter(feedRecyclerAdapter);
     }
@@ -251,18 +244,13 @@ public class HomePageFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-//        Intent intent = new Intent(getContext(), MusicPlayerService.class);
-//        getActivity().bindService(intent,mServiceConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        if (mLocalBinder != null){
-//            mLocalBinder.stop();
-//
-//        }
-//        getActivity().unbindService(mServiceConnection);
+
     }
 
 //    private MusicPlayerService.LocalBinder mLocalBinder;

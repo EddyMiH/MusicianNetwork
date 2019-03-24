@@ -95,21 +95,6 @@ public class PostDetailsFragment extends Fragment {
                 }
             };
 
-//    private void loadUserProfileImage(){
-//        FirebaseDatabase.getInstance().getReference().child("profession_and_bio").child(mCurrentUser.getProfessionAndInfoId()).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                String url = dataSnapshot.getValue(ProfessionAndInfo.class).getImageUri();
-//                mCurrentUserImage = url;
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -152,11 +137,6 @@ public class PostDetailsFragment extends Fragment {
                     Date date = new Date(System.currentTimeMillis());
                     newComment.setCreationTime(simple.format(date));
                     newComment.setCommentText(postText);
-//                    newComment.setCreatorId(mCurrentUser.getPrimaryKey());
-//                    newComment.setUserCreatorNickName(mCurrentUser.getNickName());
-//                    newComment.setUserProfileImageUrl(mCurrentUserImage);/////
-//                    DBAsyncTask.waitResponse("comments",PostDetailsFragment.this, newComment);
-//                    DBAsyncTask.waitResponse("posts",PostDetailsFragment.this, mCurrentPost);
                     newComment.setCreatorId(CurrentUser.getCurrentUser().getPrimaryKey());
                     newComment.setUserCreatorNickName(CurrentUser.getCurrentUser().getNickName());
                     newComment.setUserProfileImageUrl(CurrentUser.getCurrentUser().getUserInfo().getImageUri());

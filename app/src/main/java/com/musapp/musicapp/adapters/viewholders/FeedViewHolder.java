@@ -43,6 +43,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> mUploadsAdapter;
     private OnUserProfileImageListener userProfileImageListener;
     private BaseUploadsAdapter.OnItemSelectedListener mInnerItemClickListener;
+    private BaseUploadsAdapter.OnMusicSeekBarListener mMusicSeekBarListener;
     //add field for inflate music view
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -144,6 +145,10 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         mInnerItemClickListener = listener;
     }
 
+    public void setOnSeekBarListener(BaseUploadsAdapter.OnMusicSeekBarListener listener){
+        mMusicSeekBarListener = listener;
+    }
+
     public RecyclerView getRecyclerView() {
         return mRecyclerView;
     }
@@ -169,6 +174,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         mUploadsAdapter.setUploads(uploads);
         //
         mUploadsAdapter.setOnItemSelectedListener(mInnerItemClickListener);
+        mUploadsAdapter.setOnSeekBarListner(mMusicSeekBarListener);
         mRecyclerView.setLayoutManager(new GridLayoutManager(context, post.getType() == PostUploadType.IMAGE ? 2 : 1));
         mRecyclerView.setAdapter(mUploadsAdapter);
     }

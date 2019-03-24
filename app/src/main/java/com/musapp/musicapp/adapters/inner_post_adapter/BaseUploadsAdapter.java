@@ -2,6 +2,7 @@ package com.musapp.musicapp.adapters.inner_post_adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ public abstract class BaseUploadsAdapter<T, Y extends RecyclerView.ViewHolder > 
 
     protected List<T> uploads;
     protected OnItemSelectedListener mOnItemSelectedListener;
+    protected OnMusicSeekBarListener mOnSeekBarListener;
 
     @Override
     public int getItemCount() {
@@ -42,8 +44,17 @@ public abstract class BaseUploadsAdapter<T, Y extends RecyclerView.ViewHolder > 
         mOnItemSelectedListener = onItemSelectedListener;
     }
 
+    public void setOnSeekBarListner(OnMusicSeekBarListener listener){
+        mOnSeekBarListener = listener;
+    }
+
     public interface OnItemSelectedListener {
         void onItemSelected(String uri);
+    }
+
+    public interface OnMusicSeekBarListener {
+        void onSeekBarChanged(int position);
+        void onStartHandle(View view, View view2);
     }
 
 }

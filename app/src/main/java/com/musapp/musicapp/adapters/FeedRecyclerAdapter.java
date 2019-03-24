@@ -8,15 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.SeekBar;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.adapters.viewholders.FeedViewHolder;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.model.Post;
-import com.musapp.musicapp.pattern.UploadTypeFactory;
-import com.musapp.musicapp.pattern.UploadsAdapterFactory;
 import com.musapp.musicapp.uploads.BaseUpload;
 
 import java.util.ArrayList;
@@ -34,9 +34,33 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
             mOnUserImageListener.onProfileImageClickListener();
         }
     };
-    private BaseUploadsAdapter.OnItemSelectedListener mInnerItemClickListener;
+    private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
+
+    private BaseUploadsAdapter.OnItemSelectedListener mInnerMusicItemOnClickListener = new BaseUploadsAdapter.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(String uri) {
+            mPlayerServiceConnection.play(uri);
+        }
+    };
+
+    private BaseUploadsAdapter.OnMusicSeekBarListener mMusicSeekBarListener =
+            new BaseUploadsAdapter.OnMusicSeekBarListener() {
+                @Override
+                public void onSeekBarChanged(int position) {
+                    mPlayerServiceConnection.seekTo(position);
+                }
+
+                @Override
+                public void onStartHandle(View view, View view2) {
+                    mPlayerServiceConnection.handleSeekBar( (SeekBar) view, (Button) view2);
+                }
+            };
+
     private Context context;
 
+    public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection connection){
+        mPlayerServiceConnection = connection;
+    }
 
     public FeedRecyclerAdapter() {
         mData = new ArrayList<>();
@@ -78,9 +102,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         this.mOnItemSelectedListener = onItemSelectedListener;
     }
 
-    public void setInnerItemClickListener(BaseUploadsAdapter.OnItemSelectedListener listener){
-        mInnerItemClickListener = listener;
-    }
+//    public void setInnerItemClickListener(BaseUploadsAdapter.OnItemSelectedListener listener){
+//        mInnerItemClickListener = listener;
+//    }
 
 
     private View view;
@@ -116,13 +140,16 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         feedViewHolder.setPostText(post.getPostText());
         feedViewHolder.setPostTime(post.getPublishedTime());
         feedViewHolder.setCommentCount(String.valueOf(post.getCommentsQuantity()));
-        feedViewHolder.setInnerItemClickListener(mInnerItemClickListener);
+        if(post.getType() == PostUploadType.MUSIC){
+            feedViewHolder.setInnerItemClickListener(mInnerMusicItemOnClickListener);
+            feedViewHolder.setOnSeekBarListener(mMusicSeekBarListener);
+        }
+        //in else if statements set inner listener for image(open tabbed fragment for fullscreen)
         Log.i("BINDING", i + "");
         feedViewHolder.initializeRecyclerView(post, context);
 
     }
-
-
+    
     @Override
     public int getItemCount() {
         return mData == null ? 0 : mData.size();
