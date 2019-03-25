@@ -29,26 +29,8 @@ public class MusicPlayerService extends IntentService {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     mMediaPlayer.start();
-                    if (mSeekBar != null){
-                        handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mLocalBinder.isPlaying()) {
-                                    int currentPosition = mLocalBinder.getCurrentDuration();
-                                    mSeekBar.setProgress(currentPosition);
-                                    if (mSeekBar.getMax() == currentPosition){
-                                        mSeekBar.setProgress(0);
-                                        mLocalBinder.isPrepared = true;
-                                    }
-                                    handler.postDelayed(this, 1000);
-                                }else if (mLocalBinder.isPrepared ){
-                                    handler.postDelayed(this, 10);
-                                }
+                    startSeekBarHandle();
 
-                            }
-                        }, 10);
-                    }
                 }
             };
 
@@ -72,6 +54,29 @@ public class MusicPlayerService extends IntentService {
             Log.d("buffering", "onBufferingUpdate: percent: " + percent);
         }
     };
+
+    public void startSeekBarHandle(){
+        if (mSeekBar != null){
+            handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mLocalBinder.isPlaying()) {
+                        int currentPosition = mLocalBinder.getCurrentDuration();
+                        mSeekBar.setProgress(currentPosition);
+                        if (mSeekBar.getMax() == currentPosition){
+                            mSeekBar.setProgress(0);
+                            mLocalBinder.isPrepared = true;
+                        }
+                        handler.postDelayed(this, 1000);
+                    }else if (mLocalBinder.isPrepared ){
+                        handler.postDelayed(this, 10);
+                    }
+
+                }
+            }, 10);
+        }
+    }
 
 
     @Override
@@ -188,6 +193,7 @@ public class MusicPlayerService extends IntentService {
                 if(isPlaying()){
                     pause();
                 }else{
+                    MusicPlayerService.this.startSeekBarHandle();
                     resume();
                 }
                 isPrepared = false;
@@ -230,12 +236,14 @@ public class MusicPlayerService extends IntentService {
             mSeekBar = bar;
         }
         public void setPlayPauseButton(Button btn){
-            if(mButton!= null){
+            if(mButton != null && btn != mButton){
                 mButton.setBackgroundResource(R.drawable.ic_play_arrow_white_24dp);
             }
             mButton = btn;
         }
-
+        public void startSeekBarHandle(){
+            MusicPlayerService.this.startSeekBarHandle();
+        }
 
     }
 }

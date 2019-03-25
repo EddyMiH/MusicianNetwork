@@ -235,6 +235,15 @@ public class AppMainActivity extends AppCompatActivity {
                     mLocalBinder.setSeekBar(seekBar);
                     mLocalBinder.setPlayPauseButton(button);
                 }
+
+                @Override
+                public boolean isPlayerPlaying(String url) {
+                    if (mLocalBinder.isPlaying() && mLocalBinder.getCurrentUrl().equals(url)){
+                        //mLocalBinder.startSeekBarHandle();
+                        return true;
+                    }
+                    return false;
+                }
             };
 
     public interface MusicPlayerServiceConnection{
@@ -242,5 +251,6 @@ public class AppMainActivity extends AppCompatActivity {
         void pause();
         void seekTo(int progress);
         void handleSeekBar(SeekBar seekBar, Button button);
+        boolean isPlayerPlaying(String url);
     }
 }

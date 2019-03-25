@@ -8,23 +8,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.SeekBar;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.adapters.viewholders.FeedViewHolder;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
 import com.musapp.musicapp.enums.PostUploadType;
+import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.uploads.BaseUpload;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Handler;
 
-public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
+public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> implements Filterable {
 
     private List<Post> mData;
+    private List<Post> mSearchData;
     private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> innerAdapter;
     private OnItemSelectedListener mOnItemSelectedListener;
     private OnUserImageListener mOnUserImageListener;
@@ -64,13 +77,18 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
     public FeedRecyclerAdapter() {
         mData = new ArrayList<>();
+        mSearchData = new ArrayList<>();
     }
 
     public void setData(List<Post> mData) {
         if (this.mData == null) {
             this.mData = new ArrayList<>();
         }
+        if (this.mSearchData == null){
+            this.mSearchData = new ArrayList<>();
+        }
         this.mData.addAll(mData);
+        this.mSearchData.addAll(mData);
         notifyDataSetChanged();
     }
 
@@ -78,7 +96,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         if (this.mData == null) {
             this.mData = new ArrayList<>();
         }
+        if (this.mSearchData == null){
+            this.mSearchData = new ArrayList<>();
+        }
         this.mData.addAll(index, mData);
+        this.mSearchData.addAll(index, mData);
         notifyDataSetChanged();
     }
 
@@ -87,7 +109,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         if (mData == null) {
             mData = new ArrayList<>();
         }
+        if (this.mSearchData == null){
+            this.mSearchData = new ArrayList<>();
+        }
         mData.add(index, post);
+        mSearchData.add(index, post);
         notifyItemInserted(index);
 
     }
@@ -105,7 +131,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 //    public void setInnerItemClickListener(BaseUploadsAdapter.OnItemSelectedListener listener){
 //        mInnerItemClickListener = listener;
 //    }
-
 
     private View view;
 
@@ -149,7 +174,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         feedViewHolder.initializeRecyclerView(post, context);
 
     }
-    
+
     @Override
     public int getItemCount() {
         return mData == null ? 0 : mData.size();
@@ -157,6 +182,94 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
     public void setOnUserImageListener(OnUserImageListener onUserImageListener) {
         mOnUserImageListener = onUserImageListener;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return postFilter;
+    }
+
+    private Filter postFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            final List<Post> filteredPosts = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0){
+                filteredPosts.addAll(mSearchData);
+            }else{
+                final String queryText = constraint.toString().toLowerCase().trim();
+//                FirebaseRepository.getSearchedPost( new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+//                            Post post = snapshot.getValue(Post.class);
+//                            String postText = post.getPostText().toLowerCase().trim();
+//                            String name = post.getUserName().toLowerCase().trim();
+//                            if(postText.contains(queryText) || name.contains(queryText)){
+//                                filteredPosts.add(post);
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+                FirebaseRepository.getSearchedPostByPostText(queryText, new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        GenericTypeIndicator<HashMap<String,Post>> T = new GenericTypeIndicator<HashMap<String,Post>>() {};
+                        HashMap<String,Post> posts = dataSnapshot.getValue(T);
+                        if (posts != null){
+                            filteredPosts.addAll(posts.values());
+                        }
+                        upDateAdapterDataAfterSearch(filteredPosts);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+//                final List<Post> filteredPostsByCreator = new ArrayList<>();
+//                FirebaseRepository.getSearchedPostByPostCreator(queryText, new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        GenericTypeIndicator<HashMap<String,Post>> T = new GenericTypeIndicator<HashMap<String,Post>>() {};
+//                        HashMap<String,Post> posts = dataSnapshot.getValue(T);
+//                        if (posts != null){
+//
+//                            filteredPostsByCreator.addAll(posts.values());
+//                        }
+//                        filteredPosts.addAll(filteredPostsByCreator);
+//                        HashSet<Post> set = new HashSet<>(filteredPosts);
+//                        filteredPostsByCreator.clear();
+//                        filteredPosts.addAll(set);
+//                        upDateAdapterDataAfterSearch(filteredPosts);
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+            }
+            FilterResults result = new FilterResults();
+            result.values = filteredPosts;
+            return result;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            upDateAdapterDataAfterSearch((List)results.values);
+        }
+    };
+
+    private void upDateAdapterDataAfterSearch(List<Post> list){
+        mData.clear();
+        //Collections.reverse(list);
+        mData.addAll(list);
+        notifyDataSetChanged();
     }
 
     public interface OnItemSelectedListener {

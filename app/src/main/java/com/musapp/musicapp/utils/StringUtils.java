@@ -18,4 +18,8 @@ public final class StringUtils {
         Date date = new Date(System.currentTimeMillis());
         return simple.format(date);
     }
+
+    public static String getSongUri(String fullName){
+        return fullName.substring(fullName.lastIndexOf("$")+1);
+    }
 }

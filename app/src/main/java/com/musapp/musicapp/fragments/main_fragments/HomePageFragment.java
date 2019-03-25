@@ -212,8 +212,7 @@ public class HomePageFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String s) {
                 //TODO search
-                //feedRecyclerAdapter.getFilter().filter(s);
-
+                feedRecyclerAdapter.getFilter().filter(s);
                 return false;
             }
         });
@@ -228,7 +227,7 @@ public class HomePageFragment extends Fragment {
             case R.id.action_add_home_fragment_menu_item:
                 //TODO open new fragment for add new post
                 AddPostFragment fragment = new AddPostFragment();
-                //fragment.setSetToolBarTitle(mSetToolBarTitle);
+                fragment.setSetToolBarTitle(mSetToolBarTitle);
                 beginTransaction(fragment);
         }
         return true;
@@ -238,7 +237,6 @@ public class HomePageFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -252,20 +250,6 @@ public class HomePageFragment extends Fragment {
         super.onDestroy();
 
     }
-
-//    private MusicPlayerService.LocalBinder mLocalBinder;
-//
-//    private ServiceConnection mServiceConnection = new ServiceConnection() {
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            mLocalBinder = (MusicPlayerService.LocalBinder) service;
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            mLocalBinder = null;
-//        }
-//    };
 
     public void beginTransaction(Fragment fragment){
         if(fragment.isAdded())
