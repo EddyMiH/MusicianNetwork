@@ -127,6 +127,10 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).child("postId").setValue(CurrentUser.getCurrentUser().getPostId());
     }
 
+    public static void updateCurrentUserFavouritePosts(){
+        DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).child("favouriteId").setValue(CurrentUser.getCurrentUser().getFavouritePostId());
+    }
+
     public static void getPosts(int limit, @NotNull String lastDateRetrivered, ValueEventListener valueEventListener) {
         Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").endAt(lastDateRetrivered).limitToFirst(limit);
         postQuery.addListenerForSingleValueEvent(valueEventListener);

@@ -21,6 +21,7 @@ import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.adapters.viewholders.FeedViewHolder;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
+import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.model.Post;
@@ -45,6 +46,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
         @Override
         public void onUserImageClickListener(int position) {
             mOnUserImageListener.onProfileImageClickListener(mData.get(position));
+        }
+    };
+    private FeedViewHolder.OnPostSettingsClickListener mOnPostSettingsClickListener = new FeedViewHolder.OnPostSettingsClickListener() {
+        @Override
+        public void onFavouriteClickListener(int position) {
+            CurrentUser.getCurrentUser().addFavouritePostId(mData.get(position).getPrimaryKey());
+            updateUsersFavouritePosts();
         }
     };
     private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
@@ -163,6 +171,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
         feedViewHolder.setPostText(post.getPostText());
         feedViewHolder.setPostTime(post.getPublishedTime());
         feedViewHolder.setCommentCount(String.valueOf(post.getCommentsQuantity()));
+        feedViewHolder.setPostSettingsClickListener(mOnPostSettingsClickListener);
         if(post.getType() == PostUploadType.MUSIC){
             feedViewHolder.setInnerItemClickListener(mInnerMusicItemOnClickListener);
             feedViewHolder.setOnSeekBarListener(mMusicSeekBarListener);
@@ -282,5 +291,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
     }
 
 
+    private void updateUsersFavouritePosts(){
+        FirebaseRepository.updateCurrentUserFavouritePosts();
+    }
 
 }

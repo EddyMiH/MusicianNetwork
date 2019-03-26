@@ -17,6 +17,7 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.adapters.inner_post_adapter.MusicUploadAdapter;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
+import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.pattern.UploadTypeFactory;
@@ -42,6 +43,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
 
     private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> mUploadsAdapter;
     private OnUserProfileImageListener userProfileImageListener;
+    private OnPostSettingsClickListener postSettingsClickListener;
     private BaseUploadsAdapter.OnItemSelectedListener mInnerItemClickListener;
     private BaseUploadsAdapter.OnMusicSeekBarListener mMusicSeekBarListener;
     //add field for inflate music view
@@ -56,7 +58,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
                 public boolean onMenuItemClick(MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
                         case R.id.favorite_pop_up_menu_item:
-                            //TODO add to favorites
+                            postSettingsClickListener.onFavouriteClickListener(getAdapterPosition());
                             return true;
                     }
                     return false;
@@ -179,7 +181,14 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         mRecyclerView.setAdapter(mUploadsAdapter);
     }
 
+    public void setPostSettingsClickListener(OnPostSettingsClickListener postSettingsClickListener) {
+        this.postSettingsClickListener = postSettingsClickListener;
+    }
+
     public interface OnUserProfileImageListener {
         void onUserImageClickListener(int position);
+    }
+    public  interface  OnPostSettingsClickListener{
+        void  onFavouriteClickListener(int position);
     }
 }
