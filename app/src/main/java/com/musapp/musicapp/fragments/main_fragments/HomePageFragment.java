@@ -58,13 +58,6 @@ public class HomePageFragment extends Fragment {
         mSetToolBarTitle = setToolBarTitle;
     }
 
-    private BaseUploadsAdapter.OnItemSelectedListener mInnerItemOnClickListener = new BaseUploadsAdapter.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(String uri) {
-            mPlayerServiceConnection.play(uri);
-        }
-    };
-
     private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
         @Override
         public void onProfileImageClickListener(Post post) {
@@ -140,8 +133,8 @@ public class HomePageFragment extends Fragment {
         feedRecyclerAdapter = new FeedRecyclerAdapter();
         feedRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
         feedRecyclerAdapter.setOnUserImageListener(mOnUserImageListener);
-        feedRecyclerAdapter.setInnerItemClickListener(mInnerItemOnClickListener);
-      //  feedRecyclerAdapter.setData(posts);
+        //feedRecyclerAdapter.setInnerItemClickListener(mInnerItemOnClickListener);
+        feedRecyclerAdapter.setPlayerServiceConnection(mPlayerServiceConnection);
         view.setLayoutManager(new LinearLayoutManager(getContext()));
         view.setAdapter(feedRecyclerAdapter);
     }
@@ -242,8 +235,7 @@ public class HomePageFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String s) {
                 //TODO search
-                //feedRecyclerAdapter.getFilter().filter(s);
-
+                feedRecyclerAdapter.getFilter().filter(s);
                 return false;
             }
         });
@@ -258,7 +250,7 @@ public class HomePageFragment extends Fragment {
             case R.id.action_add_home_fragment_menu_item:
                 //TODO open new fragment for add new post
                 AddPostFragment fragment = new AddPostFragment();
-                //fragment.setSetToolBarTitle(mSetToolBarTitle);
+                fragment.setSetToolBarTitle(mSetToolBarTitle);
                 beginTransaction(fragment);
         }
         return true;
@@ -268,39 +260,19 @@ public class HomePageFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
-//        Intent intent = new Intent(getContext(), MusicPlayerService.class);
-//        getActivity().bindService(intent,mServiceConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        if (mLocalBinder != null){
-//            mLocalBinder.stop();
-//
-//        }
-//        getActivity().unbindService(mServiceConnection);
-    }
 
-//    private MusicPlayerService.LocalBinder mLocalBinder;
-//
-//    private ServiceConnection mServiceConnection = new ServiceConnection() {
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            mLocalBinder = (MusicPlayerService.LocalBinder) service;
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            mLocalBinder = null;
-//        }
-//    };
+    }
 
     public void beginTransaction(Fragment fragment){
         if(fragment.isAdded())

@@ -87,8 +87,6 @@ public class UploadForegroundService extends IntentService {
                               sentPostToFirebase();
 
                           }
-
-
                       }
                   });
                }
@@ -118,7 +116,7 @@ public class UploadForegroundService extends IntentService {
         }}
 
         else if(attachedFile.getFileType() == PostUploadType.MUSIC){
-            for(Map.Entry<String, Uri> entry: filesUri.entrySet()){
+            for(final Map.Entry<String, Uri> entry: filesUri.entrySet()){
                 final StorageReference fileReference = FirebaseRepository.createMusicStorageChild(entry.getKey());
 
                 FirebaseRepository.putFileInStorage(fileReference, entry.getValue(), new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -127,7 +125,8 @@ public class UploadForegroundService extends IntentService {
                         FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
-                                attachedFile.addFile(uri.toString());
+                                //attachedFile.addFile(uri.toString());
+                                attachedFile.addFile(getSongName(entry.getKey(), uri.toString()));
                                 if(attachedFile.getFilesUrls().size() == filesUri.size()){
                                     post.setAttachment(attachedFile);
                                     sentPostToFirebase();}
@@ -139,6 +138,10 @@ public class UploadForegroundService extends IntentService {
             }
         }
 
+    }
+
+    private String getSongName(String name, String uri){
+        return name.substring(0, name.length()-4) + uri;
     }
 
 

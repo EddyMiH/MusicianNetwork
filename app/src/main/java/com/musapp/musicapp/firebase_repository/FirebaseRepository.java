@@ -159,7 +159,20 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users/" + primaryKey).addListenerForSingleValueEvent(valueEventListener);
     }
 
+    //query posts which starts with searchText
+    public static void getSearchedPostByPostText(String searchText, ValueEventListener valueEventListener){
+        Query query = DBAccess.getDatabaseReference().child("posts").orderByChild("postText").startAt(searchText).endAt(searchText + "\uf8ff");
+        query.addValueEventListener(valueEventListener);
+    }
+    public static void getSearchedPostByPostCreator(String searchText, ValueEventListener valueEventListener){
+        Query query = DBAccess.getDatabaseReference().child("posts").orderByChild("userName").startAt(searchText).endAt(searchText + "\uf8ff");
+        query.addValueEventListener(valueEventListener);
+    }
 
+    //querying post which contains searchText
+    public static void getSearchedPost( ValueEventListener valueEventListener){
+        DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").addValueEventListener(valueEventListener);
+    }
 
 
 }

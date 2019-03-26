@@ -21,8 +21,10 @@ import com.musapp.musicapp.activities.StartActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.adapters.PostRecyclerViewAdapter;
 import com.musapp.musicapp.adapters.UserPostViewPagerAdapter;
+import com.musapp.musicapp.fragments.main_fragments.profile_menu_items.EditProfileFragment;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
+import com.musapp.musicapp.utils.FragmentShowUtils;
 
 import java.util.Arrays;
 
@@ -137,10 +139,24 @@ public class ProfileFragment extends Fragment {
         switch(item.getItemId()){
             case(R.id.action_log_out):{
               changeActivity.changeActivity(StartActivity.class);
+              break;
             }
+            case R.id.action_edit_profile_info :
+                beginTransaction(new EditProfileFragment());
+                break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void beginTransaction(Fragment fragment){
+
+//        FragmentShowUtils.setPreviousFragment(this);
+//        FragmentShowUtils.setCurrentFragment(fragment);
+        getFragmentManager().beginTransaction()
+                .addToBackStack(fragment.getClass().getCanonicalName())
+                .replace(R.id.layout_activity_app_container, fragment)
+                .commit();
     }
 
     public void setChangeActivity(ChangeActivity changeActivity){

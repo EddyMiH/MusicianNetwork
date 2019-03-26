@@ -90,5 +90,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_fullname">Full Name</string>
+    <string name="hint_nickname">NickName</string>
+    <string name="gender">Gender</string>
+    <string name="birthday">Birthday</string>
+    <string name="profession">Profession</string>
+    <string name="hint_additional_info">About me</string>
+    <string name="save_button">Save</string>
 
 </resources>

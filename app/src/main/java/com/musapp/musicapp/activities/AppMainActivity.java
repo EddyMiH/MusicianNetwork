@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +16,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.SeekBar;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -204,31 +207,45 @@ public class AppMainActivity extends AppCompatActivity {
 
     private MusicPlayerServiceConnection mPlayerServiceConnection =
             new MusicPlayerServiceConnection() {
+
                 @Override
                 public void play(String url) {
                     if(mLocalBinder != null){
-                        if(mLocalBinder.isPlaying()){
-                            mLocalBinder.pause();
-                            changePlayButton(false);
-                        }else{
-                            mLocalBinder.play(url);
-                            changePlayButton(true);
-                        }
+                       mLocalBinder.play(url);
                     }
                 }
                 @Override
                 public void pause() {
                     mLocalBinder.pause();
                 }
+
+                @Override
+                public void seekTo(int progress) {
+                    mLocalBinder.seekTo(progress);
+                }
+
+
+                @Override
+                public void handleSeekBar( SeekBar seekBar, Button button) {
+                    mLocalBinder.setSeekBar(seekBar);
+                    mLocalBinder.setPlayPauseButton(button);
+                }
+
+                @Override
+                public boolean isPlayerPlaying(String url) {
+                    if (mLocalBinder.isPlaying() && mLocalBinder.getCurrentUrl().equals(url)){
+                        //mLocalBinder.startSeekBarHandle();
+                        return true;
+                    }
+                    return false;
+                }
             };
-
-    public void changePlayButton(boolean isPlay){
-
-    }
 
     public interface MusicPlayerServiceConnection{
         void play(String url);
         void pause();
-
+        void seekTo(int progress);
+        void handleSeekBar(SeekBar seekBar, Button button);
+        boolean isPlayerPlaying(String url);
     }
 }
