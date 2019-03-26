@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +35,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
-import com.musapp.musicapp.firebase.DBAccess;
-import com.musapp.musicapp.firebase.DBAsyncTask;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.image_generator.RandomGradientGenerator;
@@ -186,9 +185,10 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
             if (requestCode == REQUEST_CAMERA) {
 
                 Bundle bundle = data.getExtras();
+                Log.d("camera", "onActivityResult: data url is: " + data.getData());
                 final Bitmap bmp = (Bitmap) bundle.get("data");
                 profileImage.setImageBitmap(bmp);
-                putImageToStorage(path);
+                //putImageToStorage(path);
 
             } else if (requestCode == SELECT_FILE) {
 

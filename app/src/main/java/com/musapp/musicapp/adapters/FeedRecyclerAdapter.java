@@ -197,6 +197,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
                 filteredPosts.addAll(mSearchData);
             }else{
                 final String queryText = constraint.toString().toLowerCase().trim();
+
+                //query all posts ant check contains queryText
 //                FirebaseRepository.getSearchedPost( new ValueEventListener() {
 //                    @Override
 //                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -231,6 +233,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
 
                     }
                 });
+                //qsearch by user name , something wrong here
 //                final List<Post> filteredPostsByCreator = new ArrayList<>();
 //                FirebaseRepository.getSearchedPostByPostCreator(queryText, new ValueEventListener() {
 //                    @Override
