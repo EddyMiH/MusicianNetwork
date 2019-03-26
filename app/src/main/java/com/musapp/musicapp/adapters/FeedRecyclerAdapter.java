@@ -92,9 +92,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
         if (this.mData == null) {
             this.mData = new ArrayList<>();
         }
-        if (this.mSearchData == null){
-            this.mSearchData = new ArrayList<>();
-        }
+        this.mData.clear();
         this.mData.addAll(mData);
         this.mSearchData.addAll(mData);
         notifyDataSetChanged();

@@ -21,10 +21,13 @@ import com.musapp.musicapp.activities.StartActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.adapters.PostRecyclerViewAdapter;
 import com.musapp.musicapp.adapters.UserPostViewPagerAdapter;
+import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.fragments.main_fragments.profile_menu_items.EditProfileFragment;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
+import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.FragmentShowUtils;
+import com.musapp.musicapp.utils.GlideUtil;
 
 import java.util.Arrays;
 
@@ -106,7 +109,7 @@ public class ProfileFragment extends Fragment {
 //        postRecyclerViewAdapter.setData(Arrays.asList(posts));
 //        postsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        postsRecyclerView.setAdapter(postRecyclerAdapter);
-        setToolBarTitle.setTitle(R.string.toolbar_title_profile);
+//        setToolBarTitle.setTitle(R.string.toolbar_title_profile);
 
     }
 
@@ -121,7 +124,11 @@ public class ProfileFragment extends Fragment {
 
 
     private void showDataFromFireBase(){
-        //TODO set fields info
+        User user = CurrentUser.getCurrentUser();
+        GlideUtil.setImageGlide(user.getUserInfo().getImageUri(), userImage);
+        fullname.setText(user.getFullName());
+        nickname.setText(user.getNickName());
+        infoBox.setText(user.getUserInfo().getAdditionalInfo());
     }
 
     public void setSetToolBarTitle(SetToolBarTitle toolBarTitle){

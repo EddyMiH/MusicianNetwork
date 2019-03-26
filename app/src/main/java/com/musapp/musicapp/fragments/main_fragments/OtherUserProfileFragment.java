@@ -123,7 +123,6 @@ public class OtherUserProfileFragment extends Fragment {
                         }
                     });
                 }
-                Log.i("ZIBIL", posts.size()+"");
 
             }
 
