@@ -144,7 +144,7 @@ public class FirebaseRepository {
         DBAccess.getUserReference("posts").child(id).addValueEventListener(valueEventListener);
     }
     public static void getNewPost(@NotNull String lastDateRetrivered,ValueEventListener valueEventListener) {
-        Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").startAt(lastDateRetrivered);
+        Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").endAt(lastDateRetrivered);
         postQuery.addListenerForSingleValueEvent(valueEventListener);
     }
 
