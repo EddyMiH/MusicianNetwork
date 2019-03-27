@@ -103,5 +103,7 @@
     <string name="profession">Profession</string>
     <string name="hint_additional_info">About me</string>
     <string name="save_button">Save</string>
+    <string name="hint_password">new password</string>
+    <string name="hint_confirm_password">confirm</string>
 
 </resources>
