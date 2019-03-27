@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -138,6 +140,7 @@ public class PostDetailsFragment extends Fragment {
 
         initCommentsRecyclerView();
         loadCommentsFromDatabase();
+        loadNewComments();
 
         mPublishCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,7 +168,7 @@ public class PostDetailsFragment extends Fragment {
                                     mCurrentPost.addCommentId(newComment.getPrimaryKey());
                                     FirebaseRepository.setCommentInnerPrimaryKeyToFirebasePost(mCurrentPost);
                                     mCommentAdapter.addComment(newComment);
-                                    mPostCommentsRecyclerView.scrollToPosition(mCommentAdapter.getItemCount() - 1);
+                                   mPostCommentsRecyclerView.scrollToPosition(mCommentAdapter.getItemCount() - 1);
   //                                  int count  = Integer.getInteger(mCommentCount.getText().toString());
 //                                    mCommentCount.setText(++count);
                                     //   mCommentAdapter.notifyDataSetChanged();
@@ -192,7 +195,9 @@ public class PostDetailsFragment extends Fragment {
     private void initCommentsRecyclerView(){
         mCommentAdapter = new CommentRecyclerViewAdapter();
         mCommentAdapter.setOnCommentItemSelectedListener(mOnCommentItemSelectedListener);
-        mPostCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+     //   linearLayoutManager.setStackFromEnd(true);
+        mPostCommentsRecyclerView.setLayoutManager(linearLayoutManager);
         mPostCommentsRecyclerView.setAdapter(mCommentAdapter);
         mCommentAdapter.setData(mComments);
 
@@ -205,7 +210,7 @@ public class PostDetailsFragment extends Fragment {
         for(String id : commentsId){
             final String temp = id;
 
-            FirebaseDatabase.getInstance().getReference().child("comments").child(id).addValueEventListener(new ValueEventListener() {
+            FirebaseDatabase.getInstance().getReference().child("comments").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Comment comment = dataSnapshot.getValue(Comment.class);
@@ -242,11 +247,48 @@ public class PostDetailsFragment extends Fragment {
      //   mCommentCount.setText(String.valueOf(mCurrentPost.getCommentsQuantity()));
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+   private void loadNewComments(){
+        FirebaseRepository.getNewComments(mCurrentPost.getPrimaryKey(), new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.i("loadnewcom", dataSnapshot.toString());
+                FirebaseRepository.getCommentById(dataSnapshot.getValue(String.class), new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mCommentAdapter.addComment(dataSnapshot.getValue(Comment.class));
+                        if(mCommentAdapter.getItemCount() > 0){
+                           mRecyclerView.scrollToPosition(mCommentAdapter.getItemCount() - 1);}
+                    }
 
-    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+   }
 
     public PostDetailsFragment() {
         mComments = new ArrayList<>();
@@ -277,6 +319,8 @@ public class PostDetailsFragment extends Fragment {
     }
 
     private void checkMediaPlayerState(){
+        if(mCurrentPost.getType() == PostUploadType.NONE)
+            return;
         for(String url: mCurrentPost.getAttachment().getFilesUrls()){
             if (mPlayerServiceConnection.isPlayerPlaying(getSongUri(url))){
                 mPlayerServiceConnection.play(getSongUri(url));
