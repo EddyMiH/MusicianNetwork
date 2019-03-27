@@ -7,7 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -43,6 +46,7 @@ import com.musapp.musicapp.model.Profession;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.UIUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +63,6 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
     private User user = CurrentUser.getCurrentUser();
     private final int REQUEST_CAMERA = 1;
     private final int SELECT_FILE = 0;
-
 
     private final int STORAGE_CAMERA_PERMISSION_CODE = 100;
     public boolean isPermissionAccepted = false;
@@ -107,9 +110,15 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
         return rootView;
     }
     private void setImage(){
-        if(userInfo.getImageUri() == null){
-            Drawable generateImage = RandomGradientGenerator.getRandomGradient();
+        if(userInfo.getImageUri() == null ){
             //TODO get uri of generated drawable
+
+            GradientDrawable generateImage = RandomGradientGenerator.getRandomGradient();
+            Bitmap bitmap = RandomGradientGenerator.convertToBitmap(generateImage);
+            profileImage.setImageBitmap(bitmap);
+            putBitmapImageToStorage(bitmap);
+            //profileImage.setImageDrawable(generateImage);
+            //Bitmap bitmap = ((BitmapDrawable)generateImage).getBitmap();
             //putImageToStorage(generateImage.get);
         }
     }
@@ -189,7 +198,7 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
                 Log.d("camera", "onActivityResult: data url is: " + data.getData());
                 final Bitmap bmp = (Bitmap) bundle.get("data");
                 profileImage.setImageBitmap(bmp);
-                //putImageToStorage(path);
+                putBitmapImageToStorage(bmp);
 
             } else if (requestCode == SELECT_FILE) {
 
@@ -235,6 +244,24 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        userInfo.setImageUri(uri.toString());
+                    }
+                });
+            }
+        });
+    }
+
+    private void putBitmapImageToStorage(Bitmap btm){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        btm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        final StorageReference reference = FirebaseRepository.createImageStorageChild(System.currentTimeMillis() + "." + "jpg");
+        FirebaseRepository.putBytesToFirebaseStorage(reference, data, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                FirebaseRepository.getDownloadUrl(reference, new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
                         userInfo.setImageUri(uri.toString());

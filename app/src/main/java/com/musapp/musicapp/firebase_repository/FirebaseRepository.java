@@ -204,5 +204,9 @@ public class FirebaseRepository {
         DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").addValueEventListener(valueEventListener);
     }
 
+    public static void putBytesToFirebaseStorage(StorageReference reference, byte[] data, OnSuccessListener<UploadTask.TaskSnapshot> onSuccessListener){
+        reference.putBytes(data).addOnSuccessListener(onSuccessListener);
+    }
+
 
 }

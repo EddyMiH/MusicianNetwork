@@ -107,7 +107,7 @@ public class SignInFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //AppPreferences.clearGenreState(getContext());
+        AppPreferences.clearGenreState(getContext());
     }
 
     @Override

@@ -48,7 +48,7 @@ import java.util.List;
 public class HomePageFragment extends Fragment {
 
     private FeedRecyclerAdapter feedRecyclerAdapter;
-    private final int limit = 5;
+    private final int limit = 10;
 
     private ProgressBar mProgressBar;
     private Spinner mSearchModeSpinner;
@@ -179,7 +179,6 @@ public class HomePageFragment extends Fragment {
 
     private void initSearchSpinner(){
         mSearchModeSpinner.setOnItemSelectedListener(mItemSelectedListener);
-        //R.layout.search_mode_spinner_item
         ArrayAdapter<CharSequence> spinnerDataAdapter = ArrayAdapter.createFromResource(getContext(), R.array.search_modes, R.layout.search_mode_spinner_item);
         spinnerDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSearchModeSpinner.setAdapter(spinnerDataAdapter);
