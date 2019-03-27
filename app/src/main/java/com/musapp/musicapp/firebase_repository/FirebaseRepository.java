@@ -17,6 +17,7 @@ import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Post;
+import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.uploads.AttachedFile;
 
 import java.util.Date;
@@ -153,6 +154,10 @@ public class FirebaseRepository {
 
     public static void setCurrentUser(String primaryKey, ValueEventListener valueEventListener) {
         DBAccess.getUserReference("users/" + primaryKey).addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    public static void updateCurrentUser(String primaryKey, User user){
+        DBAccess.getDatabaseReference().child("user").child(primaryKey).setValue(user);
     }
 
     //query posts which starts with searchText

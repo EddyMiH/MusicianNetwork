@@ -29,6 +29,13 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_edit_profile_fragment_email"
+                android:background="@color/colorGreyCards"
+                android:textColor="@color/lightBlue"
+                android:text="User: a@mail.ru"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"

@@ -32,6 +32,12 @@
     <string name="comment_hint">Comment...</string>
     <string name="dialog_email_info">Please enter your email addres. We\'ll sent you a code. </string>
 
+    <string-array name="search_modes">
+        <item>Search by Posts</item>
+        <item>Search by UserName</item>
+    </string-array>
+
+    <string name="sort">Sort by</string>
 
     <string-array name="professions">
         <item>Singer/Vocalist</item>

@@ -1,5 +1,6 @@
 package com.musapp.musicapp.fragments.main_fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -277,11 +278,21 @@ public class PostDetailsFragment extends Fragment {
     }
 
     private void initRecyclerView(){
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), mCurrentPost.getType() == PostUploadType.IMAGE ? 2 : 1));
+        setRecyclerViewLayoutManager(mCurrentPost, getContext());
+        //mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), mCurrentPost.getType() == PostUploadType.IMAGE ? 2 : 1));
         initUploadsAdapter();
         mRecyclerView.setAdapter(mAdapter);
 
         checkMediaPlayerState();
+    }
+    private void setRecyclerViewLayoutManager(Post post, Context context){
+        if (post.getType() == PostUploadType.IMAGE){
+            if (post.getAttachment().getFilesUrls().size() > 2){
+                mRecyclerView.setLayoutManager(new GridLayoutManager(context, 2));
+                return;
+            }
+        }
+        mRecyclerView.setLayoutManager(new GridLayoutManager(context, 1));
     }
 
     private void checkMediaPlayerState(){

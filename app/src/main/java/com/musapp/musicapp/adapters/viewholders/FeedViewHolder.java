@@ -89,18 +89,6 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         mPostSetting.setOnClickListener(onClickListener);
     }
 
-    public void setOnSettingClickListener(View.OnClickListener listener) {
-        onClickListener = listener;
-    }
-
-    public void setPostImageVisible() {
-        //     mPostImage.setVisibility(View.VISIBLE);
-    }
-
-    public void setPostVideoVisible() {
-        //mPostVideo.setVisibility(View.VISIBLE);
-    }
-
     public void setFeedProfileImage(String src) {
         GlideUtil.setImageGlide(src, mFeedProfileImage);
     }
@@ -175,8 +163,19 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         //
         mUploadsAdapter.setOnItemSelectedListener(mInnerItemClickListener);
         mUploadsAdapter.setOnSeekBarListner(mMusicSeekBarListener);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(context, post.getType() == PostUploadType.IMAGE ? 2 : 1));
+        //mRecyclerView.setLayoutManager(new GridLayoutManager(context, post.getType() == PostUploadType.IMAGE ? 2 : 1));
+        setRecyclerViewLayoutManager(post, context);
         mRecyclerView.setAdapter(mUploadsAdapter);
+    }
+
+    private void setRecyclerViewLayoutManager(Post post, Context context){
+        if (post.getType() == PostUploadType.IMAGE){
+            if (post.getAttachment().getFilesUrls().size() > 2){
+                mRecyclerView.setLayoutManager(new GridLayoutManager(context, 2));
+                return;
+            }
+        }
+        mRecyclerView.setLayoutManager(new GridLayoutManager(context, 1));
     }
 
     public interface OnUserProfileImageListener {

@@ -27,6 +27,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -71,6 +72,8 @@ public class EditProfileFragment extends Fragment {
     EditText mAdditionalInfo;
     @BindView(R.id.action_edit_profile_fragment_save)
     Button mSaveButton;
+    @BindView(R.id.text_edit_profile_fragment_email)
+    TextView mEmailText;
 
     private User mEditedUser = new User();
     private Info mInfo = new Info();
@@ -157,6 +160,7 @@ public class EditProfileFragment extends Fragment {
         ArrayAdapter<CharSequence> spinnerDataAdapter = ArrayAdapter.createFromResource(getContext(), R.array.professions, android.R.layout.simple_spinner_dropdown_item);
         spinnerDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mProfessionSpinner.setAdapter(spinnerDataAdapter);
+        User us = CurrentUser.getCurrentUser();
         mProfessionSpinner.setSelection(spinnerDataAdapter.getPosition(CurrentUser.getCurrentUser().getProfession().getName()));
         fillViews();
 
@@ -200,6 +204,7 @@ public class EditProfileFragment extends Fragment {
     private void fillViews(){
         User currentUser = CurrentUser.getCurrentUser();
         GlideUtil.setImageGlide(currentUser.getUserInfo().getImageUri(), mUserImage);
+        mEmailText.setText(currentUser.getEmail());
         mFullname.setText(currentUser.getFullName());
         mNickname.setText(currentUser.getNickName());
         mAdditionalInfo.setText(currentUser.getUserInfo().getAdditionalInfo());
@@ -295,6 +300,8 @@ public class EditProfileFragment extends Fragment {
         mEditedUser.setUserInfo(mInfo);
         mEditedUser.setGender(mMaleRadioButton.isChecked() ? Gender.MAN : Gender.WOMAN);
         //TODO save(update) user in firebase
+        FirebaseRepository.updateCurrentUser(CurrentUser.getCurrentUser().getPrimaryKey(), mEditedUser);
+        CurrentUser.setCurrentUser(mEditedUser);
     }
 
     private void quitFragment(){
