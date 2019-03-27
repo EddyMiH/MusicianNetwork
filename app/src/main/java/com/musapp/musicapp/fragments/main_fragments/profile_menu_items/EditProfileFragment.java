@@ -175,8 +175,10 @@ public class EditProfileFragment extends Fragment {
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveUser();
-                quitFragment();
+                boolean isGood = saveUser();
+                if(isGood){
+                    quitFragment();
+                }
             }
         });
 
@@ -212,6 +214,7 @@ public class EditProfileFragment extends Fragment {
     private void fillViews(){
         User currentUser = CurrentUser.getCurrentUser();
         GlideUtil.setImageGlide(currentUser.getUserInfo().getImageUri(), mUserImage);
+        mInfo.setImageUri(currentUser.getUserInfo().getImageUri());
         String email = "email: " + currentUser.getEmail();
         mEmailText.setText(email);
         mFullname.setText(currentUser.getFullName());
@@ -300,7 +303,7 @@ public class EditProfileFragment extends Fragment {
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    private void saveUser(){
+    private boolean saveUser(){
         mEditedUser.setFullName(mFullname.getText().toString());
         mEditedUser.setNickName(mNickname.getText().toString());
         mEditedUser.setBirthDay(mBirthday.getText().toString());
@@ -311,15 +314,16 @@ public class EditProfileFragment extends Fragment {
             //TODO save(update) user in firebase
             FirebaseRepository.updateCurrentUser(CurrentUser.getCurrentUser().getPrimaryKey(), mEditedUser);
             CurrentUser.setCurrentUser(mEditedUser);
+            return true;
         }
-
+        return false;
     }
 
     private void quitFragment(){
         getFragmentManager().beginTransaction()
                 .replace(R.id.layout_activity_app_container, new ProfileFragment())
                 .commit();
-        getFragmentManager().popBackStack();
+        //getFragmentManager().popBackStack();
     }
 
     private boolean setNewPassword(){
@@ -330,6 +334,7 @@ public class EditProfileFragment extends Fragment {
         }
         if (checkPassword()){
             mEditedUser.setPassword(HashUtils.hash(newPass));
+            FirebaseRepository.updatePassword(CurrentUser.getCurrentUser().getPrimaryKey(), HashUtils.hash(newPass));
             return true;
         }
         return false;

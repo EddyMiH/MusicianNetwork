@@ -106,4 +106,20 @@
     <string name="hint_password">new password</string>
     <string name="hint_confirm_password">confirm</string>
 
+    <string name="about_us_info_text">
+        Owner: CARAMBOLA corporation\n
+        CARAMBOLA for Android emd65-55C\n
+        App version 0.1.1\n
+
+    </string>
+
+    <string name="about_us_email_link">
+        Feedback: Our email
+    </string>
+    <string name="about_us_git_link">
+        Our GitHup Link.
+    </string>
+
+    <string name="carambola_copyright">©Copyright Carampola™ 2019</string>
+
 </resources>

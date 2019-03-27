@@ -21,6 +21,7 @@ import com.musapp.musicapp.activities.StartActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.adapters.PostRecyclerViewAdapter;
 import com.musapp.musicapp.adapters.UserPostViewPagerAdapter;
+import com.musapp.musicapp.fragments.main_fragments.profile_menu_items.AboutUsFragment;
 import com.musapp.musicapp.fragments.main_fragments.profile_menu_items.EditProfileFragment;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
@@ -106,7 +107,7 @@ public class ProfileFragment extends Fragment {
 //        postRecyclerViewAdapter.setData(Arrays.asList(posts));
 //        postsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        postsRecyclerView.setAdapter(postRecyclerAdapter);
-        setToolBarTitle.setTitle(R.string.toolbar_title_profile);
+        //setToolBarTitle.setTitle(R.string.toolbar_title_profile);
 
     }
 
@@ -144,6 +145,8 @@ public class ProfileFragment extends Fragment {
             case R.id.action_edit_profile_info :
                 beginTransaction(new EditProfileFragment());
                 break;
+            case R.id.action_about_us:
+                beginTransaction(new AboutUsFragment());
         }
 
         return super.onOptionsItemSelected(item);

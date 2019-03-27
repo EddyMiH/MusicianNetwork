@@ -156,8 +156,26 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users/" + primaryKey).addListenerForSingleValueEvent(valueEventListener);
     }
 
+//    public static void updateCurrentUser(String primaryKey, User user){
+//        DBAccess.getDatabaseReference().child("users").child(primaryKey).setValue(user);
+//    }
+
+    public static void updatePassword(String primaryKey, String password){
+        DBAccess.getDatabaseReference().child("users").child(primaryKey).child("password").setValue(password);
+
+    }
+
     public static void updateCurrentUser(String primaryKey, User user){
-        DBAccess.getDatabaseReference().child("user").child(primaryKey).setValue(user);
+        //DBAccess.getDatabaseReference().child("users").child(primaryKey).setValue(user);
+        DBAccess.getDatabaseReference().child("users").child(primaryKey).child("fullName").setValue(user.getFullName());
+        DBAccess.getDatabaseReference().child("users").child(primaryKey).child("birthDay").setValue(user.getBirthDay());
+        DBAccess.getDatabaseReference().child("users").child(primaryKey).child("email").setValue(user.getEmail());
+        DBAccess.getDatabaseReference().child("users").child(primaryKey).child("gender").setValue(user.getGender());
+        DBAccess.getDatabaseReference().child("users").child(primaryKey).child("nickName").setValue(user.getNickName());
+        DBAccess.getDatabaseReference().child("users").child(primaryKey).child("profession").setValue(user.getProfession());
+        DBAccess.getDatabaseReference().child("users").child(primaryKey).child("userInfo").setValue(user.getUserInfo());
+
+
     }
 
     //query posts which starts with searchText
