@@ -57,7 +57,6 @@ public class HomePageFragment extends Fragment {
 
     private List<Post> posts;
     public static final String ARG_POST = "current_post";
-    private OpenUserFragment mOpenUserFragment;
     private SetToolBarTitle mSetToolBarTitle;
     private RecyclerView recyclerView;
     private final String SEARCH_POST = "Search by Posts";
@@ -107,8 +106,13 @@ public class HomePageFragment extends Fragment {
 
     private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
         @Override
-        public void onProfileImageClickListener() {
-            mOpenUserFragment.openUserFragment();
+        public void onProfileImageClickListener(Post post) {
+           OtherUserProfileFragment otherUserProfileFragment = new OtherUserProfileFragment();
+           Bundle args = new Bundle();
+           args.putString(String.class.getSimpleName(), post.getUserId());
+           otherUserProfileFragment.setArguments(args);
+           beginTransaction(otherUserProfileFragment);
+
         }
     };
 
@@ -168,7 +172,7 @@ public class HomePageFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                 swipeRefreshLayout.setRefreshing(false);
+                loadNewPostsAfterRefresh();
             }
         });
     }
@@ -250,6 +254,25 @@ public class HomePageFragment extends Fragment {
 
     }
 
+    private void loadNewPostsAfterRefresh(){
+        FirebaseRepository.getNewPost(feedRecyclerAdapter.getData().get(0).getPublishedTime(), new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Post> posts =  new ArrayList<>();
+                for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
+                    posts.add(postSnapshot.getValue(Post.class));
+                }
+                swipeRefreshLayout.setRefreshing(false);
+                feedRecyclerAdapter.setData(posts, 0);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_home_fragment_search_add, menu);
@@ -310,25 +333,20 @@ public class HomePageFragment extends Fragment {
         if(fragment.isAdded())
             return;
         FragmentShowUtils.setPreviousFragment(this);
-        FragmentShowUtils.setCurrentFragment(fragment);
         getFragmentManager().beginTransaction()
-                .addToBackStack(fragment.getClass().getCanonicalName())
+
+                .addToBackStack(null)
                 .replace(R.id.layout_activity_app_container, fragment)
+              //  .add(R.id.layout_activity_app_container, fragment)
                 .commit();
-        //.add(R.id.layout_activity_app_container, fragment)
+
     }
 
     public HomePageFragment() {
         //Required
     }
 
-    public void setOpenUserFragment(OpenUserFragment openUserFragment) {
-        mOpenUserFragment = openUserFragment;
-    }
 
-    public interface OpenUserFragment{
-        void openUserFragment();
-    }
 
     private void setProgressBarVisibility(int visibility){
         mProgressBar.setVisibility(visibility);

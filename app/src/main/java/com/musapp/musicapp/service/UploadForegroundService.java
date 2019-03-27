@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.model.Post;
@@ -184,6 +185,8 @@ public class UploadForegroundService extends IntentService {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Iterator<DataSnapshot> lastChild = dataSnapshot.getChildren().iterator();
                         post.setPrimaryKey(lastChild.next().getKey());
+                        CurrentUser.getCurrentUser().addPostId(post.getPrimaryKey());
+                        FirebaseRepository.updateCurrentUserPostsInFirebase();
                         FirebaseRepository.setPostInnerPrimaryKeyToFirebase(post.getPrimaryKey());
 
                     }

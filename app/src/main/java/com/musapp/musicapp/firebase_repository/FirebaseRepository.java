@@ -1,12 +1,8 @@
 package com.musapp.musicapp.firebase_repository;
 
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.renderscript.Sampler;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.NotNull;
@@ -15,12 +11,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
-import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.uploads.AttachedFile;
-
 import java.util.Date;
+
 
 public class FirebaseRepository {
 
@@ -123,8 +118,21 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users").addValueEventListener(valueEventListener);
     }
 
+    public static void getUserByPrimaryKey(String primaryKey, ValueEventListener valueEventListener) {
+        DBAccess.getUserReference("users").child(primaryKey).addValueEventListener(valueEventListener);
+    }
+
     public static void getCurrentUser(ValueEventListener valueEventListener) {
         DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).addListenerForSingleValueEvent(valueEventListener);
+    }
+
+
+    public static void updateCurrentUserPostsInFirebase(){
+        DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).child("postId").setValue(CurrentUser.getCurrentUser().getPostId());
+    }
+
+    public static void updateCurrentUserFavouritePosts(){
+        DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).child("favouriteId").setValue(CurrentUser.getCurrentUser().getFavouritePostId());
     }
 
     public static void getPosts(int limit, @NotNull String lastDateRetrivered, ValueEventListener valueEventListener) {
@@ -136,8 +144,11 @@ public class FirebaseRepository {
         DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").limitToLast(limit).addListenerForSingleValueEvent(valueEventListener);
     }
 
+    public static void getPostById(String id, ValueEventListener valueEventListener){
+        DBAccess.getUserReference("posts").child(id).addValueEventListener(valueEventListener);
+    }
     public static void getNewPost(@NotNull String lastDateRetrivered,ValueEventListener valueEventListener) {
-        Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").startAt(lastDateRetrivered);
+        Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").endAt(lastDateRetrivered);
         postQuery.addListenerForSingleValueEvent(valueEventListener);
     }
 
@@ -148,8 +159,8 @@ public class FirebaseRepository {
     }
 
 
-    public static void getPost(String primaryKey, ValueEventListener valueEventListener){
-        DBAccess.getDatabaseReference().child("posts").child(primaryKey).addListenerForSingleValueEvent(valueEventListener);
+    public static void getCurrentUserFavouritePosts(ValueEventListener valueEventListener){
+        DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).child("favouriteId").addValueEventListener(valueEventListener);
     }
 
     public static void setCurrentUser(String primaryKey, ValueEventListener valueEventListener) {

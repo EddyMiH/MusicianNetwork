@@ -21,6 +21,7 @@ import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.adapters.viewholders.FeedViewHolder;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
+import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.enums.SearchMode;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
@@ -45,8 +46,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
     private OnUserImageListener mOnUserImageListener;
     private FeedViewHolder.OnUserProfileImageListener mOnUserProfileImageListener = new FeedViewHolder.OnUserProfileImageListener() {
         @Override
-        public void onUserImageClickListener() {
-            mOnUserImageListener.onProfileImageClickListener();
+        public void onUserImageClickListener(int position) {
+            mOnUserImageListener.onProfileImageClickListener(mData.get(position));
+        }
+    };
+    private FeedViewHolder.OnPostSettingsClickListener mOnPostSettingsClickListener = new FeedViewHolder.OnPostSettingsClickListener() {
+        @Override
+        public void onFavouriteClickListener(int position) {
+            CurrentUser.getCurrentUser().addFavouritePostId(mData.get(position).getPrimaryKey());
+            updateUsersFavouritePosts();
         }
     };
     private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
@@ -86,21 +94,17 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
         if (this.mData == null) {
             this.mData = new ArrayList<>();
         }
-        if (this.mSearchData == null){
-            this.mSearchData = new ArrayList<>();
-        }
+        this.mData.removeAll(mData);
         this.mData.addAll(mData);
         this.mSearchData.addAll(mData);
         notifyDataSetChanged();
     }
 
     public void setData(List<Post> mData, int index) {
-        if (this.mData == null) {
-            this.mData = new ArrayList<>();
-        }
         if (this.mSearchData == null){
             this.mSearchData = new ArrayList<>();
         }
+        this.mData.removeAll(mData);
         this.mData.addAll(index, mData);
         this.mSearchData.addAll(index, mData);
         notifyDataSetChanged();
@@ -167,6 +171,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
         feedViewHolder.setPostText(post.getPostText());
         feedViewHolder.setPostTime(post.getPublishedTime());
         feedViewHolder.setCommentCount(String.valueOf(post.getCommentsQuantity()));
+        feedViewHolder.setPostSettingsClickListener(mOnPostSettingsClickListener);
         if(post.getType() == PostUploadType.MUSIC){
             feedViewHolder.setInnerItemClickListener(mInnerMusicItemOnClickListener);
             feedViewHolder.setOnSeekBarListener(mMusicSeekBarListener);
@@ -283,9 +288,12 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
     }
 
     public interface OnUserImageListener {
-        void onProfileImageClickListener();
+        void onProfileImageClickListener(Post post);
     }
 
 
+    private void updateUsersFavouritePosts(){
+        FirebaseRepository.updateCurrentUserFavouritePosts();
+    }
 
 }
