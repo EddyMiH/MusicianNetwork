@@ -7,40 +7,32 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.SeekBar;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.musapp.musicapp.R;
-import com.musapp.musicapp.adapters.viewholders.post_viewholder.MusicPostViewHolder;
 import com.musapp.musicapp.currentinformation.CurrentUser;
-import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.BlankFragment;
 import com.musapp.musicapp.fragments.main_fragments.HomePageFragment;
-import com.musapp.musicapp.fragments.main_fragments.MessagesFragment;
 import com.musapp.musicapp.fragments.main_fragments.NotificationFragment;
+import com.musapp.musicapp.fragments.main_fragments.OtherUserProfileFragment;
+import com.musapp.musicapp.fragments.main_fragments.PostDetailsFragment;
 import com.musapp.musicapp.fragments.main_fragments.ProfileFragment;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.preferences.RememberPreferences;
 import com.musapp.musicapp.service.MusicPlayerService;
@@ -70,7 +62,6 @@ public class AppMainActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(title);
         }
     };
-
 
     private ProfileFragment.ChangeActivity mChangeActivity = new ProfileFragment.ChangeActivity() {
         @Override
@@ -105,6 +96,32 @@ public class AppMainActivity extends AppCompatActivity {
         }
     };
 
+    private ClickListener mClickListener = new ClickListener() {
+        @Override
+        public void userImageClickListener(Post post) {
+            OtherUserProfileFragment otherUserProfileFragment = new OtherUserProfileFragment();
+            Bundle args = new Bundle();
+            args.putString(String.class.getSimpleName(), post.getUserId());
+            otherUserProfileFragment.setArguments(args);
+            otherUserProfileFragment.setSetToolBarTitle(mToolBarTitle);
+            otherUserProfileFragment.setPlayerServiceConnection(mPlayerServiceConnection);
+            otherUserProfileFragment.setClickListener(mClickListener);
+            beginTransaction(otherUserProfileFragment);
+        }
+
+        @Override
+        public void postClickListener(Post post) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(HomePageFragment.ARG_POST, post);
+            PostDetailsFragment fragment = new PostDetailsFragment();
+            fragment.setPlayerServiceConnection(mPlayerServiceConnection);
+            fragment.setClickListener(mClickListener);
+            fragment.setArguments(bundle);
+            fragment.setSetToolBarTitle(mToolBarTitle);
+            beginTransaction(fragment);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,7 +132,7 @@ public class AppMainActivity extends AppCompatActivity {
         setCurrentUser();
         init();
         navigation.setSelectedItemId(R.id.navigation_home);
-new Notify().execute();
+        new Notify().execute();
     }
 
     @Override
@@ -133,8 +150,10 @@ new Notify().execute();
         mProfileFragment = new ProfileFragment();
         mHomePageFragment = new HomePageFragment();
         mHomePageFragment.setSetToolBarTitle(mToolBarTitle);
+        mHomePageFragment.setClickListener(mClickListener);
         mMessagesFragment = new BlankFragment();
         mProfileFragment.setSetToolBarTitle(mToolBarTitle);
+        mProfileFragment.setClickListener(mClickListener);
         mNotificationFragment.setSetToolBarTitle(mToolBarTitle);
         mProfileFragment.setSetToolBarTitle(mToolBarTitle);
 
@@ -210,6 +229,11 @@ new Notify().execute();
         super.onStart();
         Intent intent = new Intent(this, MusicPlayerService.class);
         this.bindService(intent,mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public interface ClickListener {
+        void userImageClickListener(Post post);
+        void postClickListener(Post post);
     }
 
     @Override
@@ -318,7 +342,6 @@ new Notify().execute();
             {
                 Log.d("Error",""+e);
             }
-
 
             return null;
         }

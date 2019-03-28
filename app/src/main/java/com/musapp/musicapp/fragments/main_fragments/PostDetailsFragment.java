@@ -7,9 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -60,6 +62,7 @@ public class PostDetailsFragment extends Fragment {
     private TextView mPublishedTime;
     private TextView mPostText;
     private EditText mCommentText;
+    private ImageView mPostSetting;
     private Button mPublishCommentButton;
 //    private TextView mCommentCount;
     private RecyclerView mPostAttachmentsRecyclerView;
@@ -69,6 +72,11 @@ public class PostDetailsFragment extends Fragment {
     private SetToolBarTitle mSetToolBarTitle;
     private RecyclerView mRecyclerView;
     private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> mAdapter;
+    private AppMainActivity.ClickListener mClickListener;
+
+    public void setClickListener(AppMainActivity.ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
 
     public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
         mSetToolBarTitle = setToolBarTitle;
@@ -101,6 +109,31 @@ public class PostDetailsFragment extends Fragment {
                 }
             };
 
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            PopupMenu popupMenu = new PopupMenu(mPostSetting.getContext(), mPostSetting);
+            popupMenu.inflate(R.menu.menu_pop_up_post_item);
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.favorite_pop_up_menu_item:
+                            CurrentUser.getCurrentUser().addFavouritePostId(mCurrentPost.getPrimaryKey());
+                            updateUsersFavouritePosts();
+                            return true;
+                    }
+                    return false;
+                }
+            });
+            popupMenu.show();
+        }
+    };
+
+    private void updateUsersFavouritePosts(){
+        FirebaseRepository.updateCurrentUserFavouritePosts();
+    }
+
     public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection connection){
         mPlayerServiceConnection = connection;
     }
@@ -128,6 +161,7 @@ public class PostDetailsFragment extends Fragment {
         mPublishCommentButton = view.findViewById(R.id.action_comment_view_send_comment);
         mPostCommentsRecyclerView = view.findViewById(R.id.recycler_view_comments_in_post);
         mRecyclerView = view.findViewById(R.id.recycler_view_post_uploads);
+        mPostSetting = view.findViewById(R.id.image_post_item_setting);
         return view;
     }
 
@@ -142,6 +176,15 @@ public class PostDetailsFragment extends Fragment {
         initCommentsRecyclerView();
         loadCommentsFromDatabase();
         loadNewComments();
+
+        mPostSetting.setOnClickListener(onClickListener);
+
+        mProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mClickListener.userImageClickListener(mCurrentPost);
+            }
+        });
 
         mPublishCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override

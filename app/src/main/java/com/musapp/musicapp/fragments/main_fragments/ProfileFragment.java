@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.activities.StartActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.adapters.PostRecyclerViewAdapter;
@@ -55,6 +56,11 @@ public class ProfileFragment extends Fragment {
 
     private SetToolBarTitle setToolBarTitle;
     private ChangeActivity changeActivity;
+    private AppMainActivity.ClickListener mClickListener;
+
+    public void setClickListener(AppMainActivity.ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,6 +90,7 @@ public class ProfileFragment extends Fragment {
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         UserPostViewPagerAdapter pagerAdapter = new UserPostViewPagerAdapter(getActivity(), getChildFragmentManager(), mTabLayout.getTabCount());
+        pagerAdapter.setClickListener(mClickListener);
         mViewPager.setAdapter(pagerAdapter);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
@@ -103,13 +110,6 @@ public class ProfileFragment extends Fragment {
 
             }
         });
-
-//        Post[] posts = new Post[10];
-//        Arrays.fill(posts, new Post());
-//        postRecyclerAdapter.setData(Arrays.asList(posts));
-//        postRecyclerViewAdapter.setData(Arrays.asList(posts));
-//        postsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        postsRecyclerView.setAdapter(postRecyclerAdapter);
 
         setToolBarTitle.setTitle(CurrentUser.getCurrentUser().getFullName());
     }

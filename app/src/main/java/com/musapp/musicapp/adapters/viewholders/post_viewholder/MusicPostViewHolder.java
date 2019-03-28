@@ -106,7 +106,11 @@ public class MusicPostViewHolder extends BasePostViewHolder {
 
             long minutes = (milliseconds) / 1000 / 60;
             long sec = ( milliseconds / 1000 ) % 60;
-            return (String.valueOf(minutes) + ":" + String.valueOf(sec) );
+            if(sec>=10){
+                return (String.valueOf(minutes) + ":" + String.valueOf(sec) );
+            }else{
+                return (String.valueOf(minutes) + ":0" + String.valueOf(sec) );
+            }
         }
         return "0:00";
     }

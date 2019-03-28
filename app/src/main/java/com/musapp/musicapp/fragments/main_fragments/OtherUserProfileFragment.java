@@ -19,6 +19,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.activities.StartActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.adapters.PostRecyclerViewAdapter;
@@ -52,10 +53,30 @@ public class OtherUserProfileFragment extends Fragment {
 
     String userPrimaryKey;
     private SetToolBarTitle mSetToolBarTitle;
+    private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
+    private AppMainActivity.ClickListener mClickListener;
+
+    public void setClickListener(AppMainActivity.ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
 
     public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
         mSetToolBarTitle = setToolBarTitle;
     }
+    private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
+        @Override
+        public void onProfileImageClickListener(Post post) {
+            mClickListener.userImageClickListener(post);
+        }
+    };
+
+    private FeedRecyclerAdapter.OnItemSelectedListener mOnItemSelectedListener =
+            new FeedRecyclerAdapter.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(Post post) {
+                    mClickListener.postClickListener(post);
+                }
+            };
 
     private FeedRecyclerAdapter postRecyclerViewAdapter = new FeedRecyclerAdapter();
 
@@ -81,6 +102,9 @@ public class OtherUserProfileFragment extends Fragment {
         });
 
         postRecyclerViewAdapter.setData(new ArrayList<Post>());
+        postRecyclerViewAdapter.setPlayerServiceConnection(mPlayerServiceConnection);
+        postRecyclerViewAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
+        postRecyclerViewAdapter.setOnUserImageListener(mOnUserImageListener);
         postsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         postsRecyclerView.setAdapter(postRecyclerViewAdapter);
 
@@ -97,8 +121,9 @@ public class OtherUserProfileFragment extends Fragment {
         return view;
     }
 
-
-
+    public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection playerServiceConnection) {
+        mPlayerServiceConnection = playerServiceConnection;
+    }
 
     private void showDataFromFireBase(){
         FirebaseRepository.getUserByPrimaryKey(userPrimaryKey, new ValueEventListener() {
