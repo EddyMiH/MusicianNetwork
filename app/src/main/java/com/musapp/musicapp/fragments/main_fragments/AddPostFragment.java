@@ -44,6 +44,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -297,7 +298,7 @@ public class AddPostFragment extends Fragment {
     private void savePost(){
         mNewPost.setPostText(mPostText.getText().toString());
         mNewPost.setType(mType);
-        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm");
+        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
         Date date = new Date(System.currentTimeMillis());
         mNewPost.setPublishedTime( simple.format(date));
         mNewPost.setUserId(CurrentUser.getCurrentUser().getPrimaryKey());
