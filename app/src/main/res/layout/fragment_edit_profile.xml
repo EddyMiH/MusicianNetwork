@@ -29,6 +29,13 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_edit_profile_fragment_email"
+                android:background="@color/colorGreyCards"
+                android:textColor="@color/lightBlue"
+                android:text="User: a@mail.ru"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -146,6 +153,40 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_additional_info"
                     android:id="@+id/edit_text_fragment_edit_profile_additional_info"
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/margin_edit_profile_view"
+                android:layout_marginEnd="@dimen/margin_edit_profile_view"
+                android:layout_marginBottom="@dimen/margin_edit_profile_view"
+                android:background="@color/colorGreyCards"
+                android:textColor="@color/lightBlue"
+                android:textColorHint="@color/lightBlue" >
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_password"
+                    android:id="@+id/edit_text_fragment_edit_profile_password"
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/margin_edit_profile_view"
+                android:layout_marginEnd="@dimen/margin_edit_profile_view"
+                android:layout_marginBottom="@dimen/margin_edit_profile_view"
+                android:background="@color/colorGreyCards"
+                android:textColor="@color/lightBlue"
+                android:textColorHint="@color/lightBlue" >
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_confirm_password"
+                    android:id="@+id/edit_text_fragment_edit_profile_confirm_password"
                     />
             </android.support.design.widget.TextInputLayout>
 

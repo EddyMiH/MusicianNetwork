@@ -27,6 +27,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,7 +41,11 @@ import com.musapp.musicapp.model.Gender;
 import com.musapp.musicapp.model.Info;
 import com.musapp.musicapp.model.Profession;
 import com.musapp.musicapp.model.User;
+import com.musapp.musicapp.utils.CheckUtils;
+import com.musapp.musicapp.utils.ContextUtils;
+import com.musapp.musicapp.utils.ErrorShowUtils;
 import com.musapp.musicapp.utils.GlideUtil;
+import com.musapp.musicapp.utils.HashUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -71,6 +76,12 @@ public class EditProfileFragment extends Fragment {
     EditText mAdditionalInfo;
     @BindView(R.id.action_edit_profile_fragment_save)
     Button mSaveButton;
+    @BindView(R.id.text_edit_profile_fragment_email)
+    TextView mEmailText;
+    @BindView(R.id.edit_text_fragment_edit_profile_password)
+    EditText mPassword;
+    @BindView(R.id.edit_text_fragment_edit_profile_confirm_password)
+    EditText mConfirmPassword;
 
     private User mEditedUser = new User();
     private Info mInfo = new Info();
@@ -157,14 +168,17 @@ public class EditProfileFragment extends Fragment {
         ArrayAdapter<CharSequence> spinnerDataAdapter = ArrayAdapter.createFromResource(getContext(), R.array.professions, android.R.layout.simple_spinner_dropdown_item);
         spinnerDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mProfessionSpinner.setAdapter(spinnerDataAdapter);
+        User us = CurrentUser.getCurrentUser();
         mProfessionSpinner.setSelection(spinnerDataAdapter.getPosition(CurrentUser.getCurrentUser().getProfession().getName()));
         fillViews();
 
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveUser();
-                quitFragment();
+                boolean isGood = saveUser();
+                if(isGood){
+                    quitFragment();
+                }
             }
         });
 
@@ -200,6 +214,9 @@ public class EditProfileFragment extends Fragment {
     private void fillViews(){
         User currentUser = CurrentUser.getCurrentUser();
         GlideUtil.setImageGlide(currentUser.getUserInfo().getImageUri(), mUserImage);
+        mInfo.setImageUri(currentUser.getUserInfo().getImageUri());
+        String email = "email: " + currentUser.getEmail();
+        mEmailText.setText(email);
         mFullname.setText(currentUser.getFullName());
         mNickname.setText(currentUser.getNickName());
         mAdditionalInfo.setText(currentUser.getUserInfo().getAdditionalInfo());
@@ -262,7 +279,6 @@ public class EditProfileFragment extends Fragment {
                 putImageToStorage(selectedImageUri);
 
             }
-
         }
     }
 
@@ -287,21 +303,48 @@ public class EditProfileFragment extends Fragment {
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    private void saveUser(){
+    private boolean saveUser(){
         mEditedUser.setFullName(mFullname.getText().toString());
         mEditedUser.setNickName(mNickname.getText().toString());
         mEditedUser.setBirthDay(mBirthday.getText().toString());
         mInfo.setAdditionalInfo(mAdditionalInfo.getText().toString());
         mEditedUser.setUserInfo(mInfo);
         mEditedUser.setGender(mMaleRadioButton.isChecked() ? Gender.MAN : Gender.WOMAN);
-        //TODO save(update) user in firebase
+        if (setNewPassword()){
+            //TODO save(update) user in firebase
+            FirebaseRepository.updateCurrentUser(CurrentUser.getCurrentUser().getPrimaryKey(), mEditedUser);
+            CurrentUser.setCurrentUser(mEditedUser);
+            return true;
+        }
+        return false;
     }
 
     private void quitFragment(){
         getFragmentManager().beginTransaction()
                 .replace(R.id.layout_activity_app_container, new ProfileFragment())
                 .commit();
-        getFragmentManager().popBackStack();
+        //getFragmentManager().popBackStack();
+    }
+
+    private boolean setNewPassword(){
+        String newPass = mPassword.getText().toString();
+        String newConfirmPass = mConfirmPassword.getText().toString();
+        if((newPass == null || newPass.isEmpty()) && (newConfirmPass == null || newConfirmPass.isEmpty())){
+            return true;
+        }
+        if (checkPassword()){
+            mEditedUser.setPassword(HashUtils.hash(newPass));
+            FirebaseRepository.updatePassword(CurrentUser.getCurrentUser().getPrimaryKey(), HashUtils.hash(newPass));
+            return true;
+        }
+        return false;
+    }
+    private boolean checkPassword(){
+        if (!CheckUtils.checkEqual(mPassword, mConfirmPassword)) {
+            ErrorShowUtils.showEditTextError(mConfirmPassword, ContextUtils.getResourceString(this, R.string.password_match));
+            return false;
+        }
+        return true;
     }
 
     public EditProfileFragment() {

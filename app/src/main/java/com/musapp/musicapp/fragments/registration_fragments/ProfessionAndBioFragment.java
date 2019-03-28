@@ -77,6 +77,7 @@ public class ProfessionAndBioFragment extends Fragment implements AdapterView.On
         userInfoTextView = rootView.findViewById(R.id.text_profession_fragment_user_info);
         nextButton = UIUtils.getButtonFromView(getActivity().findViewById(R.id.layout_registration_genre_info), R.id.action_fragment_grid_and_profession_next);
         professionSpinner.setOnItemSelectedListener(this);
+
         ArrayAdapter<CharSequence> spinnerDataAdapter = ArrayAdapter.createFromResource(getContext(), R.array.professions, android.R.layout.simple_spinner_dropdown_item);
         spinnerDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         professionSpinner.setAdapter(spinnerDataAdapter);

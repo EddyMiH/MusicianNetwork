@@ -23,6 +23,7 @@ import com.musapp.musicapp.adapters.viewholders.FeedViewHolder;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.PostUploadType;
+import com.musapp.musicapp.enums.SearchMode;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.uploads.BaseUpload;
@@ -40,6 +41,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
     private List<Post> mData;
     private List<Post> mSearchData;
     private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> innerAdapter;
+    private SearchMode mSearchMode = SearchMode.POST_SEARCH;
     private OnItemSelectedListener mOnItemSelectedListener;
     private OnUserImageListener mOnUserImageListener;
     private FeedViewHolder.OnUserProfileImageListener mOnUserProfileImageListener = new FeedViewHolder.OnUserProfileImageListener() {
@@ -240,45 +242,42 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
 //
 //                    }
 //                });
-                FirebaseRepository.getSearchedPostByPostText(queryText, new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        GenericTypeIndicator<HashMap<String,Post>> T = new GenericTypeIndicator<HashMap<String,Post>>() {};
-                        HashMap<String,Post> posts = dataSnapshot.getValue(T);
-                        if (posts != null){
-                            filteredPosts.addAll(posts.values());
+                if (mSearchMode == SearchMode.POST_SEARCH) {
+                    FirebaseRepository.getSearchedPostByPostText(queryText, new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            GenericTypeIndicator<HashMap<String, Post>> T = new GenericTypeIndicator<HashMap<String, Post>>() {
+                            };
+                            HashMap<String, Post> posts = dataSnapshot.getValue(T);
+                            if (posts != null) {
+                                filteredPosts.addAll(posts.values());
+                            }
+                            upDateAdapterDataAfterSearch(filteredPosts);
                         }
-                        upDateAdapterDataAfterSearch(filteredPosts);
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    }
-                });
-                //qsearch by user name , something wrong here
-//                final List<Post> filteredPostsByCreator = new ArrayList<>();
-//                FirebaseRepository.getSearchedPostByPostCreator(queryText, new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        GenericTypeIndicator<HashMap<String,Post>> T = new GenericTypeIndicator<HashMap<String,Post>>() {};
-//                        HashMap<String,Post> posts = dataSnapshot.getValue(T);
-//                        if (posts != null){
-//
-//                            filteredPostsByCreator.addAll(posts.values());
-//                        }
-//                        filteredPosts.addAll(filteredPostsByCreator);
-//                        HashSet<Post> set = new HashSet<>(filteredPosts);
-//                        filteredPostsByCreator.clear();
-//                        filteredPosts.addAll(set);
-//                        upDateAdapterDataAfterSearch(filteredPosts);
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
+                        }
+                    });
+                }else{
+                    FirebaseRepository.getSearchedPostByPostCreator(queryText, new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            GenericTypeIndicator<HashMap<String,Post>> T = new GenericTypeIndicator<HashMap<String,Post>>() {};
+                            HashMap<String,Post> posts = dataSnapshot.getValue(T);
+                            if (posts != null){
+                                filteredPosts.addAll(posts.values());
+                            }
+                            upDateAdapterDataAfterSearch(filteredPosts);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
             }
             FilterResults result = new FilterResults();
             result.values = filteredPosts;
@@ -296,6 +295,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
         //Collections.reverse(list);
         mData.addAll(list);
         notifyDataSetChanged();
+    }
+
+    public void setSearchMode(SearchMode searchMode) {
+        mSearchMode = searchMode;
     }
 
     public interface OnItemSelectedListener {

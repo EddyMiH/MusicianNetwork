@@ -20,7 +20,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +33,8 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
+import com.musapp.musicapp.currentinformation.CurrentUser;
+import com.musapp.musicapp.enums.SearchMode;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;
@@ -48,17 +53,58 @@ public class HomePageFragment extends Fragment {
     private final int limit = 10;
 
     private ProgressBar mProgressBar;
+    private Spinner mSearchModeSpinner;
+    private SearchView searchView;
+    private SearchMode mSearchMode = SearchMode.POST_SEARCH;
 
     private List<Post> posts;
     public static final String ARG_POST = "current_post";
     private SetToolBarTitle mSetToolBarTitle;
     private RecyclerView recyclerView;
+    private final String SEARCH_POST = "Search by Posts";
+    private final String SEARCH_USER = "Search by UserName";
     private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
 
     private  SwipeRefreshLayout swipeRefreshLayout;
     public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
         mSetToolBarTitle = setToolBarTitle;
     }
+
+    public AdapterView.OnItemSelectedListener mItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            String item = parent.getItemAtPosition(position).toString();
+            switch (item){
+                case SEARCH_POST:
+                    mSearchMode = SearchMode.POST_SEARCH;
+                    if (feedRecyclerAdapter != null){
+                        feedRecyclerAdapter.setSearchMode(SearchMode.POST_SEARCH);
+                    }
+                    break;
+                case SEARCH_USER:
+                    mSearchMode = SearchMode.USERNAME_SEARCH;
+                    if (feedRecyclerAdapter != null){
+                        feedRecyclerAdapter.setSearchMode(SearchMode.USERNAME_SEARCH);
+                    }
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
+    private View.OnFocusChangeListener mOnFocusChangeListener = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus){
+                mSearchModeSpinner.setVisibility(View.VISIBLE);
+            }else{
+                mSearchModeSpinner.setVisibility(View.GONE);
+            }
+        }
+    };
 
     private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
         @Override
@@ -99,6 +145,7 @@ public class HomePageFragment extends Fragment {
         mProgressBar = rootView.findViewById(R.id.progressbar);
         mProgressBar.getIndeterminateDrawable().setColorFilter(getActivity().getResources().getColor(R.color.darkPurple), android.graphics.PorterDuff.Mode.MULTIPLY);
         swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_feed);
+        mSearchModeSpinner = rootView.findViewById(R.id.spinner_home_page_fragment_search_mode_drop_down_);
         return rootView;
     }
 
@@ -108,6 +155,7 @@ public class HomePageFragment extends Fragment {
         posts = new ArrayList<>();
         initRecyclerView(recyclerView);
         loadFirstPosts(limit);
+        initSearchSpinner();
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -130,6 +178,14 @@ public class HomePageFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+    }
+
+    private void initSearchSpinner(){
+        mSearchModeSpinner.setOnItemSelectedListener(mItemSelectedListener);
+        //R.layout.search_mode_spinner_item
+        ArrayAdapter<CharSequence> spinnerDataAdapter = ArrayAdapter.createFromResource(getContext(), R.array.search_modes, R.layout.search_mode_spinner_item);
+        spinnerDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSearchModeSpinner.setAdapter(spinnerDataAdapter);
     }
 
     private void initRecyclerView(RecyclerView view){
@@ -155,12 +211,9 @@ public class HomePageFragment extends Fragment {
                         list.add(post);
                     }
                 }
-              Collections.reverse(list);
-              //  posts.addAll(list);
+                Collections.reverse(list);
                 feedRecyclerAdapter.setData(list);
-                //feedRecyclerAdapter.setData(list, 0);
-           //    feedRecyclerAdapter.notifyDataSetChanged();
-           //     posts.clear();
+
             }
 
             @Override
@@ -286,8 +339,9 @@ public class HomePageFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_home_fragment_search_add, menu);
         MenuItem menuItem = menu.findItem(R.id.action_search_home_fragment_menu_item);
-        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView = (SearchView) menuItem.getActionView();
         searchView.setIconifiedByDefault(false);
+        searchView.setOnQueryTextFocusChangeListener(mOnFocusChangeListener);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -314,6 +368,7 @@ public class HomePageFragment extends Fragment {
                 AddPostFragment fragment = new AddPostFragment();
                 fragment.setSetToolBarTitle(mSetToolBarTitle);
                 beginTransaction(fragment);
+                break;
         }
         return true;
     }
