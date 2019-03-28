@@ -181,10 +181,10 @@ public class HomePageFragment extends Fragment {
                   Post post = postSnapshot.getValue(Post.class);
                   if(!feedRecyclerAdapter.getData().contains(post)){
                       list.add(post);
-                    //  showProgress = true;
+                      showProgress = true;
                   }
-                  //if(!showProgress)
-                    //  setProgressBarVisibility(View.GONE);
+                 // if(!showProgress)
+                   //   setProgressBarVisibility(View.GONE);
               }
               Collections.reverse(list);
               posts.addAll(list);

@@ -180,6 +180,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
     public void onBindViewHolder(@NonNull final FeedViewHolder feedViewHolder, int i) {
         Post post = mData.get(i);
         //feedViewHolder.setOnSettingClickListener(mOnClickListener);
+        if(post == null)
+            return;
         feedViewHolder.setUserName(post.getUserName());
         feedViewHolder.setFeedProfileImage(post.getProfileImage());
         feedViewHolder.setPostText(post.getPostText());

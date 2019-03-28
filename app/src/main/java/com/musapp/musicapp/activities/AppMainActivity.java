@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -15,15 +16,20 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.SeekBar;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.MusicPostViewHolder;
 import com.musapp.musicapp.currentinformation.CurrentUser;
@@ -39,6 +45,12 @@ import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.preferences.RememberPreferences;
 import com.musapp.musicapp.service.MusicPlayerService;
 import com.musapp.musicapp.utils.GlideUtil;
+
+import org.json.JSONObject;
+
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class AppMainActivity extends AppCompatActivity {
 
@@ -98,7 +110,7 @@ public class AppMainActivity extends AppCompatActivity {
         setCurrentUser();
         init();
         navigation.setSelectedItemId(R.id.navigation_home);
-
+new Notify().execute();
     }
 
     @Override
@@ -247,5 +259,62 @@ public class AppMainActivity extends AppCompatActivity {
         void seekTo(int progress);
         void handleSeekBar(SeekBar seekBar, Button button);
         boolean isPlayerPlaying(String url);
+    }
+
+
+    public class Notify extends AsyncTask<Void,Void,Void>
+    {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+
+            try {
+
+                URL url = new URL("https://fcm.googleapis.com/fcm/send");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                conn.setUseCaches(false);
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Authorization", "key=AIzaSyCgGkIpG7sPYu99dcZEuhLWr3KacbjGzzU");
+                conn.setRequestProperty("Content-Type", "application/json");
+
+                JSONObject json = new JSONObject();
+
+                String tkn = FirebaseInstanceId.getInstance().getToken();
+
+
+                        /*getIdToken(true).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
+                    @Override
+                    public void onSuccess(GetTokenResult getTokenResult) {
+                       t[0] = getTokenResult.getToken();
+                    }
+                });*/
+                json.put("to", tkn);
+
+
+                JSONObject info = new JSONObject();
+                info.put("title", "TechnoWeb");   // Notification title
+                info.put("body", "Hello Test notification"); // Notification body
+
+                json.put("notification", info);
+
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                wr.write(json.toString());
+                wr.flush();
+                conn.getInputStream();
+
+            }
+            catch (Exception e)
+            {
+                Log.d("Error",""+e);
+            }
+
+
+            return null;
+        }
     }
 }

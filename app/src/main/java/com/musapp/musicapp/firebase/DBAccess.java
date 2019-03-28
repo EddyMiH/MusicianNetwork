@@ -2,6 +2,7 @@ package com.musapp.musicapp.firebase;
 
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,6 +20,7 @@ public final class DBAccess {
 
     private static DatabaseReference databaseReference;
     private static StorageReference mStorageReference;
+    private static FirebaseAuth sFirebaseAuth;
     private static String DEFAULT_PATH = "";
 
     //CREATE
@@ -97,5 +99,13 @@ public final class DBAccess {
 
     public static StorageReference getStorageReference() {
         return mStorageReference;
+    }
+
+    public static FirebaseAuth getFirebaseAuth() {
+        return sFirebaseAuth;
+    }
+
+    public static void setFirebaseAuth(FirebaseAuth firebaseAuth) {
+        sFirebaseAuth = firebaseAuth;
     }
 }
