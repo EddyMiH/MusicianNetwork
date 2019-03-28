@@ -13,6 +13,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -174,6 +176,7 @@ public class HomePageFragment extends Fragment {
             @Override
             public void onRefresh() {
                 loadNewPostsAfterRefresh();
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
         mSetToolBarTitle.setTitle(R.string.title_home);
@@ -234,8 +237,8 @@ public class HomePageFragment extends Fragment {
                       list.add(post);
                       showProgress = true;
                   }
-                  if(!showProgress)
-                      setProgressBarVisibility(View.GONE);
+                 // if(!showProgress)
+                   //   setProgressBarVisibility(View.GONE);
               }
               Collections.reverse(list);
               posts.addAll(list);
@@ -256,7 +259,7 @@ public class HomePageFragment extends Fragment {
     }
 
     private void loadNewPostsAfterRefresh(){
-        FirebaseRepository.getNewPost(feedRecyclerAdapter.getData().get(0).getPublishedTime(), new ValueEventListener() {
+       /* FirebaseRepository.getNewPost(feedRecyclerAdapter.getData().get(0).getPublishedTime(), new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Post> posts =  new ArrayList<>();
@@ -271,7 +274,66 @@ public class HomePageFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
+       FirebaseRepository.getNewPost(limit, new ChildEventListener() {
+           @Override
+           public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+               Post post = dataSnapshot.getValue(Post.class);
+               if(!feedRecyclerAdapter.getData().contains(post)){
+                   Log.i("POSTTT", post.getPrimaryKey() + "mm");
+                    feedRecyclerAdapter.addPostItem(post, 0);
+                    recyclerView.smoothScrollToPosition(0);
+                   }
+           }
+
+           @Override
+           public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+           }
+
+           @Override
+           public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+           }
+
+           @Override
+           public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+           }
+
+           @Override
+           public void onCancelled(@NonNull DatabaseError databaseError) {
+
+           }
+       });/*
+       FirebaseRepository.getNewPost(limit, new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+               List<Post> list = new ArrayList<>();
+               boolean showProgress = false;
+               for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                   Post post = postSnapshot.getValue(Post.class);
+                   if(!feedRecyclerAdapter.getData().contains(post)){
+                       list.add(post);
+                       showProgress = true;
+                   }
+                   if(!showProgress)
+                       setProgressBarVisibility(View.GONE);
+               }
+               Collections.reverse(list);
+               if(list.size() > 0) {
+                   feedRecyclerAdapter.setData(list);
+                   feedRecyclerAdapter.notifyItemRangeChanged(feedRecyclerAdapter.getItemCount() - limit + 1, limit);
+               } setProgressBarVisibility(View.GONE);
+           }
+
+           @Override
+           public void onCancelled(@NonNull DatabaseError databaseError) {
+
+           }
+       });*/
+
+
     }
 
     @Override

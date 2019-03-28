@@ -110,6 +110,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
         notifyDataSetChanged();
     }
 
+    public void clearData(){
+        if(mData != null)
+            mData.clear();
+    }
+
 
     public void addPostItem(Post post, int index) {
         if (mData == null) {
@@ -118,9 +123,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
         if (this.mSearchData == null){
             this.mSearchData = new ArrayList<>();
         }
+        if(!mData.contains(post)){
         mData.add(index, post);
         mSearchData.add(index, post);
-        notifyItemInserted(index);
+        notifyItemInserted(index);}
 
     }
 
@@ -137,6 +143,16 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
 //    public void setInnerItemClickListener(BaseUploadsAdapter.OnItemSelectedListener listener){
 //        mInnerItemClickListener = listener;
 //    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
     private View view;
 
@@ -166,6 +182,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
     public void onBindViewHolder(@NonNull final FeedViewHolder feedViewHolder, int i) {
         Post post = mData.get(i);
         //feedViewHolder.setOnSettingClickListener(mOnClickListener);
+        if(post == null)
+            return;
         feedViewHolder.setUserName(post.getUserName());
         feedViewHolder.setFeedProfileImage(post.getProfileImage());
         feedViewHolder.setPostText(post.getPostText());

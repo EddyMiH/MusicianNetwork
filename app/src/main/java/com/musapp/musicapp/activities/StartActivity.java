@@ -13,6 +13,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.currentinformation.CurrentUser;
+import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.fragments.registration_fragments.GenreGridFragment;
 import com.musapp.musicapp.fragments.registration_fragments.ProfessionAndBioFragment;
 import com.musapp.musicapp.fragments.registration_fragments.RegistrationFragment1;
@@ -21,6 +23,7 @@ import com.musapp.musicapp.fragments.registration_fragments.RegistrationFragment
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegisterFragmentTransaction;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.fragments.sign_in_fragments.SignInFragment;
+import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.preferences.RegisterPreferences;
 import com.musapp.musicapp.preferences.RememberPreferences;
 
@@ -176,6 +179,8 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void start() {
+        DBAccess.getFirebaseAuth().signOut();
+        CurrentUser.setCurrentUser(new User());
         if (!RegisterPreferences.getState(this))
             beginTransaction(register1);
         else if (!RememberPreferences.getState(this)) {

@@ -3,6 +3,7 @@ package com.musapp.musicapp.firebase_repository;
 import android.net.Uri;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.NotNull;
@@ -68,6 +69,14 @@ public class FirebaseRepository {
 
     public static void setCommentInnerPrimaryKeyToFirebasePost(Post post) {
         DBAccess.getDatabaseReference().child("posts").child(post.getPrimaryKey()).child("commentsId").setValue(post.getCommentsId());
+    }
+
+    public static void getNewComments(String postPrimaryKey, ChildEventListener childEventListener){
+        DBAccess.getDatabaseReference().child("posts").child(postPrimaryKey).child("commentsId").addChildEventListener(childEventListener);
+    }
+
+    public static void getCommentById(String id, ValueEventListener valueEventListener){
+        DBAccess.getDatabaseReference().child("comments").child(id).addListenerForSingleValueEvent(valueEventListener);
     }
 
 
@@ -147,9 +156,16 @@ public class FirebaseRepository {
     public static void getPostById(String id, ValueEventListener valueEventListener){
         DBAccess.getUserReference("posts").child(id).addValueEventListener(valueEventListener);
     }
-    public static void getNewPost(@NotNull String lastDateRetrivered,ValueEventListener valueEventListener) {
-        Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").endAt(lastDateRetrivered);
-        postQuery.addListenerForSingleValueEvent(valueEventListener);
+    public static void getNewPost(@NotNull int limit, ValueEventListener valueEventListener) {
+    //   DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").limitToLast(limit).addChildEventListener(childEventListener);
+        DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").limitToLast(limit).addValueEventListener(valueEventListener);
+
+
+    }
+
+    public static void getNewPost(@NotNull int limit, ChildEventListener childEventListener) {
+        DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").limitToLast(limit).addChildEventListener(childEventListener);
+     //   DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").limitToLast(limit).addValueEventListener(valueEventListener);
     }
 
     public static void getGenres(String userPrimaryKey, ValueEventListener valueEventListener){

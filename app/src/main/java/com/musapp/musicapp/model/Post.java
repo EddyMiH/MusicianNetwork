@@ -275,8 +275,15 @@ public class Post implements Parcelable{
 
     @Override
     public boolean equals( Object obj) {
-        if(obj instanceof Post)
-            return primaryKey != null && primaryKey.equals(((Post) obj).getPrimaryKey());
+        if(obj instanceof Post){
+            if(primaryKey == null){
+                return ((Post) obj).getPublishedTime().equals(mPublishedTime)
+                        && ((Post)obj).getUserId().equals(mUserId)
+                        && ((Post)obj).getPostText().equals(mPostText)
+                        && ((Post)obj).getType() == type;
+            }
+        else
+            return primaryKey.equals(((Post) obj).getPrimaryKey());}
         return false;
     }
 }

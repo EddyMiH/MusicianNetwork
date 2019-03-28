@@ -9,13 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.firebase_repository.FirebaseAuthRepository;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.User;
@@ -49,7 +54,7 @@ public class RegistrationFragment5 extends Fragment {
                 RegistrationTransactionWrapper.registerForNextFragment((int) nextButton.getTag());
                 RegisterPreferences.saveState(getActivity().getBaseContext(), true);
                 CurrentUser.setCurrentUser(user);
-                addUserToFirebase();
+                fireBaseAuth();
             }
         }
     };
@@ -142,5 +147,20 @@ public class RegistrationFragment5 extends Fragment {
             }
         });
 
+    }
+
+    private void fireBaseAuth(){
+        FirebaseAuthRepository.createUserWithEmailAndPassword(email.getText().toString(), HashUtils.hash(password.getText().toString()), new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    addUserToFirebase();
+                }
+                else{
+                    Toast.makeText(getActivity(), "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

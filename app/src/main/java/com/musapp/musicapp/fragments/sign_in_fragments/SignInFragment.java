@@ -13,15 +13,21 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.dialogs.ForgotPassDialog;
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase.DBAsyncTask;
 import com.musapp.musicapp.firebase.DBAsyncTaskResponse;
+import com.musapp.musicapp.firebase_repository.FirebaseAuthRepository;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.registration_fragments.registration_fragment_transaction.RegistrationTransactionWrapper;
 import com.musapp.musicapp.model.User;
@@ -69,7 +75,7 @@ public class SignInFragment extends Fragment {
 
                 if (!isClicked) {
                     isClicked = true;
-                    getUserByEmailPassword(email.getText().toString(), HashUtils.hash(password.getText().toString()));
+                   signInFirebaseAuth();
                 } else {
                     RegistrationTransactionWrapper.registerForNextFragment((int) signIn.getTag());
                     RememberPreferences.saveState(getActivity().getBaseContext(), remembered.isChecked());
@@ -162,6 +168,23 @@ public class SignInFragment extends Fragment {
         return checkEditTextField();
     }
 
+
+    private void signInFirebaseAuth(){
+        FirebaseAuthRepository.signInWithEmailAndPassword(email.getText().toString(), HashUtils.hash(password.getText().toString()), new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    CurrentUser.setCurrentFirebaseUser(DBAccess.getFirebaseAuth().getCurrentUser());
+                    getUserByEmailPassword(email.getText().toString(), HashUtils.hash(password.getText().toString()));
+                }
+                else{
+                    Toast.makeText(getActivity(), "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
     private void getUserByEmailPassword(final String email, final String password) {
         FirebaseRepository.getUser(new ValueEventListener() {
             @Override
@@ -170,7 +193,7 @@ public class SignInFragment extends Fragment {
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     if (email.equals(childSnapshot.child("email").getValue()) && password.equals(childSnapshot.child("password").getValue())) {
                         CurrentUser.setCurrentUser(childSnapshot.getValue(User.class));
-                        //                Toast.makeText(getActivity().getBaseContext(), CurrentUser.getCurrentUser().toString(), Toast.LENGTH_LONG).show();
+                  //       Toast.makeText(getActivity().getBaseContext(), CurrentUser.getCurrentUser().toString(), Toast.LENGTH_LONG).show();
                         isFound = true;
                         break;
                     }
@@ -179,7 +202,9 @@ public class SignInFragment extends Fragment {
                     signIn.performClick();
                 else {
                     isClicked = false;
-                    Toast.makeText(getActivity().getBaseContext(), "Email or password is wrong", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getActivity().getBaseContext(), "Email or password is wrong", Toast.LENGTH_LONG).show();
+
+
                 }
             }
 

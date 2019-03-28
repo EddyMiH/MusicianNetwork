@@ -2,6 +2,7 @@ package com.musapp.musicapp.activities;
 
 import android.app.Application;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,6 +32,7 @@ public class MainApplication extends Application {
         DatabaseReference ref = database.getReference();
         StorageReference storageReference = storage.getReference();
 
+        DBAccess.setFirebaseAuth(FirebaseAuth.getInstance());
         DBAccess.setDatabaseReference(ref);
 
         DBAccess.setStorageReference(storageReference);
