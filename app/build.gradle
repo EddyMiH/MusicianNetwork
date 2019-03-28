@@ -55,6 +55,19 @@ dependencies {
     implementation "android.arch.navigation:navigation-fragment:$nav_version"
     implementation "android.arch.navigation:navigation-ui:$nav_version"
     implementation project(':YouTubeAndroidPlayerApi')
+
+    // your app's other dependencies
+    implementation 'com.facebook.fresco:fresco:1.13.0'
+    // For animated GIF support
+    implementation 'com.facebook.fresco:animated-gif:1.13.0'
+
+    // For WebP support, including animated WebP
+    implementation 'com.facebook.fresco:animated-webp:1.13.0'
+    implementation 'com.facebook.fresco:webpsupport:1.13.0'
+
+    // For WebP support, without animations
+    implementation 'com.facebook.fresco:webpsupport:1.13.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'
