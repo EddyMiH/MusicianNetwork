@@ -37,6 +37,7 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.main_fragments.ProfileFragment;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Gender;
 import com.musapp.musicapp.model.Info;
 import com.musapp.musicapp.model.Profession;
@@ -47,6 +48,7 @@ import com.musapp.musicapp.utils.ErrorShowUtils;
 import com.musapp.musicapp.utils.GlideUtil;
 import com.musapp.musicapp.utils.HashUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -94,6 +96,11 @@ public class EditProfileFragment extends Fragment {
     private boolean isCameraPermissionAccepted = false;
     private boolean isStoragePermissionAccepted = false;
     private Uri path;
+    private SetToolBarTitle mSetToolBarTitle;
+
+    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
+        mSetToolBarTitle = setToolBarTitle;
+    }
 
     private AdapterView.OnItemSelectedListener mItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
@@ -184,6 +191,7 @@ public class EditProfileFragment extends Fragment {
 
         mBirthday.setOnClickListener(mDataPickerListener);
         mUserImage.setOnClickListener(mImagePickerListener);
+        mSetToolBarTitle.setTitle(R.string.title_edit_profile);
 
     }
 
@@ -270,7 +278,7 @@ public class EditProfileFragment extends Fragment {
                 Bundle bundle = data.getExtras();
                 final Bitmap bmp = (Bitmap) bundle.get("data");
                 mUserImage.setImageBitmap(bmp);
-                //putImageToStorage(path);
+                putBitmapImageToStorage(bmp);
 
             } else if (requestCode == SELECT_FILE) {
 
@@ -288,6 +296,24 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        mInfo.setImageUri(uri.toString());
+                    }
+                });
+            }
+        });
+    }
+
+    private void putBitmapImageToStorage(Bitmap btm){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        btm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        final StorageReference reference = FirebaseRepository.createImageStorageChild(System.currentTimeMillis() + "." + "jpg");
+        FirebaseRepository.putBytesToFirebaseStorage(reference, data, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                FirebaseRepository.getDownloadUrl(reference, new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
                         mInfo.setImageUri(uri.toString());

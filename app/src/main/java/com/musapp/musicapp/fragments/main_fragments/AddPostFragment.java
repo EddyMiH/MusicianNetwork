@@ -140,7 +140,7 @@ public class AddPostFragment extends Fragment {
                 }
             }
         });
-//        mSetToolBarTitle.setTitle(R.string.add_post_action_bar_title_menu);
+        mSetToolBarTitle.setTitle(R.string.add_post_action_bar_title_menu);
         return view;
     }
 

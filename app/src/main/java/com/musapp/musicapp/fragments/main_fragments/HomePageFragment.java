@@ -111,6 +111,7 @@ public class HomePageFragment extends Fragment {
            Bundle args = new Bundle();
            args.putString(String.class.getSimpleName(), post.getUserId());
            otherUserProfileFragment.setArguments(args);
+           otherUserProfileFragment.setSetToolBarTitle(mSetToolBarTitle);
            beginTransaction(otherUserProfileFragment);
 
         }
@@ -175,6 +176,7 @@ public class HomePageFragment extends Fragment {
                 loadNewPostsAfterRefresh();
             }
         });
+        mSetToolBarTitle.setTitle(R.string.title_home);
     }
 
     private void initSearchSpinner(){

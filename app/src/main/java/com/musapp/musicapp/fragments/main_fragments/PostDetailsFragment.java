@@ -187,7 +187,7 @@ public class PostDetailsFragment extends Fragment {
                 }
             }
         });
-//        mSetToolBarTitle.setTitle(R.string.title_activity_opened_post);
+        mSetToolBarTitle.setTitle(R.string.title_activity_opened_post);
     }
 
     private void initCommentsRecyclerView(){

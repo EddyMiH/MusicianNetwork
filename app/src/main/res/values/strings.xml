@@ -73,10 +73,12 @@
     <string name="action_feedback">feedback</string>
     <string name="action_log_out">log out</string>
     <string name="toolbar_title_profile">Profile</string>
+    <string name="title_about_us">About us</string>
     <string name="title_activity_app">AppActivity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_edit_profile">Edit</string>
 
     <string name="text_bottom_navigation_item_home">Home</string>
     <string name="text_bottom_navigation_item_messages">Messages</string>

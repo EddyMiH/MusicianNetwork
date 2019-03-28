@@ -51,7 +51,11 @@ public class OtherUserProfileFragment extends Fragment {
     RecyclerView postsRecyclerView;
 
     String userPrimaryKey;
+    private SetToolBarTitle mSetToolBarTitle;
 
+    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
+        mSetToolBarTitle = setToolBarTitle;
+    }
 
     private FeedRecyclerAdapter postRecyclerViewAdapter = new FeedRecyclerAdapter();
 
@@ -81,7 +85,6 @@ public class OtherUserProfileFragment extends Fragment {
         postsRecyclerView.setAdapter(postRecyclerViewAdapter);
 
         showDataFromFireBase();
-
     }
 
     @Nullable
@@ -104,6 +107,8 @@ public class OtherUserProfileFragment extends Fragment {
               final User  user = dataSnapshot.getValue(User.class);
                 GlideUtil.setImageGlide(user.getUserInfo().getImageUri(), userImage);
                 fullname.setText(user.getFullName());
+                mSetToolBarTitle.setTitle(user.getFullName());
+
                 nickname.setText(user.getNickName());
                 infoBox.setText(user.getUserInfo().getAdditionalInfo());
                 final List<Post> posts = new ArrayList<>();

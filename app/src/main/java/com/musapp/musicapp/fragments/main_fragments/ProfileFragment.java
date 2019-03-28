@@ -111,6 +111,7 @@ public class ProfileFragment extends Fragment {
 //        postsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        postsRecyclerView.setAdapter(postRecyclerAdapter);
 
+        setToolBarTitle.setTitle(CurrentUser.getCurrentUser().getFullName());
     }
 
     @Nullable
@@ -149,10 +150,14 @@ public class ProfileFragment extends Fragment {
               break;
             }
             case R.id.action_edit_profile_info :
-                beginTransaction(new EditProfileFragment());
+                EditProfileFragment fragment = new EditProfileFragment();
+                fragment.setSetToolBarTitle(setToolBarTitle);
+                beginTransaction(fragment);
                 break;
             case R.id.action_about_us:
-                beginTransaction(new AboutUsFragment());
+                AboutUsFragment fragment1 = new AboutUsFragment();
+                fragment1.setSetToolBarTitle(setToolBarTitle);
+                beginTransaction(fragment1);
         }
 
         return super.onOptionsItemSelected(item);

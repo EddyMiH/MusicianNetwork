@@ -52,6 +52,11 @@ public class AppMainActivity extends AppCompatActivity {
         public void setTitle(int titleId) {
             getSupportActionBar().setTitle(getString(titleId));
         }
+
+        @Override
+        public void setTitle(String title) {
+            getSupportActionBar().setTitle(title);
+        }
     };
 
 
@@ -119,6 +124,7 @@ public class AppMainActivity extends AppCompatActivity {
         mMessagesFragment = new BlankFragment();
         mProfileFragment.setSetToolBarTitle(mToolBarTitle);
         mNotificationFragment.setSetToolBarTitle(mToolBarTitle);
+        mProfileFragment.setSetToolBarTitle(mToolBarTitle);
 
         mProfileFragment.setChangeActivity(mChangeActivity);
 
