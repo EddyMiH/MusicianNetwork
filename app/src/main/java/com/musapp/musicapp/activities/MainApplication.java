@@ -15,6 +15,7 @@ import com.musapp.musicapp.firebase.DBAsyncTask;
 import com.musapp.musicapp.model.Genre;
 import com.musapp.musicapp.model.Profession;
 import com.musapp.musicapp.model.User;
+import com.musapp.musicapp.utils.GlideUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ public class MainApplication extends Application {
         final FirebaseStorage storage = FirebaseStorage.getInstance();
         DatabaseReference ref = database.getReference();
         StorageReference storageReference = storage.getReference();
-
+        GlideUtil.setContext(this);
         DBAccess.setFirebaseAuth(FirebaseAuth.getInstance());
         DBAccess.setDatabaseReference(ref);
 

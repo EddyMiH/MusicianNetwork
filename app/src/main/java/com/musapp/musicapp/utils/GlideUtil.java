@@ -46,4 +46,9 @@ public final class GlideUtil {
         Glide.with(context).load(src).apply(requestOptions).into(view);
     }
 
+    public static void setResource(int source, ImageView view){
+        RequestOptions requestOptions = new RequestOptions().fitCenter();
+
+        Glide.with(context).load(source).apply(requestOptions).into(view);
+    }
 }

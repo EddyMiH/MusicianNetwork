@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,49 +35,49 @@ public class GenreGridFragment extends Fragment {
     private Button nextButton;
     private User user = CurrentUser.getCurrentUser();
     private List<Genre> listOfGenres = new ArrayList<Genre>(
-            Arrays.asList(new Genre("Rock", null)
-                    ,new Genre("Blues", null)
-                    ,new Genre("Classic", null)
-                    ,new Genre("Classic Metal", null)
-                    ,new Genre("Power Metal", null)
-                    ,new Genre("Symphonic Metal", null)
-                    ,new Genre("Electronic dance", null)
-                    ,new Genre("Jazz", null)
-                    ,new Genre("Pop", null)
-                    ,new Genre("Folk", null)
-                    ,new Genre("Hip Hop", null)
-                    ,new Genre("Country", null)
-                    ,new Genre("Rhythm & Blues", null)
-                    ,new Genre("Heavy metal", null)
-                    ,new Genre("Reggae", null)
-                    ,new Genre("Punk Rock", null)
-                    ,new Genre("Funk", null)
-                    ,new Genre("Soul", null)
-                    ,new Genre("Alternative Rock", null)
-                    ,new Genre("Dance music", null)
-                    ,new Genre("Techno", null)
-                    ,new Genre("Rap", null)
-                    ,new Genre("House", null)
-                    ,new Genre("Singing/Vocal", null)
-                    ,new Genre("Ambient", null)
-                    ,new Genre("Instrumental", null)
-                    ,new Genre("World music", null)
-                    ,new Genre("Trance music", null)
-                    ,new Genre("Progressive Rock", null)
-                    ,new Genre("Latin Music", null)
-                    ,new Genre("Indie Rock", null)
-                    ,new Genre("Pop Rock", null)
-                    ,new Genre("Hard Rock", null)
-                    ,new Genre("Psychedelic music", null)
-                    ,new Genre("Grunge", null)
-                    ,new Genre("Electro", null)
-                    ,new Genre("New Wave", null)
-                    ,new Genre("Death metal", null)
-                    ,new Genre("Noise", null)
-                    ,new Genre("Industrial Rock", null)
-                    ,new Genre("Acoustic", null)
-                    ,new Genre("Jazz Fusion", null)
-                    ,new Genre("African music", null))
+            Arrays.asList(new Genre("Rock", R.drawable.rock_genre)
+                    ,new Genre("Blues", R.drawable.blues_genre)
+                    ,new Genre("Classic", R.drawable.classic1_genre)
+                    ,new Genre("Classic Metal", R.drawable.classic_metal_genre)
+                    ,new Genre("Power Metal", R.drawable.power_metal_genre)
+                    ,new Genre("Symphonic Metal", R.drawable.simphonic_metal_genre)
+                    ,new Genre("Electronic dance", R.drawable.elctronic_dance_genre)
+                    ,new Genre("Jazz", R.drawable.jazz_genre)
+                    ,new Genre("Pop", R.drawable.pop_genre)
+                    ,new Genre("Folk", R.drawable.folk_genre)
+                    ,new Genre("Hip Hop", R.drawable.hip_hop_genre)
+                    ,new Genre("Country", R.drawable.country_genre)
+                    ,new Genre("Rhythm & Blues", R.drawable.rhythm_blues_genre)
+                    ,new Genre("Heavy metal", R.drawable.heavy_metal_genre)
+                    ,new Genre("Reggae", R.drawable.reggae_genre)
+                    ,new Genre("Punk Rock", R.drawable.punk_rock_genre)
+                    ,new Genre("Funk", R.drawable.funk_genre)
+                    ,new Genre("Soul", R.drawable.soul_genre)
+                    ,new Genre("Alternative Rock", R.drawable.alternative_rock_genre)
+                    ,new Genre("Dance music", R.drawable.dance_genre)
+                    ,new Genre("Techno", R.drawable.techno_genre)
+                    ,new Genre("Rap", R.drawable.rap_genre)
+                    ,new Genre("House", R.drawable.house_genre)
+                    ,new Genre("Singing/Vocal", R.drawable.vocal_genre)
+                    ,new Genre("Ambient", R.drawable.ambient_genre)
+                    ,new Genre("Instrumental", R.drawable.classic1_genre)
+                    ,new Genre("World music", R.drawable.world_genre)
+                    ,new Genre("Trance music", R.drawable.trance_genre)
+                    ,new Genre("Progressive Rock", R.drawable.power_metal_genre)
+                    ,new Genre("Latin Music", R.drawable.latin_genre)
+                    ,new Genre("Indie Rock", R.drawable.indie_genre)
+                    ,new Genre("Pop Rock", R.drawable.pop_genre)
+                    ,new Genre("Hard Rock", R.drawable.hard_rock_genre)
+                    ,new Genre("Psychedelic music", R.drawable.psychedelic_genre)
+                    ,new Genre("Grunge", R.drawable.grunge_genre)
+                    ,new Genre("Electro", R.drawable.elctronic_dance_genre)
+                    ,new Genre("New Wave", R.drawable.new_wave_genre)
+                    ,new Genre("Death metal", R.drawable.death_metal_genre)
+                    ,new Genre("Noise", R.drawable.noise_genre)
+                    ,new Genre("Industrial Rock", R.drawable.industrial_genre)
+                    ,new Genre("Acoustic", R.drawable.country_genre)
+                    ,new Genre("Jazz Fusion", R.drawable.jazz_genre)
+                    ,new Genre("African music", R.drawable.african_genre))
     );
 
     private GenreRecyclerViewAdapter.OnItemSelectedListener mOnItemSelectedListener = new GenreRecyclerViewAdapter.OnItemSelectedListener() {
@@ -124,7 +125,11 @@ public class GenreGridFragment extends Fragment {
         genreRecyclerAdapter = new GenreRecyclerViewAdapter();
         genreRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
         genreRecyclerAdapter.setData(listOfGenres);
-        view.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        view.setHasFixedSize(false);
+        //view.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        StaggeredGridLayoutManager man = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        man.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
+        view.setLayoutManager(man);
         view.setAdapter(genreRecyclerAdapter);
 
     }

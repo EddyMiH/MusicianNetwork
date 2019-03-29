@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.utils.GlideUtil;
 
 
 public class GenreViewHolder extends RecyclerView.ViewHolder {
@@ -22,7 +23,8 @@ public class GenreViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setImage(int source) {
-        img.setImageResource(source);
+        GlideUtil.setResource(source, img);
+        //img.setImageResource(source);
     }
 
     public void setName(String Name) {
