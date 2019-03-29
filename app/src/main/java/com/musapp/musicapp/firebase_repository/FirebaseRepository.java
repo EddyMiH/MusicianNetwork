@@ -235,6 +235,10 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users/" + userId).child("notifications").setValue(value).addOnSuccessListener(successListener);
     }
 
+    public static void loadNotifications(ChildEventListener childEventListener){
+        DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).child("notifications").addChildEventListener(childEventListener);
+    }
+
 
 
 

@@ -1,20 +1,32 @@
 package com.musapp.musicapp.adapters;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.viewholders.NotificationViewHolder;
+import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.model.Notification;
+import com.musapp.musicapp.utils.GlideUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<NotificationViewHolder> {
-    private List<Notification> data;
+    private List<Notification> data = new ArrayList<>();
+    private OnProfileImageClickListener mOnProfileImageClickListener;
+    private NotificationViewHolder.ImageOnClickListener mImageOnClickListener = new NotificationViewHolder.ImageOnClickListener() {
+        @Override
+        public void onImagePerformClick(int position) {
+            mOnProfileImageClickListener.onProfileImageClick(data.get(position));
+        }
+    };
 
     @NonNull
     @Override
@@ -25,8 +37,12 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
 
     @Override
     public void onBindViewHolder(@NonNull NotificationViewHolder notificationViewHolder, int i) {
-        notificationViewHolder.setDescriptionText(data.get(i).getDescription());
-       // notificationViewHolder.setUserImage(data.get(i).getImgId());
+        Notification notification = data.get(i);
+        notificationViewHolder.setDescriptionText(notification.getDescription());
+        notificationViewHolder.setBodyText(notification.getNotificationBody());
+        notificationViewHolder.setDate(notification.getDate());
+        GlideUtil.setImageGlide(notification.getCommentatorImageUrl(), notificationViewHolder.getUserImage());
+        notificationViewHolder.setImageOnClickListener(mImageOnClickListener);
     }
 
     @Override
@@ -35,13 +51,23 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
     }
 
     public void setData(List<Notification> notificationArrayList){
-        if(data == null){
-            data = new ArrayList<>(notificationArrayList);
-        }
-        else{
+
             data.clear();
             data.addAll(notificationArrayList);
-        }
         notifyDataSetChanged();
     }
+
+    public void addItem(Notification notification, int pos){
+        data.add(pos, notification);
+        notifyItemInserted(pos);
+    }
+
+    public void setOnProfileImageClickListener(OnProfileImageClickListener onProfileImageClickListener) {
+        mOnProfileImageClickListener = onProfileImageClickListener;
+    }
+
+    public interface OnProfileImageClickListener{
+        void onProfileImageClick(Notification notification);
+    }
+
 }

@@ -34,7 +34,7 @@ public class Notification {
 
     public Notification(String commentatorId, String postId, String notificationBody, String date, String commentatorImageUrl, String commentatorName){
         this(commentatorId, postId, notificationBody, date, commentatorImageUrl);
-        description = commentatorName + " has commented your post";
+        description = "Checkout new comment\n" + commentatorName;
     }
 
     public String getDescription() {

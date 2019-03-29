@@ -12,11 +12,25 @@ import com.musapp.musicapp.R;
 public class NotificationViewHolder extends RecyclerView.ViewHolder {
 
     private TextView descriptionText;
+    private TextView bodyText;
+    private TextView date;
     private ImageView userImage;
+    private ImageOnClickListener imageOnClickListener;
+
+    private View.OnClickListener  clickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            imageOnClickListener.onImagePerformClick(getAdapterPosition());
+        }
+    };
     public NotificationViewHolder(@NonNull View itemView) {
         super(itemView);
         descriptionText = itemView.findViewById(R.id.text_item_user_notification_description);
+        bodyText = itemView.findViewById(R.id.text_item_user_notification_body);
+        date = itemView.findViewById(R.id.text_item_user_notification_date);
         userImage = itemView.findViewById(R.id.image_item_user_notification_others_pic);
+        userImage.setOnClickListener(clickListener);
+
     }
 
     public void setDescriptionText(String text){
@@ -31,5 +45,31 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder {
 
     public void setUserImage(int  source) {
         userImage.setImageResource(source);
+    }
+
+    public ImageView getUserImage(){ return userImage;}
+
+    public String getBodyText() {
+        return bodyText.getText().toString();
+    }
+
+    public void setBodyText(String bodyText) {
+        this.bodyText.setText(bodyText);
+    }
+
+    public String getDate() {
+        return date.getText().toString();
+    }
+
+    public void setDate(String date) {
+        this.date.setText(date);
+    }
+
+    public void setImageOnClickListener(ImageOnClickListener imageOnClickListener) {
+        this.imageOnClickListener = imageOnClickListener;
+    }
+
+    public interface ImageOnClickListener{
+        void onImagePerformClick(int position);
     }
 }

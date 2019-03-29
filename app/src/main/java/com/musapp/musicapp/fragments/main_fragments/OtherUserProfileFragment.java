@@ -21,7 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.activities.StartActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
-import com.musapp.musicapp.adapters.PostRecyclerViewAdapter;
+
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Post;

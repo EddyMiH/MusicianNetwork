@@ -115,7 +115,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void createNotification(RemoteMessage remoteMessage){
 
-        if(!remoteMessage.getData().get("commenterId").equals(RememberPreferences.getUser(this))){
+        if(!remoteMessage.getData().get("tag").equals(RememberPreferences.getUser(this))){
             return;
         }
 

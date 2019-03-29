@@ -15,14 +15,16 @@ public class Notify extends AsyncTask<Void, Void, Void> {
     private String notificationBody;
     private String receiverId;
     private String postId;
+    private String commenterId;
     private String commenterImageUrl;
     private String date;
 
-    public Notify(String receiverToken, String notificationTitle, String notificationBody, String receiverId, String postId, String commenterImageUrl, String date) {
+    public Notify(String receiverToken, String notificationTitle, String notificationBody, String receiverId, String commenterId, String postId, String commenterImageUrl, String date) {
         this.receiverToken = receiverToken;
         this.notificationTitle = notificationTitle;
         this.notificationBody = notificationBody;
         this.receiverId = receiverId;
+        this.commenterId = commenterId;
         this.postId = postId;
         this.commenterImageUrl = commenterImageUrl;
         this.date = date;
@@ -55,7 +57,8 @@ public class Notify extends AsyncTask<Void, Void, Void> {
             JSONObject info = new JSONObject();
             info.put("title", notificationTitle);   // Notification title
             info.put("body", notificationBody); // Notification body
-            info.put("commenterId", receiverId);
+            info.put("tag", receiverId);
+            info.put("commenterId", commenterId);
             info.put("postId", postId);
             info.put("commenterImageUrl", commenterImageUrl);
             info.put("date", date);

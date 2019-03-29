@@ -165,9 +165,8 @@ public class PostDetailsFragment extends Fragment {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             User receiver = dataSnapshot.getValue(User.class);
                             new Notify(receiver.getToken(), CurrentUser.getCurrentUser().getNickName(),
-                                    newComment.getCommentText(), receiver.getPrimaryKey(),
+                                    newComment.getCommentText(), receiver.getPrimaryKey(), CurrentUser.getCurrentUser().getPrimaryKey(),
                                     mCurrentPost.getPrimaryKey(), newComment.getUserProfileImageUrl(), newComment.getCreationTime()).execute();
-
                         }
 
                         @Override
