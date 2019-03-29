@@ -7,6 +7,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.StorageReference;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.HashUtils;
@@ -22,6 +23,7 @@ public final class DBAccess {
     private static StorageReference mStorageReference;
     private static FirebaseAuth sFirebaseAuth;
     private static String DEFAULT_PATH = "";
+    private static String token = FirebaseInstanceId.getInstance().getToken();
 
     //CREATE
     public static void createChild(String childName, Object obj) {
@@ -100,6 +102,13 @@ public final class DBAccess {
     public static StorageReference getStorageReference() {
         return mStorageReference;
     }
+
+    public static void setToken(String newToken){token = newToken;}
+
+    public static String getToken() {
+        return token;
+    }
+
 
     public static FirebaseAuth getFirebaseAuth() {
         return sFirebaseAuth;

@@ -23,11 +23,15 @@ public class User {
     private String primaryKey;
 
     private List<String> favouritePostId;
+    private String token;
+
+    private List<Notification> notificationList;
 
     public User(){
         genresId = new ArrayList<>();
         postId = new ArrayList<>();
        favouritePostId = new ArrayList<>();
+       notificationList = new ArrayList<>();
     }
 
     public List<String> getPostId() {
@@ -56,6 +60,9 @@ public class User {
         this.postId = postId;
     }
 
+    public  void addNotification(Notification notification){
+        notificationList.add(notification);
+    }
     public void addPostId(String id){
         postId.add(id);
     }
@@ -136,5 +143,21 @@ public class User {
 
     public List<String> getFavouritePostId() {
         return favouritePostId;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public List<Notification> getNotificationList() {
+        return notificationList;
+    }
+
+    public void setNotificationList(List<Notification> notificationList) {
+        this.notificationList = notificationList;
     }
 }

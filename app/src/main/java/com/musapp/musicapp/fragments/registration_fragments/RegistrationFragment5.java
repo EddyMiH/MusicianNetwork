@@ -124,6 +124,7 @@ public class RegistrationFragment5 extends Fragment {
 //    }
 
     private void addUserToFirebase() {
+        CurrentUser.getCurrentUser().setToken(DBAccess.getToken());
         FirebaseRepository.addCurrentUserToFirebase(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

@@ -1,6 +1,7 @@
 package com.musapp.musicapp.firebase_repository;
 
 import android.net.Uri;
+import android.renderscript.Sampler;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -12,10 +13,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.model.Notification;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.uploads.AttachedFile;
 import java.util.Date;
+import java.util.List;
 
 
 public class FirebaseRepository {
@@ -128,7 +131,7 @@ public class FirebaseRepository {
     }
 
     public static void getUserByPrimaryKey(String primaryKey, ValueEventListener valueEventListener) {
-        DBAccess.getUserReference("users").child(primaryKey).addValueEventListener(valueEventListener);
+        DBAccess.getUserReference("users").child(primaryKey).addListenerForSingleValueEvent(valueEventListener);
     }
 
     public static void getCurrentUser(ValueEventListener valueEventListener) {
@@ -223,6 +226,18 @@ public class FirebaseRepository {
     public static void putBytesToFirebaseStorage(StorageReference reference, byte[] data, OnSuccessListener<UploadTask.TaskSnapshot> onSuccessListener){
         reference.putBytes(data).addOnSuccessListener(onSuccessListener);
     }
+
+    public static void updateCurrentUserToken(String newToken){
+        DBAccess.getUserReference("users").child(CurrentUser.getCurrentUser().getPrimaryKey()).child("token").setValue(newToken);
+    }
+
+    public static void updateUserNotificationListById(String userId, List<Notification> value,OnSuccessListener<Void> successListener){
+        DBAccess.getUserReference("users/" + userId).child("notifications").setValue(value).addOnSuccessListener(successListener);
+    }
+
+
+
+
 
 
 }

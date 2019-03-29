@@ -115,7 +115,6 @@ public class AppMainActivity extends AppCompatActivity {
         setCurrentUser();
         init();
         navigation.setSelectedItemId(R.id.navigation_home);
-new Notify().execute();
     }
 
     @Override
@@ -182,6 +181,7 @@ new Notify().execute();
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 CurrentUser.setCurrentUser(dataSnapshot.getValue(User.class));
+                CurrentUser.setCurrentFirebaseUser(FirebaseAuth.getInstance().getCurrentUser());
             }
 
             @Override
@@ -221,6 +221,7 @@ new Notify().execute();
 
         }
         this.unbindService(mServiceConnection);
+        RememberPreferences.saveUser(this, CurrentUser.getCurrentUser().getPrimaryKey());
     }
 
     private MusicPlayerServiceConnection mPlayerServiceConnection =
@@ -268,59 +269,7 @@ new Notify().execute();
     }
 
 
-    public class Notify extends AsyncTask<Void,Void,Void>
-    {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
 
 
-            try {
 
-                URL url = new URL("https://fcm.googleapis.com/fcm/send");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-                conn.setUseCaches(false);
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Authorization", "key=AIzaSyCgGkIpG7sPYu99dcZEuhLWr3KacbjGzzU");
-                conn.setRequestProperty("Content-Type", "application/json");
-
-                JSONObject json = new JSONObject();
-
-                String tkn = FirebaseInstanceId.getInstance().getToken();
-
-
-                        /*getIdToken(true).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
-                    @Override
-                    public void onSuccess(GetTokenResult getTokenResult) {
-                       t[0] = getTokenResult.getToken();
-                    }
-                });*/
-                json.put("to", tkn);
-
-
-                JSONObject info = new JSONObject();
-                info.put("title", "TechnoWeb");   // Notification title
-                info.put("body", "Hello Test notification"); // Notification body
-
-                json.put("notification", info);
-
-                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                wr.write(json.toString());
-                wr.flush();
-                conn.getInputStream();
-
-            }
-            catch (Exception e)
-            {
-                Log.d("Error",""+e);
-            }
-
-
-            return null;
-        }
-    }
 }

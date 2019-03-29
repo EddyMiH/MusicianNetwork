@@ -26,7 +26,7 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
     @Override
     public void onBindViewHolder(@NonNull NotificationViewHolder notificationViewHolder, int i) {
         notificationViewHolder.setDescriptionText(data.get(i).getDescription());
-        notificationViewHolder.setUserImage(data.get(i).getImgId());
+       // notificationViewHolder.setUserImage(data.get(i).getImgId());
     }
 
     @Override

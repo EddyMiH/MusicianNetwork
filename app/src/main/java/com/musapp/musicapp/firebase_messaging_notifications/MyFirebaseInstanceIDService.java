@@ -25,6 +25,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.activities.AppMainActivity;
+import com.musapp.musicapp.currentinformation.CurrentUser;
+import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -38,21 +40,21 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
 
         String tkn = FirebaseInstanceId.getInstance().getToken();
-        Log.d("Not","Token ["+tkn+"]");
+        CurrentUser.getCurrentUser().setToken(tkn);
+        FirebaseRepository.updateCurrentUserToken(tkn);
+        Log.d("Nottttt","Token ["+tkn+"]");
 
         sendRegistrationToServer(tkn);
 
 
 
     }
-
-
     private void sendRegistrationToServer(String token) {
         // TODO: Implement this method to send token to your app server.
 
         Intent intent = new Intent(this, AppMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1410 /* Request code */, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1410 ,/* Request code */intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -66,6 +68,7 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(1410 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(1410
+            ,notificationBuilder.build());
     }
 }

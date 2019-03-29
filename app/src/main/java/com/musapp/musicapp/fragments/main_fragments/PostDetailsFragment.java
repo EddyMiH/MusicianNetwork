@@ -31,6 +31,8 @@ import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHold
 import com.musapp.musicapp.currentinformation.CurrentUser;
 
 import com.musapp.musicapp.enums.PostUploadType;
+import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.firebase_messaging_notifications.Notify;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
 import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Post;
@@ -50,6 +52,7 @@ import java.util.Date;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import static com.musapp.musicapp.utils.StringUtils.getSongUri;
 
@@ -150,13 +153,28 @@ public class PostDetailsFragment extends Fragment {
                 mCommentText.setText("");
                 if (!postText.isEmpty()){
                     final Comment newComment = new Comment();
-                    DateFormat simple = new SimpleDateFormat("dd MMM HH:mm");
+                    DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
                     Date date = new Date(System.currentTimeMillis());
                     newComment.setCreationTime(simple.format(date));
                     newComment.setCommentText(postText);
                     newComment.setCreatorId(CurrentUser.getCurrentUser().getPrimaryKey());
                     newComment.setUserCreatorNickName(CurrentUser.getCurrentUser().getNickName());
                     newComment.setUserProfileImageUrl(CurrentUser.getCurrentUser().getUserInfo().getImageUri());
+                    FirebaseRepository.getUserByPrimaryKey(mCurrentPost.getUserId(), new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            User receiver = dataSnapshot.getValue(User.class);
+                            new Notify(receiver.getToken(), CurrentUser.getCurrentUser().getNickName(),
+                                    newComment.getCommentText(), receiver.getPrimaryKey(),
+                                    mCurrentPost.getPrimaryKey(), newComment.getUserProfileImageUrl(), newComment.getCreationTime()).execute();
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                     FirebaseRepository.createComment(newComment, new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -168,8 +186,9 @@ public class PostDetailsFragment extends Fragment {
                                     FirebaseRepository.setCommentInnerPrimaryKeyToFirebase(newComment.getPrimaryKey());
                                     mCurrentPost.addCommentId(newComment.getPrimaryKey());
                                     FirebaseRepository.setCommentInnerPrimaryKeyToFirebasePost(mCurrentPost);
+
                                     mCommentAdapter.addComment(newComment);
-                                   mPostCommentsRecyclerView.scrollToPosition(mCommentAdapter.getItemCount() - 1);
+                                    mPostCommentsRecyclerView.scrollToPosition(mCommentAdapter.getItemCount() - 1);
   //                                  int count  = Integer.getInteger(mCommentCount.getText().toString());
 //                                    mCommentCount.setText(++count);
                                     //   mCommentAdapter.notifyDataSetChanged();
@@ -256,9 +275,12 @@ public class PostDetailsFragment extends Fragment {
                 FirebaseRepository.getCommentById(dataSnapshot.getValue(String.class), new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                         mCommentAdapter.addComment(dataSnapshot.getValue(Comment.class));
                         if(mCommentAdapter.getItemCount() > 0){
-                           mRecyclerView.scrollToPosition(mCommentAdapter.getItemCount() - 1);}
+                            mRecyclerView.scrollToPosition(mCommentAdapter.getItemCount() - 1);}
+
+
                     }
 
                     @Override
