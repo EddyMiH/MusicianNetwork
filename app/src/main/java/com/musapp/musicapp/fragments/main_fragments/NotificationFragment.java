@@ -15,14 +15,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.activities.AppMainActivity;
+import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.adapters.NotificationRecyclerViewAdapter;
-<<<<<<< HEAD
+
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
-=======
+
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
->>>>>>> 9a6919abd3ed4d876337a0ecd6c5da0730fa58e8
+
 import com.musapp.musicapp.model.Notification;
+import com.musapp.musicapp.model.Post;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,23 +34,37 @@ import java.util.List;
 public class NotificationFragment extends Fragment {
     private RecyclerView notificationRecyclerView;
     private NotificationRecyclerViewAdapter notificationRecyclerViewAdapter;
-<<<<<<< HEAD
-    private SetToolBarTitle setToolBarTitle;
+
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
+
+    private NotificationRecyclerViewAdapter.OnItemClickListener mOnItemClickListener = new NotificationRecyclerViewAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(String postId) {
+            loadPostById(postId);
+        }
+    };
+
+    private AppMainActivity.ClickListener mClickListener;
+    private FeedRecyclerAdapter.FragmentTransactionListener mFragmentTransactionListener;
+
+
     private NotificationRecyclerViewAdapter.OnProfileImageClickListener mOnProfileImageClickListener = new NotificationRecyclerViewAdapter.OnProfileImageClickListener() {
         @Override
         public void onProfileImageClick(Notification notification) {
                 OtherUserProfileFragment otherUserProfileFragment = new OtherUserProfileFragment();
             Bundle args = new Bundle();
             args.putString(String.class.getSimpleName(), notification.getCommentatorId());
-            otherUserProfileFragment.setSetToolBarTitle(setToolBarTitle);
+            otherUserProfileFragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
             otherUserProfileFragment.setArguments(args);
+            otherUserProfileFragment.setClickListener(mClickListener);
+            otherUserProfileFragment.setTransactionListener(mFragmentTransactionListener);
             beginTransaction(otherUserProfileFragment);
         }
     };
 
-=======
-    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
->>>>>>> 9a6919abd3ed4d876337a0ecd6c5da0730fa58e8
+
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,11 +83,11 @@ public class NotificationFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         notificationRecyclerViewAdapter.setOnProfileImageClickListener(mOnProfileImageClickListener);
+        notificationRecyclerViewAdapter.setOnItemClickListener(mOnItemClickListener);
         notificationRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         notificationRecyclerView.setAdapter(notificationRecyclerViewAdapter);
-<<<<<<< HEAD
+        mSetToolBarAndNavigationBarState.setTitle(R.string.title_notifications);
         loadNotifications();
-        setToolBarTitle.setTitle(R.string.title_notifications);
     }
 
     private void loadNotifications(){
@@ -121,22 +137,36 @@ public class NotificationFragment extends Fragment {
         });*/
     }
 
+    private void loadPostById(String postId){
+        FirebaseRepository.getPostById(postId, new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mClickListener.postClickListener(dataSnapshot.getValue(Post.class));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void beginTransaction(Fragment fragment){
         if(fragment.isAdded())
             return;
-        assert getFragmentManager() != null;
-        getFragmentManager().beginTransaction().add(R.id.layout_activity_app_container, fragment).commit();
-    }
-
-    public void setSetToolBarTitle(SetToolBarTitle toolBarTitle){
-        setToolBarTitle = toolBarTitle;
-=======
-        mSetToolBarAndNavigationBarState.setTitle(R.string.title_notifications);
+        if(getFragmentManager() != null){
+        getFragmentManager().beginTransaction().add(R.id.layout_activity_app_container, fragment).commit();}
     }
 
     public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState toolBarTitle){
         mSetToolBarAndNavigationBarState = toolBarTitle;
->>>>>>> 9a6919abd3ed4d876337a0ecd6c5da0730fa58e8
     }
 
+    public void setClickListener(AppMainActivity.ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
+
+    public void setFragmentTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener fragmentTransactionListener) {
+        mFragmentTransactionListener = fragmentTransactionListener;
+    }
 }

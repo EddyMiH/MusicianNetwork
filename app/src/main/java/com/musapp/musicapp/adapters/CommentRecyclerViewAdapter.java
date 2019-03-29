@@ -19,6 +19,14 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentView
     private List<Comment> mData;
     private OnCommentItemSelectedListener mOnCommentItemSelectedListener;
 
+    private PerformImageClick mPerformImageClick;
+    CommentViewHolder.ImageOnClickListener mImageOnClickListener = new CommentViewHolder.ImageOnClickListener() {
+        @Override
+        public void onImagePerformClick(int position) {
+            mPerformImageClick.onPerformClick(mData.get(position).getCreatorId());
+        }
+    };
+
 
     @NonNull
     @Override
@@ -46,6 +54,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentView
         commentViewHolder.setCommentText(comment.getCommentText());
         commentViewHolder.setPublishedTime(comment.getCreationTime());
         commentViewHolder.setUserName(comment.getUserCreatorNickName());
+        commentViewHolder.setImageOnClickListener(mImageOnClickListener);
     }
 
     @Override
@@ -82,7 +91,15 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentView
         mOnCommentItemSelectedListener = onCommentItemSelectedListener;
     }
 
+    public void setPerformImageClick(PerformImageClick performImageClick) {
+        mPerformImageClick = performImageClick;
+    }
+
     public interface OnCommentItemSelectedListener{
         void onItemSelected(String id);
+    }
+
+    public interface PerformImageClick{
+        void onPerformClick(String userId);
     }
 }

@@ -176,6 +176,20 @@ public class AppMainActivity extends AppCompatActivity {
             fragment.setSetToolBarAndNavigationBarState(mToolBarTitle);
             beginTransaction(fragment);
         }
+
+        @Override
+        public void userCommentImageClickListener(String userId) {
+            OtherUserProfileFragment otherUserProfileFragment = new OtherUserProfileFragment();
+            Bundle args = new Bundle();
+            args.putString(String.class.getSimpleName(), userId);
+            otherUserProfileFragment.setArguments(args);
+            otherUserProfileFragment.setSetToolBarAndNavigationBarState(mToolBarTitle);
+            otherUserProfileFragment.setPlayerServiceConnection(mPlayerServiceConnection);
+            otherUserProfileFragment.setClickListener(mClickListener);
+            otherUserProfileFragment.setTransactionListener(mTransaction);
+            beginTransaction(otherUserProfileFragment);
+        }
+
     };
 
     @Override
@@ -213,6 +227,8 @@ public class AppMainActivity extends AppCompatActivity {
         mProfileFragment.setClickListener(mClickListener);
         mProfileFragment.setTransactionListener(mTransaction);
         mNotificationFragment.setSetToolBarAndNavigationBarState(mToolBarTitle);
+        mNotificationFragment.setClickListener(mClickListener);
+        mNotificationFragment.setFragmentTransactionListener(mTransaction);
         mProfileFragment.setSetToolBarAndNavigationBarState(mToolBarTitle);
 
         mProfileFragment.setChangeActivity(mChangeActivity);
@@ -294,6 +310,7 @@ public class AppMainActivity extends AppCompatActivity {
     public interface ClickListener {
         void userImageClickListener(Post post);
         void postClickListener(Post post);
+        void userCommentImageClickListener(String userId);
     }
 
     @Override

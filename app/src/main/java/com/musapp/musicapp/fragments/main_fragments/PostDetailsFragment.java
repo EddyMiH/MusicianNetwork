@@ -33,13 +33,10 @@ import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHold
 import com.musapp.musicapp.currentinformation.CurrentUser;
 
 import com.musapp.musicapp.enums.PostUploadType;
-<<<<<<< HEAD
-import com.musapp.musicapp.firebase.DBAccess;
+
 import com.musapp.musicapp.firebase_messaging_notifications.Notify;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
-=======
+
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
->>>>>>> 9a6919abd3ed4d876337a0ecd6c5da0730fa58e8
 import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
@@ -97,6 +94,13 @@ public class PostDetailsFragment extends Fragment {
 
     private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
 
+    private CommentRecyclerViewAdapter.PerformImageClick mPerformImageClick =  new CommentRecyclerViewAdapter.PerformImageClick() {
+        @Override
+        public void onPerformClick(String userId) {
+            mClickListener.userCommentImageClickListener(userId);
+        }
+    };
+
     private BaseUploadsAdapter.OnItemSelectedListener mInnerMusicItemOnClickListener = new BaseUploadsAdapter.OnItemSelectedListener() {
         @Override
         public void onItemSelected(String uri) {
@@ -141,7 +145,7 @@ public class PostDetailsFragment extends Fragment {
     private BaseUploadsAdapter.OnItemSelectedListener mInnerImageItemOnClickListener = new BaseUploadsAdapter.OnItemSelectedListener() {
         @Override
         public void onItemSelected(String uri) {
-            //TODO open full screen fragment and showToolBar images
+            // open full screen fragment and showToolBar images
             FullScreenImageFragment fragment = new FullScreenImageFragment();
             List<String> arr = new ArrayList<>();
             arr = mCurrentPost.getAttachment().getFilesUrls();
@@ -149,6 +153,7 @@ public class PostDetailsFragment extends Fragment {
             bundle.putStringArrayList(FullScreenImageFragment.IMAGE_DATA,(ArrayList<String>) arr);
             bundle.putInt(FullScreenImageFragment.IMAGE_POSITION, arr.indexOf(uri));
             fragment.setArguments(bundle);
+            fragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
             getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, fragment).addToBackStack(null)
                     .commit();
             //mTransaction.openFragment(fragment);
@@ -305,6 +310,7 @@ public class PostDetailsFragment extends Fragment {
     private void initCommentsRecyclerView(){
         mCommentAdapter = new CommentRecyclerViewAdapter();
         mCommentAdapter.setOnCommentItemSelectedListener(mOnCommentItemSelectedListener);
+        mCommentAdapter.setPerformImageClick(mPerformImageClick);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
      //   linearLayoutManager.setStackFromEnd(true);
         mPostCommentsRecyclerView.setLayoutManager(linearLayoutManager);

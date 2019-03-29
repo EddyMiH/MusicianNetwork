@@ -16,11 +16,19 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder {
     private TextView date;
     private ImageView userImage;
     private ImageOnClickListener imageOnClickListener;
+    private ItemClickPerformance itemClickPerformance;
 
     private View.OnClickListener  clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             imageOnClickListener.onImagePerformClick(getAdapterPosition());
+        }
+    };
+
+    private View.OnClickListener itemClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            itemClickPerformance.onItemClickPerformance(getAdapterPosition());
         }
     };
     public NotificationViewHolder(@NonNull View itemView) {
@@ -30,6 +38,7 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder {
         date = itemView.findViewById(R.id.text_item_user_notification_date);
         userImage = itemView.findViewById(R.id.image_item_user_notification_others_pic);
         userImage.setOnClickListener(clickListener);
+        itemView.setOnClickListener(itemClickListener);
 
     }
 
@@ -69,7 +78,15 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder {
         this.imageOnClickListener = imageOnClickListener;
     }
 
+    public void setItemClickPerformance(ItemClickPerformance itemClickPerformance) {
+        this.itemClickPerformance = itemClickPerformance;
+    }
+
     public interface ImageOnClickListener{
         void onImagePerformClick(int position);
+    }
+
+    public interface ItemClickPerformance{
+        void onItemClickPerformance(int position);
     }
 }

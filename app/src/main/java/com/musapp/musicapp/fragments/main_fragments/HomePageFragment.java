@@ -41,7 +41,7 @@ import java.util.List;
 public class HomePageFragment extends Fragment {
 
     private FeedRecyclerAdapter feedRecyclerAdapter;
-    private final int limit = 10;
+    private final int limit = 5;
 
     private ProgressBar mProgressBar;
     private Spinner mSearchModeSpinner;

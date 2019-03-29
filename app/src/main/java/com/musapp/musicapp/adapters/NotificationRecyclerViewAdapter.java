@@ -28,6 +28,14 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
         }
     };
 
+    private OnItemClickListener mOnItemClickListener;
+   private NotificationViewHolder.ItemClickPerformance mItemClickPerformance = new NotificationViewHolder.ItemClickPerformance() {
+       @Override
+       public void onItemClickPerformance(int position) {
+           mOnItemClickListener.onItemClick(data.get(position).getPostId());
+       }
+   };
+
     @NonNull
     @Override
     public NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -43,6 +51,7 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
         notificationViewHolder.setDate(notification.getDate());
         GlideUtil.setImageGlide(notification.getCommentatorImageUrl(), notificationViewHolder.getUserImage());
         notificationViewHolder.setImageOnClickListener(mImageOnClickListener);
+        notificationViewHolder.setItemClickPerformance(mItemClickPerformance);
     }
 
     @Override
@@ -66,8 +75,16 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
         mOnProfileImageClickListener = onProfileImageClickListener;
     }
 
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
     public interface OnProfileImageClickListener{
         void onProfileImageClick(Notification notification);
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(String postId);
     }
 
 }

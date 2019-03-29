@@ -16,6 +16,14 @@ public class CommentViewHolder extends RecyclerView.ViewHolder {
     private TextView mPublishedTime;
     private TextView mCommentText;
 
+    private ImageOnClickListener imageOnClickListener;
+    private View.OnClickListener  clickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            imageOnClickListener.onImagePerformClick(getAdapterPosition());
+        }
+    };
+
     public CommentViewHolder(@NonNull View itemView) {
         super(itemView);
 
@@ -23,6 +31,7 @@ public class CommentViewHolder extends RecyclerView.ViewHolder {
         mUserName  = itemView.findViewById(R.id.text_comment_item_user_name);
         mPublishedTime = itemView.findViewById(R.id.text_comment_published_time);
         mCommentText = itemView.findViewById(R.id.text_comment_item_comment_text);
+        mProfileImage.setOnClickListener(clickListener);
     }
 
     public void setProfileImage(String url) {
@@ -39,5 +48,13 @@ public class CommentViewHolder extends RecyclerView.ViewHolder {
 
     public void setCommentText(String commentText) {
         mCommentText.setText(commentText);
+    }
+
+    public void setImageOnClickListener(ImageOnClickListener imageOnClickListener) {
+        this.imageOnClickListener = imageOnClickListener;
+    }
+
+    public interface ImageOnClickListener{
+        void onImagePerformClick(int position);
     }
 }

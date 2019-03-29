@@ -17,11 +17,9 @@ import android.widget.TextView;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.activities.StartActivity;
-<<<<<<< HEAD
 
-=======
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
->>>>>>> 9a6919abd3ed4d876337a0ecd6c5da0730fa58e8
+
 import com.musapp.musicapp.adapters.UserPostViewPagerAdapter;
 import com.musapp.musicapp.fragments.main_fragments.profile_menu_items.AboutUsFragment;
 import com.musapp.musicapp.currentinformation.CurrentUser;
