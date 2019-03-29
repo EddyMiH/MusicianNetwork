@@ -26,18 +26,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.StorageMetadata;
 import com.musapp.musicapp.R;
-import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.PostUploadType;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.service.UploadForegroundService;
 import com.musapp.musicapp.uploads.AttachedFile;
-import com.musapp.musicapp.utils.FragmentShowUtils;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -60,9 +56,12 @@ public class AddPostFragment extends Fragment {
     DatabaseReference mDatabaseReference;
     private PostUploadType mType;
     private int selectedFiles = 1;
-    private SetToolBarTitle mSetToolBarTitle;
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
 
     private boolean isStoragePermissionAccepted = false;
+    private boolean isCameraPermissionAccepted = false;
+    private final int STORAGE_CAMERA_PERMISSION_CODE = 101;
+    public boolean isPermissionAccepted = false;
     private final int SELECT_IMAGE = 12;
     private final int SELECT_VIDEO = 13;
     private final int SELECT_AUDIO = 14;
@@ -114,6 +113,8 @@ public class AddPostFragment extends Fragment {
 
                 if (isStoragePermissionAccepted){
                     selectImage();
+                }else{
+                    requestPermission();
                 }
             }
         });
@@ -126,6 +127,8 @@ public class AddPostFragment extends Fragment {
                 mAttachedFile.setFileType(PostUploadType.VIDEO);
                 if (isStoragePermissionAccepted){
                     selectVideo();
+                }else{
+                    requestPermission();
                 }
             }
         });
@@ -138,10 +141,12 @@ public class AddPostFragment extends Fragment {
                 mAttachedFile.setFileType(PostUploadType.MUSIC);
                 if(isStoragePermissionAccepted){
                     selectAudio();
+                }else{
+                    requestPermission();
                 }
             }
         });
-        mSetToolBarTitle.setTitle(R.string.add_post_action_bar_title_menu);
+        mSetToolBarAndNavigationBarState.setTitle(R.string.add_post_action_bar_title_menu);
         return view;
     }
 
@@ -182,8 +187,9 @@ public class AddPostFragment extends Fragment {
 
                 final Uri selectedImageUri = data.getData();
                 fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedImageUri), selectedImageUri);
+                mSelectedFilesName.setText(String.valueOf(selectedFiles));
 
-                }
+            }
 
 
             else if(requestCode == SELECT_VIDEO){
@@ -202,43 +208,8 @@ public class AddPostFragment extends Fragment {
                 //String[] metadata = getSongCustomName(selectedAudioUri);
                 fileUri.put(getSongCustomName(selectedAudioUri) + "." + getFileExtension(selectedAudioUri), selectedAudioUri);
 
-//                StorageMetadata storageMetadata = new StorageMetadata.Builder()
-//                        .setCustomMetadata(SONG_ARTIST, metadata[0])
-//                        .setCustomMetadata(SONG_TITLE, metadata[1])
-//                        .setCustomMetadata(SONG_DURATION, metadata[2])
-//                        .build();
-//                final StorageReference fileReference = FirebaseRepository.createMusicStorageChild(System.currentTimeMillis() + "." + getFileExtension(selectedAudioUri));
-//                FirebaseRepository.putFileInStorageWithMetadata(fileReference, selectedAudioUri, storageMetadata ,new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//
-//                        FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
-//                            @Override
-//                            public void onSuccess(Uri uri) {
-//                                mAttachedFile.addFile(uri.toString());
-//                                selectedFiles++;
-//                            }
-//                        });
-//                    }
-//                });
-
                 mSelectedFilesName.setText(String.valueOf(selectedFiles));
 
-//                String audioCustomName = getAudioCustomName(selectedAudioUri);
-//                fileUri.put(audioCustomName + "." + getFileExtension(selectedAudioUri), selectedAudioUri);
-//                final StorageReference fileReference = FirebaseRepository.createAudioStorageChild(audioCustomName + "." + getFileExtension(selectedAudioUri));
-//                FirebaseRepository.putFileInStorage(fileReference, selectedAudioUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                        FirebaseRepository.getDownloadUrl(fileReference, new OnSuccessListener<Uri>() {
-//                            @Override
-//                            public void onSuccess(Uri uri) {
-//                                mAttachedFile.addFile(uri.toString());
-//                                selectedFiles++;
-//                            }
-//                        });
-//                    }
-//                });
                 Log.d("URL AUDIO", "onActivityResult: " + selectedAudioUri.toString());
 
             }
@@ -332,8 +303,6 @@ public class AddPostFragment extends Fragment {
            getFragmentManager().popBackStack();
     }
 
-
-
     public boolean isStoragePermissionAccepted(){
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED){
@@ -343,7 +312,31 @@ public class AddPostFragment extends Fragment {
         }
         return isStoragePermissionAccepted;
     }
-    public void setSetToolBarTitle(SetToolBarTitle toolBarTitle){
-        mSetToolBarTitle = toolBarTitle;
+    private void requestPermission() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, STORAGE_CAMERA_PERMISSION_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == STORAGE_CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                isPermissionAccepted = true;
+                isStoragePermissionAccepted = true;
+                selectImage();
+            }
+            if (grantResults.length > 0 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                isPermissionAccepted = true;
+                isCameraPermissionAccepted = true;
+                selectImage();
+            }
+        }
+    }
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState toolBarTitle){
+        mSetToolBarAndNavigationBarState = toolBarTitle;
     }
 }

@@ -1,7 +1,9 @@
 package com.musapp.musicapp.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,16 +27,13 @@ import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.enums.SearchMode;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
+import com.musapp.musicapp.fragments.main_fragments.FullScreenImageFragment;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.uploads.BaseUpload;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Handler;
 
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> implements Filterable {
 
@@ -63,6 +62,34 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
         @Override
         public void onItemSelected(String uri) {
             mPlayerServiceConnection.play(uri);
+        }
+    };
+    private FragmentTransactionListener mTransaction;
+
+    public void setTransactionListener(FragmentTransactionListener transaction) {
+        mTransaction = transaction;
+    }
+
+    private BaseUploadsAdapter.OnItemSelectedListener mInnerImageItemOnClickListener = new BaseUploadsAdapter.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(String uri) {
+            //TODO open full screen fragment and showToolBar images
+            FullScreenImageFragment fragment = new FullScreenImageFragment();
+            List<String> arr = new ArrayList<>();
+            for (int i = 0; i < mData.size(); ++i){
+                if (mData.get(i).getAttachment().getFilesUrls() != null && !mData.get(i).getAttachment().getFilesUrls().isEmpty()) {
+                    if (mData.get(i).getAttachment().getFilesUrls().contains(uri)) {
+                        arr = mData.get(i).getAttachment().getFilesUrls();
+                        break;
+                    }
+                }
+            }
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList(FullScreenImageFragment.IMAGE_DATA,(ArrayList<String>) arr);
+            bundle.putInt(FullScreenImageFragment.IMAGE_POSITION, arr.indexOf(uri));
+            fragment.setArguments(bundle);
+            mTransaction.openFragment(fragment);
+            Log.d("Image click:", "onItemSelected: uri = " + uri);
         }
     };
 
@@ -193,8 +220,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
         if(post.getType() == PostUploadType.MUSIC){
             feedViewHolder.setInnerItemClickListener(mInnerMusicItemOnClickListener);
             feedViewHolder.setOnSeekBarListener(mMusicSeekBarListener);
+        }else if(post.getType() == PostUploadType.IMAGE){
+            //TODO in else if statements set inner listener for image(open tabbed fragment for fullscreen)
+                feedViewHolder.setInnerItemClickListener(mInnerImageItemOnClickListener);
         }
-        //in else if statements set inner listener for image(open tabbed fragment for fullscreen)
         Log.i("BINDING", i + "");
         feedViewHolder.initializeRecyclerView(post, context);
 
@@ -309,6 +338,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
         void onProfileImageClickListener(Post post);
     }
 
+    public interface FragmentTransactionListener {
+        void openFragment(Fragment fragment);
+    }
 
     private void updateUsersFavouritePosts(){
         FirebaseRepository.updateCurrentUserFavouritePosts();

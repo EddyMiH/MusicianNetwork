@@ -37,7 +37,7 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.main_fragments.ProfileFragment;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.Gender;
 import com.musapp.musicapp.model.Info;
 import com.musapp.musicapp.model.Profession;
@@ -51,7 +51,6 @@ import com.musapp.musicapp.utils.HashUtils;
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -96,10 +95,10 @@ public class EditProfileFragment extends Fragment {
     private boolean isCameraPermissionAccepted = false;
     private boolean isStoragePermissionAccepted = false;
     private Uri path;
-    private SetToolBarTitle mSetToolBarTitle;
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
 
-    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
-        mSetToolBarTitle = setToolBarTitle;
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState setToolBarAndNavigationBarState) {
+        mSetToolBarAndNavigationBarState = setToolBarAndNavigationBarState;
     }
 
     private AdapterView.OnItemSelectedListener mItemSelectedListener = new AdapterView.OnItemSelectedListener() {
@@ -191,7 +190,7 @@ public class EditProfileFragment extends Fragment {
 
         mBirthday.setOnClickListener(mDataPickerListener);
         mUserImage.setOnClickListener(mImagePickerListener);
-        mSetToolBarTitle.setTitle(R.string.title_edit_profile);
+        mSetToolBarAndNavigationBarState.setTitle(R.string.title_edit_profile);
 
     }
 
@@ -346,8 +345,10 @@ public class EditProfileFragment extends Fragment {
     }
 
     private void quitFragment(){
+        ProfileFragment fragment = new ProfileFragment();
+        fragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
         getFragmentManager().beginTransaction()
-                .replace(R.id.layout_activity_app_container, new ProfileFragment())
+                .replace(R.id.layout_activity_app_container, fragment)
                 .commit();
         //getFragmentManager().popBackStack();
     }

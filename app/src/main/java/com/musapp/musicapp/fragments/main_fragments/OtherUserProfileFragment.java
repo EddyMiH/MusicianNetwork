@@ -6,11 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -19,17 +15,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
-import com.musapp.musicapp.activities.StartActivity;
+import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9a6919abd3ed4d876337a0ecd6c5da0730fa58e8
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.GlideUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -51,11 +49,37 @@ public class OtherUserProfileFragment extends Fragment {
     RecyclerView postsRecyclerView;
 
     String userPrimaryKey;
-    private SetToolBarTitle mSetToolBarTitle;
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
+    private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
+    private AppMainActivity.ClickListener mClickListener;
 
-    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
-        mSetToolBarTitle = setToolBarTitle;
+    public void setClickListener(AppMainActivity.ClickListener clickListener) {
+        mClickListener = clickListener;
     }
+
+    private FeedRecyclerAdapter.FragmentTransactionListener mTransactionListener;
+
+    public void setTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener transactionListener) {
+        mTransactionListener = transactionListener;
+    }
+
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState setToolBarAndNavigationBarState) {
+        mSetToolBarAndNavigationBarState = setToolBarAndNavigationBarState;
+    }
+    private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
+        @Override
+        public void onProfileImageClickListener(Post post) {
+            mClickListener.userImageClickListener(post);
+        }
+    };
+
+    private FeedRecyclerAdapter.OnItemSelectedListener mOnItemSelectedListener =
+            new FeedRecyclerAdapter.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(Post post) {
+                    mClickListener.postClickListener(post);
+                }
+            };
 
     private FeedRecyclerAdapter postRecyclerViewAdapter = new FeedRecyclerAdapter();
 
@@ -81,6 +105,10 @@ public class OtherUserProfileFragment extends Fragment {
         });
 
         postRecyclerViewAdapter.setData(new ArrayList<Post>());
+        postRecyclerViewAdapter.setPlayerServiceConnection(mPlayerServiceConnection);
+        postRecyclerViewAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
+        postRecyclerViewAdapter.setOnUserImageListener(mOnUserImageListener);
+        postRecyclerViewAdapter.setTransactionListener(mTransactionListener);
         postsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         postsRecyclerView.setAdapter(postRecyclerViewAdapter);
 
@@ -97,8 +125,9 @@ public class OtherUserProfileFragment extends Fragment {
         return view;
     }
 
-
-
+    public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection playerServiceConnection) {
+        mPlayerServiceConnection = playerServiceConnection;
+    }
 
     private void showDataFromFireBase(){
         FirebaseRepository.getUserByPrimaryKey(userPrimaryKey, new ValueEventListener() {
@@ -107,7 +136,7 @@ public class OtherUserProfileFragment extends Fragment {
               final User  user = dataSnapshot.getValue(User.class);
                 GlideUtil.setImageGlide(user.getUserInfo().getImageUri(), userImage);
                 fullname.setText(user.getFullName());
-                mSetToolBarTitle.setTitle(user.getFullName());
+                mSetToolBarAndNavigationBarState.setTitle(user.getFullName());
 
                 nickname.setText(user.getNickName());
                 infoBox.setText(user.getUserInfo().getAdditionalInfo());

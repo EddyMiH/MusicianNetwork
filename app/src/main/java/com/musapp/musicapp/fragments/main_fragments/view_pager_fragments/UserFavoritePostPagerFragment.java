@@ -15,6 +15,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.adapters.viewholders.FeedViewHolder;
 import com.musapp.musicapp.currentinformation.CurrentUser;
@@ -30,6 +31,32 @@ import java.util.List;
 public class UserFavoritePostPagerFragment extends Fragment {
 
     RecyclerView recyclerView;
+    private AppMainActivity.ClickListener mClickListener;
+
+    public void setClickListener(AppMainActivity.ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
+
+    private FeedRecyclerAdapter.FragmentTransactionListener mTransactionListener;
+
+    public void setTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener transactionListener) {
+        mTransactionListener = transactionListener;
+    }
+
+    private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
+        @Override
+        public void onProfileImageClickListener(Post post) {
+            mClickListener.userImageClickListener(post);
+        }
+    };
+
+    private FeedRecyclerAdapter.OnItemSelectedListener mOnItemSelectedListener =
+            new FeedRecyclerAdapter.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(Post post) {
+                    mClickListener.postClickListener(post);
+                }
+            };
 
     private FeedRecyclerAdapter postRecyclerAdapter = new FeedRecyclerAdapter();
 
@@ -47,7 +74,13 @@ public class UserFavoritePostPagerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         loadUserFavoritePosts();
+        initRecyclerView();
+    }
 
+    private void initRecyclerView(){
+        postRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
+        postRecyclerAdapter.setOnUserImageListener(mOnUserImageListener);
+        postRecyclerAdapter.setTransactionListener(mTransactionListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(postRecyclerAdapter);
     }

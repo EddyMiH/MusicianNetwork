@@ -17,7 +17,19 @@ public class ImageUploadsAdapter extends BaseUploadsAdapter<ImageUpload, ImagePo
     @Override
     public ImagePostViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_post_inner_recycler_view_image_item, viewGroup, false);
-        return new ImagePostViewHolder(view);
+        final ImagePostViewHolder holder = new ImagePostViewHolder(view);
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mOnItemSelectedListener != null){
+                    mOnItemSelectedListener.onItemSelected(uploads.get(holder.getAdapterPosition()).getUrl());
+                }
+            }
+        });
+
+
+        return holder;
     }
 
     @Override

@@ -16,8 +16,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.adapters.NotificationRecyclerViewAdapter;
+<<<<<<< HEAD
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+=======
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
+>>>>>>> 9a6919abd3ed4d876337a0ecd6c5da0730fa58e8
 import com.musapp.musicapp.model.Notification;
 
 import java.util.ArrayList;
@@ -28,6 +32,7 @@ import java.util.List;
 public class NotificationFragment extends Fragment {
     private RecyclerView notificationRecyclerView;
     private NotificationRecyclerViewAdapter notificationRecyclerViewAdapter;
+<<<<<<< HEAD
     private SetToolBarTitle setToolBarTitle;
     private NotificationRecyclerViewAdapter.OnProfileImageClickListener mOnProfileImageClickListener = new NotificationRecyclerViewAdapter.OnProfileImageClickListener() {
         @Override
@@ -41,6 +46,9 @@ public class NotificationFragment extends Fragment {
         }
     };
 
+=======
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
+>>>>>>> 9a6919abd3ed4d876337a0ecd6c5da0730fa58e8
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +69,7 @@ public class NotificationFragment extends Fragment {
         notificationRecyclerViewAdapter.setOnProfileImageClickListener(mOnProfileImageClickListener);
         notificationRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         notificationRecyclerView.setAdapter(notificationRecyclerViewAdapter);
+<<<<<<< HEAD
         loadNotifications();
         setToolBarTitle.setTitle(R.string.title_notifications);
     }
@@ -121,6 +130,13 @@ public class NotificationFragment extends Fragment {
 
     public void setSetToolBarTitle(SetToolBarTitle toolBarTitle){
         setToolBarTitle = toolBarTitle;
+=======
+        mSetToolBarAndNavigationBarState.setTitle(R.string.title_notifications);
+    }
+
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState toolBarTitle){
+        mSetToolBarAndNavigationBarState = toolBarTitle;
+>>>>>>> 9a6919abd3ed4d876337a0ecd6c5da0730fa58e8
     }
 
 }

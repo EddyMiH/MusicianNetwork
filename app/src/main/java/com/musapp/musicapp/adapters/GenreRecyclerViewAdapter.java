@@ -55,7 +55,7 @@ public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreViewHold
     @Override
     public void onBindViewHolder(@NonNull GenreViewHolder genreViewHolder, int i) {
         Genre genre = mData.get(i);
-        //genreViewHolder.setImage(genre.getImageResource());
+        genreViewHolder.setImage(genre.getImageResource());
         genreViewHolder.setName(genre.getName());
         if (!mData.get(i).isChecked()){
             genreViewHolder.setNameBackground(context.getResources().getColor(R.color.colorWhiteTransparent));

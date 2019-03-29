@@ -7,9 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -31,9 +33,13 @@ import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHold
 import com.musapp.musicapp.currentinformation.CurrentUser;
 
 import com.musapp.musicapp.enums.PostUploadType;
+<<<<<<< HEAD
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase_messaging_notifications.Notify;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+=======
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
+>>>>>>> 9a6919abd3ed4d876337a0ecd6c5da0730fa58e8
 import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
@@ -42,7 +48,6 @@ import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.pattern.UploadTypeFactory;
 import com.musapp.musicapp.pattern.UploadsAdapterFactory;
 import com.musapp.musicapp.uploads.BaseUpload;
-import com.musapp.musicapp.utils.FragmentShowUtils;
 import com.musapp.musicapp.utils.GlideUtil;
 
 import java.text.DateFormat;
@@ -65,18 +70,24 @@ public class PostDetailsFragment extends Fragment {
     private TextView mPublishedTime;
     private TextView mPostText;
     private EditText mCommentText;
+    private ImageView mPostSetting;
     private Button mPublishCommentButton;
 //    private TextView mCommentCount;
     private RecyclerView mPostAttachmentsRecyclerView;
     private RecyclerView mPostCommentsRecyclerView;
     private CommentRecyclerViewAdapter mCommentAdapter;
     private Post mCurrentPost;
-    private SetToolBarTitle mSetToolBarTitle;
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
     private RecyclerView mRecyclerView;
     private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> mAdapter;
+    private AppMainActivity.ClickListener mClickListener;
 
-    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
-        mSetToolBarTitle = setToolBarTitle;
+    public void setClickListener(AppMainActivity.ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
+
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState setToolBarAndNavigationBarState) {
+        mSetToolBarAndNavigationBarState = setToolBarAndNavigationBarState;
     }
 
     private User mCurrentUser = CurrentUser.getCurrentUser();
@@ -105,6 +116,49 @@ public class PostDetailsFragment extends Fragment {
                     mPlayerServiceConnection.handleSeekBar( (SeekBar) view, (Button) view2);
                 }
             };
+
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            PopupMenu popupMenu = new PopupMenu(mPostSetting.getContext(), mPostSetting);
+            popupMenu.inflate(R.menu.menu_pop_up_post_item);
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.favorite_pop_up_menu_item:
+                            CurrentUser.getCurrentUser().addFavouritePostId(mCurrentPost.getPrimaryKey());
+                            updateUsersFavouritePosts();
+                            return true;
+                    }
+                    return false;
+                }
+            });
+            popupMenu.show();
+        }
+    };
+
+    private BaseUploadsAdapter.OnItemSelectedListener mInnerImageItemOnClickListener = new BaseUploadsAdapter.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(String uri) {
+            //TODO open full screen fragment and showToolBar images
+            FullScreenImageFragment fragment = new FullScreenImageFragment();
+            List<String> arr = new ArrayList<>();
+            arr = mCurrentPost.getAttachment().getFilesUrls();
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList(FullScreenImageFragment.IMAGE_DATA,(ArrayList<String>) arr);
+            bundle.putInt(FullScreenImageFragment.IMAGE_POSITION, arr.indexOf(uri));
+            fragment.setArguments(bundle);
+            getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, fragment).addToBackStack(null)
+                    .commit();
+            //mTransaction.openFragment(fragment);
+            Log.d("Image click:", "onItemSelected: uri = " + uri);
+        }
+    };
+
+    private void updateUsersFavouritePosts(){
+        FirebaseRepository.updateCurrentUserFavouritePosts();
+    }
 
     public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection connection){
         mPlayerServiceConnection = connection;
@@ -139,6 +193,7 @@ public class PostDetailsFragment extends Fragment {
         mPublishCommentButton = view.findViewById(R.id.action_comment_view_send_comment);
         mPostCommentsRecyclerView = view.findViewById(R.id.recycler_view_comments_in_post);
         mRecyclerView = view.findViewById(R.id.recycler_view_post_uploads);
+        mPostSetting = view.findViewById(R.id.image_post_item_setting);
         return view;
     }
 
@@ -154,6 +209,15 @@ public class PostDetailsFragment extends Fragment {
         initCommentsRecyclerView();
         loadCommentsFromDatabase();
         loadNewComments();
+
+        mPostSetting.setOnClickListener(onClickListener);
+
+        mProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mClickListener.userImageClickListener(mCurrentPost);
+            }
+        });
 
         mPublishCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,7 +281,7 @@ public class PostDetailsFragment extends Fragment {
                 }
             }
         });
-        mSetToolBarTitle.setTitle(R.string.title_activity_opened_post);
+        mSetToolBarAndNavigationBarState.setTitle(R.string.title_activity_opened_post);
     }
 
     @Override
@@ -354,6 +418,8 @@ public class PostDetailsFragment extends Fragment {
         if(mCurrentPost.getType() == PostUploadType.MUSIC){
             mAdapter.setOnItemSelectedListener(mInnerMusicItemOnClickListener);
             mAdapter.setOnSeekBarListner(mMusicSeekBarListener);
+        }else if(mCurrentPost.getType() == PostUploadType.IMAGE){
+            mAdapter.setOnItemSelectedListener(mInnerImageItemOnClickListener);
         }
         //TODO in else if statement set listeners for image and video types (fullscreen feature)
          mAdapter.setUploads(uploads);

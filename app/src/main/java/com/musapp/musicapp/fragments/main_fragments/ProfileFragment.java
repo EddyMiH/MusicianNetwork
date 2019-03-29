@@ -6,8 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,19 +15,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.activities.StartActivity;
+<<<<<<< HEAD
 
+=======
+import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
+>>>>>>> 9a6919abd3ed4d876337a0ecd6c5da0730fa58e8
 import com.musapp.musicapp.adapters.UserPostViewPagerAdapter;
 import com.musapp.musicapp.fragments.main_fragments.profile_menu_items.AboutUsFragment;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.fragments.main_fragments.profile_menu_items.EditProfileFragment;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
-import com.musapp.musicapp.model.Post;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.User;
-import com.musapp.musicapp.utils.FragmentShowUtils;
 import com.musapp.musicapp.utils.GlideUtil;
-
-import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,8 +51,18 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.view_pager_user_profile_fragment)
     ViewPager mViewPager;
 
-    private SetToolBarTitle setToolBarTitle;
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
     private ChangeActivity changeActivity;
+    private AppMainActivity.ClickListener mClickListener;
+    private FeedRecyclerAdapter.FragmentTransactionListener mTransactionListener;
+
+    public void setTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener transactionListener) {
+        mTransactionListener = transactionListener;
+    }
+
+    public void setClickListener(AppMainActivity.ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +92,8 @@ public class ProfileFragment extends Fragment {
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         UserPostViewPagerAdapter pagerAdapter = new UserPostViewPagerAdapter(getActivity(), getChildFragmentManager(), mTabLayout.getTabCount());
+        pagerAdapter.setClickListener(mClickListener);
+        pagerAdapter.setTransactionListener(mTransactionListener);
         mViewPager.setAdapter(pagerAdapter);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
@@ -103,14 +114,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-//        Post[] posts = new Post[10];
-//        Arrays.fill(posts, new Post());
-//        postRecyclerAdapter.setData(Arrays.asList(posts));
-//        postRecyclerViewAdapter.setData(Arrays.asList(posts));
-//        postsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        postsRecyclerView.setAdapter(postRecyclerAdapter);
-
-        setToolBarTitle.setTitle(CurrentUser.getCurrentUser().getFullName());
+        mSetToolBarAndNavigationBarState.setTitle(CurrentUser.getCurrentUser().getFullName());
     }
 
     @Nullable
@@ -131,8 +135,8 @@ public class ProfileFragment extends Fragment {
         infoBox.setText(user.getUserInfo().getAdditionalInfo());
     }
 
-    public void setSetToolBarTitle(SetToolBarTitle toolBarTitle){
-        setToolBarTitle = toolBarTitle;
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState toolBarTitle){
+        mSetToolBarAndNavigationBarState = toolBarTitle;
     }
 
     @Override
@@ -150,12 +154,12 @@ public class ProfileFragment extends Fragment {
             }
             case R.id.action_edit_profile_info :
                 EditProfileFragment fragment = new EditProfileFragment();
-                fragment.setSetToolBarTitle(setToolBarTitle);
+                fragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
                 beginTransaction(fragment);
                 break;
             case R.id.action_about_us:
                 AboutUsFragment fragment1 = new AboutUsFragment();
-                fragment1.setSetToolBarTitle(setToolBarTitle);
+                fragment1.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
                 beginTransaction(fragment1);
         }
 

@@ -1,11 +1,6 @@
 package com.musapp.musicapp.fragments.main_fragments;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,14 +27,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
-import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
-import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.SearchMode;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.Post;
-
-import com.musapp.musicapp.service.MusicPlayerService;
 
 import com.musapp.musicapp.utils.FragmentShowUtils;
 
@@ -59,15 +50,21 @@ public class HomePageFragment extends Fragment {
 
     private List<Post> posts;
     public static final String ARG_POST = "current_post";
-    private SetToolBarTitle mSetToolBarTitle;
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
     private RecyclerView recyclerView;
     private final String SEARCH_POST = "Search by Posts";
     private final String SEARCH_USER = "Search by UserName";
     private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
+    private AppMainActivity.ClickListener mClickListener;
+    private FeedRecyclerAdapter.FragmentTransactionListener mTransactionListener;
+
+    public void setTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener transactionListener) {
+        mTransactionListener = transactionListener;
+    }
 
     private  SwipeRefreshLayout swipeRefreshLayout;
-    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
-        mSetToolBarTitle = setToolBarTitle;
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState setToolBarAndNavigationBarState) {
+        mSetToolBarAndNavigationBarState = setToolBarAndNavigationBarState;
     }
 
     public AdapterView.OnItemSelectedListener mItemSelectedListener = new AdapterView.OnItemSelectedListener() {
@@ -109,13 +106,14 @@ public class HomePageFragment extends Fragment {
     private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
         @Override
         public void onProfileImageClickListener(Post post) {
-           OtherUserProfileFragment otherUserProfileFragment = new OtherUserProfileFragment();
-           Bundle args = new Bundle();
-           args.putString(String.class.getSimpleName(), post.getUserId());
-           otherUserProfileFragment.setArguments(args);
-           otherUserProfileFragment.setSetToolBarTitle(mSetToolBarTitle);
-           beginTransaction(otherUserProfileFragment);
-
+            mClickListener.userImageClickListener(post);
+//           OtherUserProfileFragment otherUserProfileFragment = new OtherUserProfileFragment();
+//           Bundle args = new Bundle();
+//           args.putString(String.class.getSimpleName(), post.getUserId());
+//           otherUserProfileFragment.setArguments(args);
+//           otherUserProfileFragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
+//           otherUserProfileFragment.setPlayerServiceConnection(mPlayerServiceConnection);
+//           beginTransaction(otherUserProfileFragment);
         }
     };
 
@@ -124,15 +122,20 @@ public class HomePageFragment extends Fragment {
                 @Override
                 public void onItemSelected(Post post) {
                     //TODO open extended post fragment
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable(HomePageFragment.ARG_POST, post);
-                    PostDetailsFragment fragment = new PostDetailsFragment();
-                    fragment.setPlayerServiceConnection(mPlayerServiceConnection);
-                    fragment.setArguments(bundle);
-                    fragment.setSetToolBarTitle(mSetToolBarTitle);
-                    beginTransaction(fragment);
+                    mClickListener.postClickListener(post);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putParcelable(HomePageFragment.ARG_POST, post);
+//                    PostDetailsFragment fragment = new PostDetailsFragment();
+//                    fragment.setPlayerServiceConnection(mPlayerServiceConnection);
+//                    fragment.setArguments(bundle);
+//                    fragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
+//                    beginTransaction(fragment);
                 }
             };
+
+    public void setClickListener(AppMainActivity.ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
 
     public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection connection){
         mPlayerServiceConnection = connection;
@@ -179,7 +182,7 @@ public class HomePageFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        mSetToolBarTitle.setTitle(R.string.title_home);
+        mSetToolBarAndNavigationBarState.setTitle(R.string.title_home);
     }
 
     private void initSearchSpinner(){
@@ -193,6 +196,7 @@ public class HomePageFragment extends Fragment {
         feedRecyclerAdapter = new FeedRecyclerAdapter();
         feedRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
         feedRecyclerAdapter.setOnUserImageListener(mOnUserImageListener);
+        feedRecyclerAdapter.setTransactionListener(mTransactionListener);
         //feedRecyclerAdapter.setInnerItemClickListener(mInnerItemOnClickListener);
         feedRecyclerAdapter.setPlayerServiceConnection(mPlayerServiceConnection);
         view.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -367,7 +371,7 @@ public class HomePageFragment extends Fragment {
             case R.id.action_add_home_fragment_menu_item:
                 //TODO open new fragment for add new post
                 AddPostFragment fragment = new AddPostFragment();
-                fragment.setSetToolBarTitle(mSetToolBarTitle);
+                fragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
                 beginTransaction(fragment);
                 break;
         }
@@ -408,8 +412,6 @@ public class HomePageFragment extends Fragment {
     public HomePageFragment() {
         //Required
     }
-
-
 
     private void setProgressBarVisibility(int visibility){
         mProgressBar.setVisibility(visibility);

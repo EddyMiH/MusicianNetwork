@@ -13,8 +13,8 @@ public class ImagePostViewHolder extends BasePostViewHolder {
     public ImagePostViewHolder(@NonNull View itemView) {
         super(itemView);
         imageView = itemView.findViewById(R.id.image_post_item_upload_image);
-    }
 
+    }
 
     public ImageView getImageView() {
         return imageView;
@@ -23,4 +23,5 @@ public class ImagePostViewHolder extends BasePostViewHolder {
     public void setImage(String url) {
         GlideUtil.setImageGlideSquare(url, imageView);
     }
+
 }
