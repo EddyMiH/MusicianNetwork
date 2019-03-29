@@ -14,6 +14,11 @@ public class UserPostViewPagerAdapter extends FragmentPagerAdapter {
     private Context mContext;
     private int totalTabs;
     private AppMainActivity.ClickListener mClickListener;
+    private FeedRecyclerAdapter.FragmentTransactionListener mTransactionListener;
+
+    public void setTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener transactionListener) {
+        mTransactionListener = transactionListener;
+    }
 
     public void setClickListener(AppMainActivity.ClickListener clickListener) {
         mClickListener = clickListener;
@@ -30,14 +35,16 @@ public class UserPostViewPagerAdapter extends FragmentPagerAdapter {
 
         switch (i){
             case 0:
-                //TODO open fragment with recycler view, where load user posts and show in it
+                //TODO open fragment with recycler view, where load user posts and showToolBar in it
                 UserPostPagerFragment userPostPagerFragment = new UserPostPagerFragment();
                 userPostPagerFragment.setClickListener(mClickListener);
+                userPostPagerFragment.setTransactionListener(mTransactionListener);
                 return userPostPagerFragment;
             case 1:
-                //TODO open fragment with recycler view, where load user favorites posts and show in it
+                //TODO open fragment with recycler view, where load user favorites posts and showToolBar in it
                 UserFavoritePostPagerFragment userFavoritePostPagerFragment = new UserFavoritePostPagerFragment();
                 userFavoritePostPagerFragment.setClickListener(mClickListener);
+                userFavoritePostPagerFragment.setTransactionListener(mTransactionListener);
                 return userFavoritePostPagerFragment;
 
         }

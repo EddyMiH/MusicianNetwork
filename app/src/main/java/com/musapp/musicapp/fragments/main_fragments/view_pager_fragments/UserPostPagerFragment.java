@@ -36,6 +36,12 @@ public class UserPostPagerFragment extends Fragment {
         mClickListener = clickListener;
     }
 
+    private FeedRecyclerAdapter.FragmentTransactionListener mTransactionListener;
+
+    public void setTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener transactionListener) {
+        mTransactionListener = transactionListener;
+    }
+
     private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
         @Override
         public void onProfileImageClickListener(Post post) {
@@ -74,6 +80,7 @@ public class UserPostPagerFragment extends Fragment {
     private void initRecyclerView(){
         postRecyclerAdapter.setOnUserImageListener(mOnUserImageListener);
         postRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
+        postRecyclerAdapter.setTransactionListener(mTransactionListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(postRecyclerAdapter);
     }

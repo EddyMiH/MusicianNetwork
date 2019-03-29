@@ -193,7 +193,7 @@ public class SignInFragment extends Fragment {
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     if (email.equals(childSnapshot.child("email").getValue()) && password.equals(childSnapshot.child("password").getValue())) {
                         CurrentUser.setCurrentUser(childSnapshot.getValue(User.class));
-                  //       Toast.makeText(getActivity().getBaseContext(), CurrentUser.getCurrentUser().toString(), Toast.LENGTH_LONG).show();
+                  //       Toast.makeText(getActivity().getBaseContext(), CurrentUser.getCurrentUser().toString(), Toast.LENGTH_LONG).showToolBar();
                         isFound = true;
                         break;
                     }
@@ -202,7 +202,7 @@ public class SignInFragment extends Fragment {
                     signIn.performClick();
                 else {
                     isClicked = false;
-//                    Toast.makeText(getActivity().getBaseContext(), "Email or password is wrong", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getActivity().getBaseContext(), "Email or password is wrong", Toast.LENGTH_LONG).showToolBar();
 
 
                 }

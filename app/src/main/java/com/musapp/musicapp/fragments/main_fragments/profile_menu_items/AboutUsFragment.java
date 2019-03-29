@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.musapp.musicapp.R;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 
 public class AboutUsFragment extends Fragment {
 
@@ -20,10 +20,10 @@ public class AboutUsFragment extends Fragment {
     private TextView mGitLink;
     public static final String EMAIL_LINK = "";
     public static final String GIT_LINK = "https://github.com/EddyMiH/MusicianNetwork";
-    private SetToolBarTitle mSetToolBarTitle;
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
 
-    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
-        mSetToolBarTitle = setToolBarTitle;
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState setToolBarAndNavigationBarState) {
+        mSetToolBarAndNavigationBarState = setToolBarAndNavigationBarState;
     }
 
     public AboutUsFragment() {
@@ -58,6 +58,6 @@ public class AboutUsFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        mSetToolBarTitle.setTitle(R.string.title_about_us);
+        mSetToolBarAndNavigationBarState.setTitle(R.string.title_about_us);
     }
 }

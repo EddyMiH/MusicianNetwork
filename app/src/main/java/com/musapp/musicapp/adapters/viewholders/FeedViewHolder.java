@@ -46,7 +46,6 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     private OnPostSettingsClickListener postSettingsClickListener;
     private BaseUploadsAdapter.OnItemSelectedListener mInnerItemClickListener;
     private BaseUploadsAdapter.OnMusicSeekBarListener mMusicSeekBarListener;
-    //add field for inflate music view
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override

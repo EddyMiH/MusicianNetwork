@@ -6,11 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -20,17 +16,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.activities.AppMainActivity;
-import com.musapp.musicapp.activities.StartActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
-import com.musapp.musicapp.adapters.PostRecyclerViewAdapter;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.GlideUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -52,7 +45,7 @@ public class OtherUserProfileFragment extends Fragment {
     RecyclerView postsRecyclerView;
 
     String userPrimaryKey;
-    private SetToolBarTitle mSetToolBarTitle;
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
     private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
     private AppMainActivity.ClickListener mClickListener;
 
@@ -60,8 +53,14 @@ public class OtherUserProfileFragment extends Fragment {
         mClickListener = clickListener;
     }
 
-    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
-        mSetToolBarTitle = setToolBarTitle;
+    private FeedRecyclerAdapter.FragmentTransactionListener mTransactionListener;
+
+    public void setTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener transactionListener) {
+        mTransactionListener = transactionListener;
+    }
+
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState setToolBarAndNavigationBarState) {
+        mSetToolBarAndNavigationBarState = setToolBarAndNavigationBarState;
     }
     private FeedRecyclerAdapter.OnUserImageListener mOnUserImageListener = new FeedRecyclerAdapter.OnUserImageListener() {
         @Override
@@ -105,6 +104,7 @@ public class OtherUserProfileFragment extends Fragment {
         postRecyclerViewAdapter.setPlayerServiceConnection(mPlayerServiceConnection);
         postRecyclerViewAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
         postRecyclerViewAdapter.setOnUserImageListener(mOnUserImageListener);
+        postRecyclerViewAdapter.setTransactionListener(mTransactionListener);
         postsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         postsRecyclerView.setAdapter(postRecyclerViewAdapter);
 
@@ -132,7 +132,7 @@ public class OtherUserProfileFragment extends Fragment {
               final User  user = dataSnapshot.getValue(User.class);
                 GlideUtil.setImageGlide(user.getUserInfo().getImageUri(), userImage);
                 fullname.setText(user.getFullName());
-                mSetToolBarTitle.setTitle(user.getFullName());
+                mSetToolBarAndNavigationBarState.setTitle(user.getFullName());
 
                 nickname.setText(user.getNickName());
                 infoBox.setText(user.getUserInfo().getAdditionalInfo());

@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,21 +24,16 @@ import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.StorageMetadata;
 import com.musapp.musicapp.R;
-import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.PostUploadType;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.service.UploadForegroundService;
 import com.musapp.musicapp.uploads.AttachedFile;
-import com.musapp.musicapp.utils.FragmentShowUtils;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -62,7 +56,7 @@ public class AddPostFragment extends Fragment {
     DatabaseReference mDatabaseReference;
     private PostUploadType mType;
     private int selectedFiles = 1;
-    private SetToolBarTitle mSetToolBarTitle;
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
 
     private boolean isStoragePermissionAccepted = false;
     private boolean isCameraPermissionAccepted = false;
@@ -152,7 +146,7 @@ public class AddPostFragment extends Fragment {
                 }
             }
         });
-        mSetToolBarTitle.setTitle(R.string.add_post_action_bar_title_menu);
+        mSetToolBarAndNavigationBarState.setTitle(R.string.add_post_action_bar_title_menu);
         return view;
     }
 
@@ -342,7 +336,7 @@ public class AddPostFragment extends Fragment {
             }
         }
     }
-    public void setSetToolBarTitle(SetToolBarTitle toolBarTitle){
-        mSetToolBarTitle = toolBarTitle;
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState toolBarTitle){
+        mSetToolBarAndNavigationBarState = toolBarTitle;
     }
 }

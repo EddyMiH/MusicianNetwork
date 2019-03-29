@@ -33,7 +33,7 @@ import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHold
 import com.musapp.musicapp.currentinformation.CurrentUser;
 
 import com.musapp.musicapp.enums.PostUploadType;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
@@ -42,7 +42,6 @@ import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.pattern.UploadTypeFactory;
 import com.musapp.musicapp.pattern.UploadsAdapterFactory;
 import com.musapp.musicapp.uploads.BaseUpload;
-import com.musapp.musicapp.utils.FragmentShowUtils;
 import com.musapp.musicapp.utils.GlideUtil;
 
 import java.text.DateFormat;
@@ -69,7 +68,7 @@ public class PostDetailsFragment extends Fragment {
     private RecyclerView mPostCommentsRecyclerView;
     private CommentRecyclerViewAdapter mCommentAdapter;
     private Post mCurrentPost;
-    private SetToolBarTitle mSetToolBarTitle;
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
     private RecyclerView mRecyclerView;
     private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> mAdapter;
     private AppMainActivity.ClickListener mClickListener;
@@ -78,8 +77,8 @@ public class PostDetailsFragment extends Fragment {
         mClickListener = clickListener;
     }
 
-    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
-        mSetToolBarTitle = setToolBarTitle;
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState setToolBarAndNavigationBarState) {
+        mSetToolBarAndNavigationBarState = setToolBarAndNavigationBarState;
     }
 
     private User mCurrentUser = CurrentUser.getCurrentUser();
@@ -127,6 +126,24 @@ public class PostDetailsFragment extends Fragment {
                 }
             });
             popupMenu.show();
+        }
+    };
+
+    private BaseUploadsAdapter.OnItemSelectedListener mInnerImageItemOnClickListener = new BaseUploadsAdapter.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(String uri) {
+            //TODO open full screen fragment and showToolBar images
+            FullScreenImageFragment fragment = new FullScreenImageFragment();
+            List<String> arr = new ArrayList<>();
+            arr = mCurrentPost.getAttachment().getFilesUrls();
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList(FullScreenImageFragment.IMAGE_DATA,(ArrayList<String>) arr);
+            bundle.putInt(FullScreenImageFragment.IMAGE_POSITION, arr.indexOf(uri));
+            fragment.setArguments(bundle);
+            getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, fragment).addToBackStack(null)
+                    .commit();
+            //mTransaction.openFragment(fragment);
+            Log.d("Image click:", "onItemSelected: uri = " + uri);
         }
     };
 
@@ -233,7 +250,7 @@ public class PostDetailsFragment extends Fragment {
                 }
             }
         });
-        mSetToolBarTitle.setTitle(R.string.title_activity_opened_post);
+        mSetToolBarAndNavigationBarState.setTitle(R.string.title_activity_opened_post);
     }
 
     private void initCommentsRecyclerView(){
@@ -349,6 +366,8 @@ public class PostDetailsFragment extends Fragment {
         if(mCurrentPost.getType() == PostUploadType.MUSIC){
             mAdapter.setOnItemSelectedListener(mInnerMusicItemOnClickListener);
             mAdapter.setOnSeekBarListner(mMusicSeekBarListener);
+        }else if(mCurrentPost.getType() == PostUploadType.IMAGE){
+            mAdapter.setOnItemSelectedListener(mInnerImageItemOnClickListener);
         }
         //TODO in else if statement set listeners for image and video types (fullscreen feature)
          mAdapter.setUploads(uploads);

@@ -29,7 +29,7 @@ import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.enums.SearchMode;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.Post;
 
 import com.musapp.musicapp.utils.FragmentShowUtils;
@@ -50,16 +50,21 @@ public class HomePageFragment extends Fragment {
 
     private List<Post> posts;
     public static final String ARG_POST = "current_post";
-    private SetToolBarTitle mSetToolBarTitle;
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
     private RecyclerView recyclerView;
     private final String SEARCH_POST = "Search by Posts";
     private final String SEARCH_USER = "Search by UserName";
     private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
     private AppMainActivity.ClickListener mClickListener;
+    private FeedRecyclerAdapter.FragmentTransactionListener mTransactionListener;
+
+    public void setTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener transactionListener) {
+        mTransactionListener = transactionListener;
+    }
 
     private  SwipeRefreshLayout swipeRefreshLayout;
-    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
-        mSetToolBarTitle = setToolBarTitle;
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState setToolBarAndNavigationBarState) {
+        mSetToolBarAndNavigationBarState = setToolBarAndNavigationBarState;
     }
 
     public AdapterView.OnItemSelectedListener mItemSelectedListener = new AdapterView.OnItemSelectedListener() {
@@ -106,7 +111,7 @@ public class HomePageFragment extends Fragment {
 //           Bundle args = new Bundle();
 //           args.putString(String.class.getSimpleName(), post.getUserId());
 //           otherUserProfileFragment.setArguments(args);
-//           otherUserProfileFragment.setSetToolBarTitle(mSetToolBarTitle);
+//           otherUserProfileFragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
 //           otherUserProfileFragment.setPlayerServiceConnection(mPlayerServiceConnection);
 //           beginTransaction(otherUserProfileFragment);
         }
@@ -123,7 +128,7 @@ public class HomePageFragment extends Fragment {
 //                    PostDetailsFragment fragment = new PostDetailsFragment();
 //                    fragment.setPlayerServiceConnection(mPlayerServiceConnection);
 //                    fragment.setArguments(bundle);
-//                    fragment.setSetToolBarTitle(mSetToolBarTitle);
+//                    fragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
 //                    beginTransaction(fragment);
                 }
             };
@@ -177,7 +182,7 @@ public class HomePageFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        mSetToolBarTitle.setTitle(R.string.title_home);
+        mSetToolBarAndNavigationBarState.setTitle(R.string.title_home);
     }
 
     private void initSearchSpinner(){
@@ -191,6 +196,7 @@ public class HomePageFragment extends Fragment {
         feedRecyclerAdapter = new FeedRecyclerAdapter();
         feedRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
         feedRecyclerAdapter.setOnUserImageListener(mOnUserImageListener);
+        feedRecyclerAdapter.setTransactionListener(mTransactionListener);
         //feedRecyclerAdapter.setInnerItemClickListener(mInnerItemOnClickListener);
         feedRecyclerAdapter.setPlayerServiceConnection(mPlayerServiceConnection);
         view.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -365,7 +371,7 @@ public class HomePageFragment extends Fragment {
             case R.id.action_add_home_fragment_menu_item:
                 //TODO open new fragment for add new post
                 AddPostFragment fragment = new AddPostFragment();
-                fragment.setSetToolBarTitle(mSetToolBarTitle);
+                fragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
                 beginTransaction(fragment);
                 break;
         }

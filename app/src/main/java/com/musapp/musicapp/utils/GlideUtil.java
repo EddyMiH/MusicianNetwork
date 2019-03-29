@@ -41,5 +41,9 @@ public final class GlideUtil {
         Glide.with(context).load(src)
                 .into(view);
     }
+    public static void setFullScreenImage(String src, ImageView view){
+        RequestOptions requestOptions = new RequestOptions().fitCenter();//or .centerCrop()
+        Glide.with(context).load(src).apply(requestOptions).into(view);
+    }
 
 }

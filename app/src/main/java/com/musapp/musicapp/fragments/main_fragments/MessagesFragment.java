@@ -8,23 +8,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.musapp.musicapp.R;
-import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarTitle;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 
 public class MessagesFragment extends Fragment {
 
-    private SetToolBarTitle mSetToolBarTitle;
+    private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        //mSetToolBarTitle.setTitle(R.string.title_dashboard);
+        //mSetToolBarAndNavigationBarState.setTitle(R.string.title_dashboard);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    public void setSetToolBarTitle(SetToolBarTitle setToolBarTitle) {
-        mSetToolBarTitle = setToolBarTitle;
+    public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState setToolBarAndNavigationBarState) {
+        mSetToolBarAndNavigationBarState = setToolBarAndNavigationBarState;
     }
 
     public MessagesFragment() {
