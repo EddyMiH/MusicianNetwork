@@ -54,6 +54,7 @@ import java.net.URL;
 
 public class AppMainActivity extends AppCompatActivity {
 
+    private static boolean active = false;
 
     private NotificationFragment mNotificationFragment;
     private ProfileFragment mProfileFragment;
@@ -108,6 +109,7 @@ public class AppMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        active = true;
         setContentView(R.layout.activity_app_main);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation_activity_main);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -120,7 +122,7 @@ public class AppMainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
+        active = false;
         SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("lastActivity", getClass().getName());
@@ -208,6 +210,7 @@ public class AppMainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        active = true;
         Intent intent = new Intent(this, MusicPlayerService.class);
         this.bindService(intent,mServiceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -221,7 +224,9 @@ public class AppMainActivity extends AppCompatActivity {
 
         }
         this.unbindService(mServiceConnection);
+        if(RememberPreferences.getState(this))
         RememberPreferences.saveUser(this, CurrentUser.getCurrentUser().getPrimaryKey());
+        active = false;
     }
 
     private MusicPlayerServiceConnection mPlayerServiceConnection =
@@ -259,6 +264,10 @@ public class AppMainActivity extends AppCompatActivity {
                     return false;
                 }
             };
+
+    public static boolean isActive(){
+        return active;
+    }
 
     public interface MusicPlayerServiceConnection{
         void play(String url);

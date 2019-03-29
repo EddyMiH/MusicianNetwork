@@ -18,8 +18,7 @@ import android.widget.TextView;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.activities.StartActivity;
-import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
-import com.musapp.musicapp.adapters.PostRecyclerViewAdapter;
+
 import com.musapp.musicapp.adapters.UserPostViewPagerAdapter;
 import com.musapp.musicapp.fragments.main_fragments.profile_menu_items.AboutUsFragment;
 import com.musapp.musicapp.currentinformation.CurrentUser;

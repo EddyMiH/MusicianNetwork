@@ -26,6 +26,9 @@ public class NavigatorActivity extends Activity {
             activityClass = Class.forName(
                     prefs.getString("lastActivity", StartActivity.class.getName()));
 
+            if(!RememberPreferences.getState(this))
+                activityClass = StartActivity.class;
+
             if(activityClass == AppMainActivity.class){
                 setCurrentUser();
             }

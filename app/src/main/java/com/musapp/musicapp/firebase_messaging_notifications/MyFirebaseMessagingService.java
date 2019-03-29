@@ -25,6 +25,7 @@ import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
+import com.musapp.musicapp.fragments.main_fragments.PostDetailsFragment;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.preferences.RememberPreferences;
 
@@ -77,8 +78,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
 
 
+        if(!remoteMessage.getData().get("tag").equals(RememberPreferences.getUser(this))){
+            return;
+        }
+        else if(AppMainActivity.isActive() && PostDetailsFragment.isActive() && PostDetailsFragment.getPostId().equals(remoteMessage.getData().get("postId")))
+            return;
 
-        loadNotificationToFirebase(remoteMessage.getData().get("commenterId"), remoteMessage);
+        loadNotificationToFirebase(remoteMessage.getData().get("tag"), remoteMessage);
 
 
     }
@@ -115,16 +121,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void createNotification(RemoteMessage remoteMessage){
 
-        if(!remoteMessage.getData().get("tag").equals(RememberPreferences.getUser(this))){
-            return;
-        }
+
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "technoWeb")
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle(remoteMessage.getData().get("title") + " has commented your post")
+                .setContentTitle(remoteMessage.getData().get("title"))
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_background))
                 .setContentText(remoteMessage.getData().get("body"))
                 .setAutoCancel(true)

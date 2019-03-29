@@ -3,12 +3,12 @@ package com.musapp.musicapp.utils;
 import android.support.v4.app.Fragment;
 
 public final class ContextUtils {
-    private ContextUtils(){}
+  private ContextUtils(){}
 
-    public static String getResourceString(Fragment fragment, int id){
-        return fragment.getActivity().getBaseContext().getString(id);
-    }
-    public static int getResourceInteger(Fragment fragment, int id){
-        return fragment.getActivity().getBaseContext().getResources().getInteger(id);
-    }
+  public static String getResourceString(Fragment fragment, int id){
+    return fragment.getActivity().getBaseContext().getString(id);
+  }
+  public static int getResourceInteger(Fragment fragment, int id){
+    return fragment.getActivity().getBaseContext().getResources().getInteger(id);
+  }
 }

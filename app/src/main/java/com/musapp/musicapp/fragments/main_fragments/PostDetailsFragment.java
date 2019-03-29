@@ -58,6 +58,8 @@ import static com.musapp.musicapp.utils.StringUtils.getSongUri;
 
 public class PostDetailsFragment extends Fragment {
 
+    private static boolean active = false;
+    private static String id = "none";
     private ImageView mProfileImage;
     private TextView mFullName;
     private TextView mPublishedTime;
@@ -116,6 +118,12 @@ public class PostDetailsFragment extends Fragment {
                 }
             };
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        active = true;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -140,6 +148,7 @@ public class PostDetailsFragment extends Fragment {
         if(getArguments() != null && !getArguments().isEmpty()){
             mCurrentPost = getArguments().getParcelable(HomePageFragment.ARG_POST);
             setPostPage();
+            id = mCurrentPost.getPrimaryKey();
         }
 
         initCommentsRecyclerView();
@@ -209,6 +218,24 @@ public class PostDetailsFragment extends Fragment {
             }
         });
         mSetToolBarTitle.setTitle(R.string.title_activity_opened_post);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        active = true;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        active = false;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        active = false;
     }
 
     private void initCommentsRecyclerView(){
@@ -362,4 +389,11 @@ public class PostDetailsFragment extends Fragment {
         }
     }
 
+    public static boolean isActive() {
+        return active;
+    }
+
+    public static String getPostId(){
+        return id;
+    }
 }

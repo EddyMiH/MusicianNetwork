@@ -73,14 +73,11 @@ public class SignInFragment extends Fragment {
         public void onClick(View v) {
             if (checkEnteredInformation()) {
 
-                if (!isClicked) {
-                    isClicked = true;
+
                    signInFirebaseAuth();
-                } else {
-                    RegistrationTransactionWrapper.registerForNextFragment((int) signIn.getTag());
-                    RememberPreferences.saveState(getActivity().getBaseContext(), remembered.isChecked());
-                    RememberPreferences.saveUser(getActivity().getBaseContext(), CurrentUser.getCurrentUser().getPrimaryKey());
-                }
+                 //else {
+
+               // }
 
             }
 
@@ -198,11 +195,15 @@ public class SignInFragment extends Fragment {
                         break;
                     }
                 }
-                if (isClicked && isFound)
-                    signIn.performClick();
+                if (isFound){
+                    RememberPreferences.saveState(getActivity().getBaseContext(), remembered.isChecked());
+                    RememberPreferences.saveUser(getActivity().getBaseContext(), CurrentUser.getCurrentUser().getPrimaryKey());
+                    RegistrationTransactionWrapper.registerForNextFragment((int) signIn.getTag());
+                }
+
                 else {
-                    isClicked = false;
-//                    Toast.makeText(getActivity().getBaseContext(), "Email or password is wrong", Toast.LENGTH_LONG).show();
+
+                    Toast.makeText(getActivity().getBaseContext(), "Email or password is wrong", Toast.LENGTH_LONG).show();
 
 
                 }

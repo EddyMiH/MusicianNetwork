@@ -1,6 +1,7 @@
 package com.musapp.musicapp.activities;
 
 import android.app.Application;
+import android.preference.PreferenceManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -61,7 +62,7 @@ public class MainApplication extends Application {
 //       });
         DBAsyncTask.setDatabaseReference(ref);
 
-
-
     }
+
+
 }
