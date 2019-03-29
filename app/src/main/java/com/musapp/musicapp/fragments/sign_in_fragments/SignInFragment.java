@@ -196,9 +196,10 @@ public class SignInFragment extends Fragment {
                     }
                 }
                 if (isFound){
+                    if(getActivity() != null && getActivity().getBaseContext() != null){
                     RememberPreferences.saveState(getActivity().getBaseContext(), remembered.isChecked());
                     RememberPreferences.saveUser(getActivity().getBaseContext(), CurrentUser.getCurrentUser().getPrimaryKey());
-                    RegistrationTransactionWrapper.registerForNextFragment((int) signIn.getTag());
+                    RegistrationTransactionWrapper.registerForNextFragment((int) signIn.getTag());}
                 }
 
                 else {

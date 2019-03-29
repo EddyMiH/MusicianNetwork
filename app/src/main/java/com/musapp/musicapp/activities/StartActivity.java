@@ -181,10 +181,9 @@ public class StartActivity extends AppCompatActivity {
     private void start() {
         DBAccess.getFirebaseAuth().signOut();
         CurrentUser.setCurrentUser(new User());
-        if (!RegisterPreferences.getState(this)){
-            RememberPreferences.saveUser(this, "none");
-            beginTransaction(register1);}
-        else if (!RememberPreferences.getState(this)) {
+
+         //   beginTransaction(register1);}
+        if (!RememberPreferences.getState(this)) {
             RememberPreferences.saveUser(this, "none");
             beginTransaction(signInFragment);
         } else
