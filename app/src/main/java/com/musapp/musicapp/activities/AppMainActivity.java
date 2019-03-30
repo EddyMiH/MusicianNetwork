@@ -196,6 +196,9 @@ public class AppMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         active = true;
+        String openNotificationList = "def";
+        if(getIntent() != null)
+        openNotificationList = getIntent().getStringExtra("goto");
         setContentView(R.layout.activity_app_main);
         navigation = (BottomNavigationView) findViewById(R.id.navigation_activity_main);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -203,6 +206,8 @@ public class AppMainActivity extends AppCompatActivity {
         setCurrentUser();
         init();
         navigation.setSelectedItemId(R.id.navigation_home);
+        if(openNotificationList != null && openNotificationList.equals("NotificationFragment"))
+            beginTransaction(mNotificationFragment);
     }
 
     @Override
