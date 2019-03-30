@@ -88,18 +88,23 @@
             android:id="@+id/action_fragment_sign_in_facebook"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:visibility="gone"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/facebook" />
         <Button
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@drawable/twitter"
+            android:visibility="gone"
+
             android:layout_gravity="center_horizontal"
             android:id="@+id/action_fragment_sign_in_twitter"/>
         <Button
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@drawable/google_plus"
+            android:visibility="gone"
+
             android:layout_gravity="center_horizontal"
             android:id="@+id/action_fragment_sign_in_google_plus"/>
 

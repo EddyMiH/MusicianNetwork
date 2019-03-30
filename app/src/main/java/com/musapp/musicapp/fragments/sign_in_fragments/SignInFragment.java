@@ -19,6 +19,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
 import com.musapp.musicapp.R;
@@ -190,6 +191,8 @@ public class SignInFragment extends Fragment {
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     if (email.equals(childSnapshot.child("email").getValue()) && password.equals(childSnapshot.child("password").getValue())) {
                         CurrentUser.setCurrentUser(childSnapshot.getValue(User.class));
+                        CurrentUser.getCurrentUser().setToken(FirebaseInstanceId.getInstance().getToken());
+                        FirebaseRepository.updateCurrentUserToken(CurrentUser.getCurrentUser().getToken());
                   //       Toast.makeText(getActivity().getBaseContext(), CurrentUser.getCurrentUser().toString(), Toast.LENGTH_LONG).showToolBar();
                         isFound = true;
                         break;

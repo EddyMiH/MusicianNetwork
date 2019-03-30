@@ -1,16 +1,20 @@
 package com.musapp.musicapp.firebase_messaging_notifications;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 
@@ -119,14 +123,47 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
        });
     }
 
-    private void createNotification(RemoteMessage remoteMessage){
-
+    private void createNotification(RemoteMessage remoteMessage) {
 
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "technoWeb")
+        NotificationCompat.Builder notificationBuilder;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String chanel_id = "3000";
+            CharSequence name = "Carambola";
+            String description = "MusicianAppCommentChannel";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel mChannel = new NotificationChannel(chanel_id, name, importance);
+            mChannel.setDescription(description);
+            mChannel.enableLights(true);
+            mChannel.setLightColor(Color.BLUE);
+
+            Intent intent = new Intent(this, AppMainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, chanel_id)
+                    .setSmallIcon(R.drawable.ic_launcher_background)
+                    .setContentTitle(remoteMessage.getData().get("title"))
+                    .setContentText(remoteMessage.getData().get("body"))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    // Set the intent that will fire when the user taps the notification
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                    .setVibrate(new long[]{100, 100, 100, 100})
+                    .setSound(defaultSoundUri);
+
+
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            notificationManager.notify(new Random().nextInt(1000), builder.build());
+
+            return;
+        }
+
+        notificationBuilder = new NotificationCompat.Builder(this, "technoWeb")
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentTitle(remoteMessage.getData().get("title"))
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_background))
@@ -156,8 +193,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         mNotificationManager.notify(new Random().nextInt(1000), notificationBuilder.build());
     }
-
-
 
 
 }
