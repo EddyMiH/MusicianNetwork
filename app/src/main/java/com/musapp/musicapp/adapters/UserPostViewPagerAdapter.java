@@ -15,6 +15,11 @@ public class UserPostViewPagerAdapter extends FragmentPagerAdapter {
     private int totalTabs;
     private AppMainActivity.ClickListener mClickListener;
     private FeedRecyclerAdapter.FragmentTransactionListener mTransactionListener;
+    private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
+
+    public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection playerServiceConnection) {
+        mPlayerServiceConnection = playerServiceConnection;
+    }
 
     public void setTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener transactionListener) {
         mTransactionListener = transactionListener;
@@ -39,12 +44,14 @@ public class UserPostViewPagerAdapter extends FragmentPagerAdapter {
                 UserPostPagerFragment userPostPagerFragment = new UserPostPagerFragment();
                 userPostPagerFragment.setClickListener(mClickListener);
                 userPostPagerFragment.setTransactionListener(mTransactionListener);
+                userPostPagerFragment.setPlayerServiceConnection(mPlayerServiceConnection);
                 return userPostPagerFragment;
             case 1:
                 //TODO open fragment with recycler view, where load user favorites posts and showToolBar in it
                 UserFavoritePostPagerFragment userFavoritePostPagerFragment = new UserFavoritePostPagerFragment();
                 userFavoritePostPagerFragment.setClickListener(mClickListener);
                 userFavoritePostPagerFragment.setTransactionListener(mTransactionListener);
+                userFavoritePostPagerFragment.setPlayerServiceConnection(mPlayerServiceConnection);
                 return userFavoritePostPagerFragment;
 
         }

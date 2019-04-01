@@ -23,6 +23,11 @@ public class MusicPostViewHolder extends BasePostViewHolder {
     private SeekBar mDurationSeekBar;
     private boolean flag = false;
     public OnMusicItemClickListener mListener;
+    private BaseUploadsAdapter.OnMusicSeekBarListener mOnSeekBarListener;
+
+    public void setOnSeekBarListener(BaseUploadsAdapter.OnMusicSeekBarListener onSeekBarListener) {
+        mOnSeekBarListener = onSeekBarListener;
+    }
 
     public MusicPostViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -113,6 +118,12 @@ public class MusicPostViewHolder extends BasePostViewHolder {
             }
         }
         return "0:00";
+    }
+
+    public void setPlayState(){
+        setButtonBackground(R.drawable.ic_pause_black_24dp);
+        flag = true;
+        mOnSeekBarListener.onStartHandle(mDurationSeekBar, mPlayButton);
     }
 
     public void setButtonBackground(int resource){

@@ -62,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:paddingStart="50dp"
+            android:paddingStart="100dp"
             android:layout_marginTop="10dp"
             android:text="@string/about_us_git_link"
             android:textColor="@color/lightBlue"

@@ -232,6 +232,7 @@ public class AppMainActivity extends AppCompatActivity {
         mProfileFragment.setSetToolBarAndNavigationBarState(mToolBarTitle);
         mProfileFragment.setClickListener(mClickListener);
         mProfileFragment.setTransactionListener(mTransaction);
+        mProfileFragment.setPlayerServiceConnection(mPlayerServiceConnection);
         mNotificationFragment.setSetToolBarAndNavigationBarState(mToolBarTitle);
         mNotificationFragment.setClickListener(mClickListener);
         mNotificationFragment.setFragmentTransactionListener(mTransaction);
@@ -378,6 +379,11 @@ public class AppMainActivity extends AppCompatActivity {
                     }
                     return false;
                 }
+
+                @Override
+                public void startSeekBarHandle() {
+                    mLocalBinder.startSeekBarHandle();
+                }
             };
 
     public static boolean isActive(){
@@ -390,6 +396,7 @@ public class AppMainActivity extends AppCompatActivity {
         void seekTo(int progress);
         void handleSeekBar(SeekBar seekBar, Button button);
         boolean isPlayerPlaying(String url);
+        void startSeekBarHandle();
     }
 
 }

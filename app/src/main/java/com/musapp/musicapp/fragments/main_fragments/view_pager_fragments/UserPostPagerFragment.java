@@ -31,6 +31,11 @@ public class UserPostPagerFragment extends Fragment {
 
     RecyclerView recyclerView;
     private AppMainActivity.ClickListener mClickListener;
+    private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
+
+    public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection playerServiceConnection) {
+        mPlayerServiceConnection = playerServiceConnection;
+    }
 
     public void setClickListener(AppMainActivity.ClickListener clickListener) {
         mClickListener = clickListener;
@@ -81,6 +86,7 @@ public class UserPostPagerFragment extends Fragment {
         postRecyclerAdapter.setOnUserImageListener(mOnUserImageListener);
         postRecyclerAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
         postRecyclerAdapter.setTransactionListener(mTransactionListener);
+        postRecyclerAdapter.setPlayerServiceConnection(mPlayerServiceConnection);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(postRecyclerAdapter);
     }

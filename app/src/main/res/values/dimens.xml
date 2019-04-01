@@ -19,5 +19,9 @@
     <dimen name="user_profile_info_text_margin_top">10dp</dimen>
     <dimen name="image_view_margin_top">10dp</dimen>
     <dimen name="margin_edit_profile_view">20dp</dimen>
+    <dimen name="margin_horizontal_registration_edit_text">20dp</dimen>
+    <dimen name="margin_top_registration_edit_text">30dp</dimen>
+    <dimen name="padding_horizontal_registration_edit_text">15sp</dimen>
+    <dimen name="button_width_registration_button">200dp</dimen>
 
 </resources>

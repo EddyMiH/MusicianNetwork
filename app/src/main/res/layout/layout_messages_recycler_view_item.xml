@@ -8,7 +8,7 @@
     android:elevation="@dimen/elevation"
     app:cardElevation="@dimen/elevation"
     android:layout_marginBottom="10dp"
-    app:cardBackgroundColor="@android:color/white"
+    app:cardBackgroundColor="@color/colorGreyCards"
     app:cardCornerRadius="@dimen/card_view_corner_radius">
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/test_string_long"
-                android:textColor="@android:color/black"
+                android:textColor="@color/lightBlue"
                 android:textSize="20sp" />
 
             <TextView
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
                 android:text="@string/test_string_short"
-                android:textColor="@android:color/black"
+                android:textColor="@color/lightBlue"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:textSize="15sp" />
@@ -61,6 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="yesterday"
+            android:textColor="@color/lightBlue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/linear_layout_message_name_container"
             android:layout_marginEnd="15dp"/>

@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,19 +28,27 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
+import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
+import com.musapp.musicapp.pattern.UploadTypeFactory;
+import com.musapp.musicapp.pattern.UploadsAdapterFactory;
 import com.musapp.musicapp.service.UploadForegroundService;
 import com.musapp.musicapp.uploads.AttachedFile;
+import com.musapp.musicapp.uploads.BaseUpload;
 
+import java.io.File;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -55,7 +64,7 @@ public class AddPostFragment extends Fragment {
     private TextView mSelectedFilesName;
     DatabaseReference mDatabaseReference;
     private PostUploadType mType;
-    private int selectedFiles = 1;
+    private int selectedFiles = 0;
     private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
 
     private boolean isStoragePermissionAccepted = false;
@@ -77,6 +86,8 @@ public class AddPostFragment extends Fragment {
     private Bundle bundle;
     private boolean typeIsChoosed = false;
 
+    private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> mAdapter;
+
     public AddPostFragment() {
 
         mNewPost = new Post();
@@ -94,7 +105,7 @@ public class AddPostFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_post, container, false);
         mPostText = view.findViewById(R.id.text_fragment_add_post_text);
- //       mPostAttachment = view.findViewById(R.id.recycler_view_fragment_add_post_file);
+        mPostAttachment = view.findViewById(R.id.recycler_view_fragment_add_post_file);
         mAddImage = view.findViewById(R.id.image_fragment_add_post_attach_image);
         mAddMusic = view.findViewById(R.id.image_fragment_add_post_attach_music);
         mAddVideo = view.findViewById(R.id.image_fragment_add_post_attach_video);
@@ -181,36 +192,37 @@ public class AddPostFragment extends Fragment {
         Log.d("DODO", "onActivityResult: firs here");
 
         if(resultCode == Activity.RESULT_OK){
+
+            initUploadsAdapter();
+
             if(requestCode == SELECT_IMAGE){
                 mAddVideo.setEnabled(false);
                 mAddMusic.setEnabled(false);
 
                 final Uri selectedImageUri = data.getData();
+                addToUploads(selectedImageUri.toString());
                 fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedImageUri), selectedImageUri);
+                selectedFiles++;
                 mSelectedFilesName.setText(String.valueOf(selectedFiles));
 
-            }
-
-
-            else if(requestCode == SELECT_VIDEO){
+            }else if(requestCode == SELECT_VIDEO){
                 mAddMusic.setEnabled(false);
                 mAddImage.setEnabled(false);
                 final Uri selectedVideoUri = data.getData();
+                addToUploads(selectedVideoUri.toString());
                 fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedVideoUri), selectedVideoUri);
-
+                selectedFiles++;
                mSelectedFilesName.setText(String.valueOf(selectedFiles));
 
             }else if(requestCode == SELECT_AUDIO){
                 mAddVideo.setEnabled(false);
                 mAddImage.setEnabled(false);
 
-                Uri selectedAudioUri = data.getData();
+                final Uri selectedAudioUri = data.getData();
                 //String[] metadata = getSongCustomName(selectedAudioUri);
                 fileUri.put(getSongCustomName(selectedAudioUri) + "." + getFileExtension(selectedAudioUri), selectedAudioUri);
-
+                selectedFiles++;
                 mSelectedFilesName.setText(String.valueOf(selectedFiles));
-
-                Log.d("URL AUDIO", "onActivityResult: " + selectedAudioUri.toString());
 
             }
 
@@ -336,6 +348,34 @@ public class AddPostFragment extends Fragment {
             }
         }
     }
+
+    private BaseUploadsAdapter.OnItemSelectedListener mOnItemSelectedListener = new BaseUploadsAdapter.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(String uri) {
+
+        }
+    };
+
+    List<BaseUpload> uploads = new ArrayList<>();
+
+    private void initUploadsAdapter(){
+        if (mAdapter == null)
+            mAdapter = UploadsAdapterFactory.setAdapterTypeByInputType(mType);
+        if(mType == PostUploadType.IMAGE){
+            mAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
+        }
+        mPostAttachment.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        mPostAttachment.setAdapter(mAdapter);
+    }
+
+    private void addToUploads(String url){
+        if(mType == PostUploadType.NONE || mType == PostUploadType.MUSIC)
+            return;
+
+        uploads.add(UploadTypeFactory.setUploadByType(mType, url));
+        mAdapter.setUploads(uploads);
+    }
+
     public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState toolBarTitle){
         mSetToolBarAndNavigationBarState = toolBarTitle;
     }

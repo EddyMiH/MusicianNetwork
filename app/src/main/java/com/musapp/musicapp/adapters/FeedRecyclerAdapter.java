@@ -220,10 +220,14 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
         if(post.getType() == PostUploadType.MUSIC){
             feedViewHolder.setInnerItemClickListener(mInnerMusicItemOnClickListener);
             feedViewHolder.setOnSeekBarListener(mMusicSeekBarListener);
+            //
+            feedViewHolder.setPlayerServiceConnection(mPlayerServiceConnection);
+            //
         }else if(post.getType() == PostUploadType.IMAGE){
-            //TODO in else if statements set inner listener for image(open tabbed fragment for fullscreen)
                 feedViewHolder.setInnerItemClickListener(mInnerImageItemOnClickListener);
         }
+        //TODO in else if statements set inner listener for video(open fragment for fullscreen)
+
         Log.i("BINDING", i + "");
         feedViewHolder.initializeRecyclerView(post, context);
 

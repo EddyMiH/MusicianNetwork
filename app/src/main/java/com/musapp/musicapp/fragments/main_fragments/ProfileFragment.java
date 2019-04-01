@@ -54,6 +54,11 @@ public class ProfileFragment extends Fragment {
     private ChangeActivity changeActivity;
     private AppMainActivity.ClickListener mClickListener;
     private FeedRecyclerAdapter.FragmentTransactionListener mTransactionListener;
+    private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
+
+    public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection playerServiceConnection) {
+        mPlayerServiceConnection = playerServiceConnection;
+    }
 
     public void setTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener transactionListener) {
         mTransactionListener = transactionListener;
@@ -88,11 +93,13 @@ public class ProfileFragment extends Fragment {
 
         mTabLayout.addTab(mTabLayout.newTab().setText("My Posts"));
         mTabLayout.addTab(mTabLayout.newTab().setText("Favorites"));
+        //mTabLayout.setTabTextColors(android.R.color.white);
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         UserPostViewPagerAdapter pagerAdapter = new UserPostViewPagerAdapter(getActivity(), getChildFragmentManager(), mTabLayout.getTabCount());
         pagerAdapter.setClickListener(mClickListener);
         pagerAdapter.setTransactionListener(mTransactionListener);
+        pagerAdapter.setPlayerServiceConnection(mPlayerServiceConnection);
         mViewPager.setAdapter(pagerAdapter);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
@@ -128,10 +135,13 @@ public class ProfileFragment extends Fragment {
 
     private void showDataFromFireBase(){
         User user = CurrentUser.getCurrentUser();
-        GlideUtil.setImageGlide(user.getUserInfo().getImageUri(), userImage);
-        fullname.setText(user.getFullName());
-        nickname.setText(user.getNickName());
-        infoBox.setText(user.getUserInfo().getAdditionalInfo());
+        if(user.getUserInfo() != null){
+            GlideUtil.setImageGlide(user.getUserInfo().getImageUri(), userImage);
+            fullname.setText(user.getFullName());
+            nickname.setText(user.getNickName());
+            infoBox.setText(user.getUserInfo().getAdditionalInfo());
+        }
+
     }
 
     public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState toolBarTitle){

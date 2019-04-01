@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.adapters.inner_post_adapter.BaseUploadsAdapter;
 import com.musapp.musicapp.adapters.inner_post_adapter.MusicUploadAdapter;
 import com.musapp.musicapp.adapters.viewholders.post_viewholder.BasePostViewHolder;
@@ -46,6 +47,11 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     private OnPostSettingsClickListener postSettingsClickListener;
     private BaseUploadsAdapter.OnItemSelectedListener mInnerItemClickListener;
     private BaseUploadsAdapter.OnMusicSeekBarListener mMusicSeekBarListener;
+    private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
+
+    public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection playerServiceConnection) {
+        mPlayerServiceConnection = playerServiceConnection;
+    }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -164,6 +170,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         //
         mUploadsAdapter.setOnItemSelectedListener(mInnerItemClickListener);
         mUploadsAdapter.setOnSeekBarListner(mMusicSeekBarListener);
+        mUploadsAdapter.setPlayerServiceConnection(mPlayerServiceConnection);
         //mRecyclerView.setLayoutManager(new GridLayoutManager(context, post.getType() == PostUploadType.IMAGE ? 2 : 1));
         setRecyclerViewLayoutManager(post, context);
         mRecyclerView.setAdapter(mUploadsAdapter);
