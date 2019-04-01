@@ -220,6 +220,7 @@ public class AppMainActivity extends AppCompatActivity {
         editor.apply();
     }
 
+
     private void init(){
         mNotificationFragment = new NotificationFragment();
         mProfileFragment = new ProfileFragment();
@@ -279,6 +280,9 @@ public class AppMainActivity extends AppCompatActivity {
         FirebaseRepository.setCurrentUser(RememberPreferences.getUser(this), new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() == null ){
+                    RememberPreferences.saveState(AppMainActivity.this, false);
+                    activityTransaction(StartActivity.class);}
                 CurrentUser.setCurrentUser(dataSnapshot.getValue(User.class));
                 CurrentUser.setCurrentFirebaseUser(FirebaseAuth.getInstance().getCurrentUser());
             }
@@ -322,14 +326,22 @@ public class AppMainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+
         if (mLocalBinder != null){
             mLocalBinder.stop();
 
         }
         this.unbindService(mServiceConnection);
-        if(RememberPreferences.getState(this))
-        RememberPreferences.saveUser(this, CurrentUser.getCurrentUser().getPrimaryKey());
+       /* if(RememberPreferences.getState(this)){
+            if(RememberPreferences.getUser(this).equals("none"))
+                RememberPreferences.saveUser(this, "none");
+            else
+        RememberPreferences.saveUser(this, CurrentUser.getCurrentUser().getPrimaryKey());}*/
         active = false;
+       /* SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("lastActivity", StartActivity.class.getName());
+        editor.apply();*/
     }
 
     private MusicPlayerServiceConnection mPlayerServiceConnection =

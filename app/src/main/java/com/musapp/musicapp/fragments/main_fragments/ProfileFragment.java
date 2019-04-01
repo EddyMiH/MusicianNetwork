@@ -26,6 +26,7 @@ import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.fragments.main_fragments.profile_menu_items.EditProfileFragment;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.User;
+import com.musapp.musicapp.preferences.RememberPreferences;
 import com.musapp.musicapp.utils.GlideUtil;
 
 import butterknife.BindView;
@@ -147,6 +148,7 @@ public class ProfileFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case(R.id.action_log_out):{
+                RememberPreferences.saveUser(getActivity(), "none");
               changeActivity.changeActivity(StartActivity.class);
               break;
             }

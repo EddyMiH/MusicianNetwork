@@ -36,7 +36,7 @@ public class RememberPreferences {
 
     public static String  getUser(Context context){
         return getSharedPreferences(context)
-                .getString(USER_ID, "");
+                .getString(USER_ID, "none");
     }
 
     private static SharedPreferences getSharedPreferences(Context context) {

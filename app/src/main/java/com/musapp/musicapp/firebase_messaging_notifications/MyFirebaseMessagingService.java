@@ -13,6 +13,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -53,30 +54,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         sendRegistrationToServer(s);
     }
 
-
-
-
-    private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
-
-        Intent intent = new Intent(this, AppMainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1410 , intent,
-                PendingIntent.FLAG_ONE_SHOT);
-
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("FCM Message")
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(1410 , notificationBuilder.build());
-    }*/
+*/
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -84,7 +62,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         if (!remoteMessage.getData().get("tag").equals(RememberPreferences.getUser(this))) {
-            return;
+
         } else if (AppMainActivity.isActive() && PostDetailsFragment.isActive() && PostDetailsFragment.getPostId().equals(remoteMessage.getData().get("postId")))
             return;
 
@@ -110,7 +88,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 FirebaseRepository.updateUserNotificationListById(userPrimaryKey, notifications, new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        createNotification(remoteMessage);
+                        if (remoteMessage.getData().get("tag").equals(RememberPreferences.getUser(MyFirebaseMessagingService.this))) {
+                            createNotification(remoteMessage);
+                        }
+
                     }
                 });
 
@@ -132,36 +113,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder notificationBuilder;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String chanel_id = "3000";
-            CharSequence name = "Carambola";
-            String description = "MusicianAppCommentChannel";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = new NotificationChannel(chanel_id, name, importance);
-            mChannel.setDescription(description);
-            mChannel.enableLights(true);
-            mChannel.setLightColor(Color.BLUE);
-
-            Intent intent = new Intent(this, AppMainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.putExtra("goto", "NotificationFragment");
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, chanel_id)
-                    .setSmallIcon(R.drawable.ic_launcher_background)
-                    .setContentTitle(remoteMessage.getData().get("title"))
-                    .setContentText(remoteMessage.getData().get("body"))
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    // Set the intent that will fire when the user taps the notification
-                    .setContentIntent(pendingIntent)
-                    .setAutoCancel(true)
-                    .setVibrate(new long[]{100, 100, 100, 100})
-                    .setSound(defaultSoundUri);
-
-
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-            notificationManager.notify(new Random().nextInt(1000), builder.build());
-
-            return;
+          createNotificationWithChannel(remoteMessage, defaultSoundUri);
+          return;
         }
 
         notificationBuilder = new NotificationCompat.Builder(this, "technoWeb")
@@ -194,6 +147,39 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         mNotificationManager.notify(new Random().nextInt(1000), notificationBuilder.build());
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void createNotificationWithChannel(RemoteMessage remoteMessage, Uri defaultSoundUri){
+        String chanel_id = "3000";
+        CharSequence name = "Carambola";
+        String description = "MusicianAppCommentChannel";
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel mChannel = new NotificationChannel(chanel_id, name, importance);
+        mChannel.setDescription(description);
+        mChannel.enableLights(true);
+        mChannel.setLightColor(Color.BLUE);
+
+        Intent intent = new Intent(this, AppMainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("goto", "NotificationFragment");
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, chanel_id)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle(remoteMessage.getData().get("title"))
+                .setContentText(remoteMessage.getData().get("body"))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                // Set the intent that will fire when the user taps the notification
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setVibrate(new long[]{100, 100, 100, 100})
+                .setSound(defaultSoundUri);
+
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(new Random().nextInt(1000), builder.build());
+
     }
 
 
