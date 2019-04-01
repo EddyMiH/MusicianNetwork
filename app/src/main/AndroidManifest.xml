@@ -29,7 +29,9 @@
         </activity>
         <activity
             android:name=".activities.AppMainActivity"
-            android:label="@string/title_activity_app" />
+            android:label="@string/title_activity_app"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize"/>
         <activity android:name=".activities.StartActivity" />
 
         <service android:name=".service.UploadForegroundService" />
