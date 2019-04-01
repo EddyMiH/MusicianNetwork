@@ -256,25 +256,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedViewHolder> im
             }else{
                 final String queryText = constraint.toString().toLowerCase().trim();
 
-                //query all posts ant check contains queryText
-//                FirebaseRepository.getSearchedPost( new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-//                            Post post = snapshot.getValue(Post.class);
-//                            String postText = post.getPostText().toLowerCase().trim();
-//                            String name = post.getUserName().toLowerCase().trim();
-//                            if(postText.contains(queryText) || name.contains(queryText)){
-//                                filteredPosts.add(post);
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
                 if (mSearchMode == SearchMode.POST_SEARCH) {
                     FirebaseRepository.getSearchedPostByPostText(queryText, new ValueEventListener() {
                         @Override

@@ -41,7 +41,7 @@ import java.util.List;
 public class HomePageFragment extends Fragment {
 
     private FeedRecyclerAdapter feedRecyclerAdapter;
-    private final int limit = 5;
+    private final int limit = 10;
 
     private ProgressBar mProgressBar;
     private Spinner mSearchModeSpinner;
@@ -57,6 +57,11 @@ public class HomePageFragment extends Fragment {
     private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
     private AppMainActivity.ClickListener mClickListener;
     private FeedRecyclerAdapter.FragmentTransactionListener mTransactionListener;
+    private SetToolBarAndNavigationBarState mToolBarAndNavigationBarState;
+
+    public void setToolBarAndNavigationBarState(SetToolBarAndNavigationBarState toolBarAndNavigationBarState) {
+        mToolBarAndNavigationBarState = toolBarAndNavigationBarState;
+    }
 
     public void setTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener transactionListener) {
         mTransactionListener = transactionListener;
@@ -133,6 +138,18 @@ public class HomePageFragment extends Fragment {
                 }
             };
 
+    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            if(dy > 0){
+                mToolBarAndNavigationBarState.hideToolBar();
+            }else{
+                mToolBarAndNavigationBarState.showToolBar();
+            }
+        }
+    };
+
     public void setClickListener(AppMainActivity.ClickListener clickListener) {
         mClickListener = clickListener;
     }
@@ -150,6 +167,8 @@ public class HomePageFragment extends Fragment {
         mProgressBar.getIndeterminateDrawable().setColorFilter(getActivity().getResources().getColor(R.color.darkPurple), android.graphics.PorterDuff.Mode.MULTIPLY);
         swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_feed);
         mSearchModeSpinner = rootView.findViewById(R.id.spinner_home_page_fragment_search_mode_drop_down_);
+
+        recyclerView.addOnScrollListener(mOnScrollListener);
         return rootView;
     }
 
@@ -391,9 +410,15 @@ public class HomePageFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        mSetToolBarAndNavigationBarState.showToolBar();
+
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-
     }
 
     public void beginTransaction(Fragment fragment){
