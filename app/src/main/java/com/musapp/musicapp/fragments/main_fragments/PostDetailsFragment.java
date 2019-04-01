@@ -424,6 +424,7 @@ public class PostDetailsFragment extends Fragment {
         if(mCurrentPost.getType() == PostUploadType.MUSIC){
             mAdapter.setOnItemSelectedListener(mInnerMusicItemOnClickListener);
             mAdapter.setOnSeekBarListner(mMusicSeekBarListener);
+            mAdapter.setPlayerServiceConnection(mPlayerServiceConnection);
         }else if(mCurrentPost.getType() == PostUploadType.IMAGE){
             mAdapter.setOnItemSelectedListener(mInnerImageItemOnClickListener);
         }
@@ -436,8 +437,6 @@ public class PostDetailsFragment extends Fragment {
         //mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), mCurrentPost.getType() == PostUploadType.IMAGE ? 2 : 1));
         initUploadsAdapter();
         mRecyclerView.setAdapter(mAdapter);
-
-        checkMediaPlayerState();
     }
     private void setRecyclerViewLayoutManager(Post post, Context context){
         if (post.getType() == PostUploadType.IMAGE){
@@ -447,18 +446,6 @@ public class PostDetailsFragment extends Fragment {
             }
         }
         mRecyclerView.setLayoutManager(new GridLayoutManager(context, 1));
-    }
-
-    private void checkMediaPlayerState(){
-        if(mCurrentPost.getType() == PostUploadType.NONE)
-            return;
-        for(String url: mCurrentPost.getAttachment().getFilesUrls()){
-            if (mPlayerServiceConnection.isPlayerPlaying(getSongUri(url))){
-                mPlayerServiceConnection.play(getSongUri(url));
-                return;
-            }
-
-        }
     }
 
     public static boolean isActive() {

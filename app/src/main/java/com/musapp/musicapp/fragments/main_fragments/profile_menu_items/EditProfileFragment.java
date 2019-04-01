@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.musapp.musicapp.R;
@@ -56,6 +63,8 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class EditProfileFragment extends Fragment {
 
@@ -83,6 +92,8 @@ public class EditProfileFragment extends Fragment {
     EditText mPassword;
     @BindView(R.id.edit_text_fragment_edit_profile_confirm_password)
     EditText mConfirmPassword;
+    @BindView(R.id.edit_text_fragment_edit_profile_last_password)
+    EditText mLastPassword;
 
     private User mEditedUser = new User();
     private Info mInfo = new Info();
@@ -344,6 +355,63 @@ public class EditProfileFragment extends Fragment {
         return false;
     }
 
+    private void updatePasswordInFirebase(){
+        final String newPass = mPassword.getText().toString();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final String lastPass = mLastPassword.getText().toString();
+
+        if ( lastPass.isEmpty()){
+            Toast.makeText(getContext(), "Invalid password!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        //I don't have user's password so can't add credentials
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(CurrentUser.getCurrentUser().getEmail(), lastPass);
+//        user.updatePassword(newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//                if (task.isSuccessful()) {
+//                    user.updatePassword(newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<Void> task) {
+//                            if (task.isSuccessful()) {
+//                                Log.d("Update Pass", "Password updated");
+//                            } else {
+//                                Log.d("Update Pass", "Error password not updated");
+//                            }
+//                        }
+//                    });
+//                } else {
+//                    Log.d("Update Pass", "Error auth failed");
+//                }
+//            }
+//        });
+
+        // Prompt the user to re-provide their sign-in credentials
+        user.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            user.updatePassword( HashUtils.hash(newPass)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d("Update Pass", "Password updated");
+                                    } else {
+                                        Log.d("Update Pass", "Error password not updated");
+                                    }
+                                }
+                            });
+                        } else {
+                            Log.d("Update Pass", "Error auth failed");
+                            Toast.makeText(getContext(), "Invalid password!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
+
     private void quitFragment(){
         ProfileFragment fragment = new ProfileFragment();
         fragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
@@ -362,6 +430,7 @@ public class EditProfileFragment extends Fragment {
         if (checkPassword()){
             mEditedUser.setPassword(HashUtils.hash(newPass));
             FirebaseRepository.updatePassword(CurrentUser.getCurrentUser().getPrimaryKey(), HashUtils.hash(newPass));
+            updatePasswordInFirebase();
             return true;
         }
         return false;

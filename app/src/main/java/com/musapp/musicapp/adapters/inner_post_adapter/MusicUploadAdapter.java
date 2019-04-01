@@ -15,12 +15,14 @@ public class MusicUploadAdapter extends BaseUploadsAdapter<MusicUpload, MusicPos
 
     private MusicPostViewHolder.OnMusicItemClickListener mMusicItemClickListener;
 
+
     @NonNull
     @Override
     public MusicPostViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_post_inner_recycler_view_music_item, viewGroup, false);
         final MusicPostViewHolder holder = new MusicPostViewHolder(view);
 
+        holder.setOnSeekBarListener(mOnSeekBarListener);
 
         mMusicItemClickListener = new MusicPostViewHolder.OnMusicItemClickListener() {
             @Override
@@ -54,6 +56,11 @@ public class MusicUploadAdapter extends BaseUploadsAdapter<MusicUpload, MusicPos
         String title = uploads.get(i).getUrl().substring(uploads.get(i).getUrl().indexOf("$")+1, uploads.get(i).getUrl().indexOf("$", uploads.get(i).getUrl().indexOf("$")+1));
         String duration = uploads.get(i).getUrl().substring(uploads.get(i).getUrl().indexOf("$", uploads.get(i).getUrl().indexOf("$")+1)+1, uploads.get(i).getUrl().indexOf("$", uploads.get(i).getUrl().indexOf("$", uploads.get(i).getUrl().indexOf("$")+1)+1));
         musicPostViewHolder.setMusic(artist, title, duration);
+
+        if (mPlayerServiceConnection.isPlayerPlaying(getSongUri(uploads.get(musicPostViewHolder.getAdapterPosition()).getUrl()))){
+            musicPostViewHolder.setPlayState();
+            mPlayerServiceConnection.startSeekBarHandle();
+        }
     }
 
     public String getSongUri(String fullName){

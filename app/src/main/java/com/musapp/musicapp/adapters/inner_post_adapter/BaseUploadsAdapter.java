@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.musapp.musicapp.activities.AppMainActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +13,9 @@ public abstract class BaseUploadsAdapter<T, Y extends RecyclerView.ViewHolder > 
 
     protected List<T> uploads;
     protected OnItemSelectedListener mOnItemSelectedListener;
-    protected OnMusicSeekBarListener mOnSeekBarListener;
+    OnMusicSeekBarListener mOnSeekBarListener;
+    //I know it's bad solution, we have deadline...
+    AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
 
     @Override
     public int getItemCount() {
@@ -46,6 +50,10 @@ public abstract class BaseUploadsAdapter<T, Y extends RecyclerView.ViewHolder > 
 
     public void setOnSeekBarListner(OnMusicSeekBarListener listener){
         mOnSeekBarListener = listener;
+    }
+
+    public void setPlayerServiceConnection(AppMainActivity.MusicPlayerServiceConnection playerServiceConnection) {
+        mPlayerServiceConnection = playerServiceConnection;
     }
 
     public interface OnItemSelectedListener {

@@ -28,7 +28,7 @@ public final class GlideUtil {
     public static void setImageGlide(String src, ImageView view){
 
         RequestOptions requestOptions = new RequestOptions();
-        requestOptions.placeholder(R.drawable.ic_person_black_24dp);
+        requestOptions.placeholder(R.drawable.image_placeholder);
 
         Glide.with(context)
                 .setDefaultRequestOptions(requestOptions)
