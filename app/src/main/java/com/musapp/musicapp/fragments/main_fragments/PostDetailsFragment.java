@@ -34,7 +34,7 @@ import com.musapp.musicapp.currentinformation.CurrentUser;
 
 import com.musapp.musicapp.enums.PostUploadType;
 
-import com.musapp.musicapp.firebase_messaging_notifications.Notify;
+import com.musapp.musicapp.firebase_messaging_notifications.NotifyComment;
 
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.Comment;
@@ -55,8 +55,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-
-import static com.musapp.musicapp.utils.StringUtils.getSongUri;
 
 public class PostDetailsFragment extends Fragment {
 
@@ -242,7 +240,7 @@ public class PostDetailsFragment extends Fragment {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             User receiver = dataSnapshot.getValue(User.class);
-                            new Notify(receiver.getToken(), CurrentUser.getCurrentUser().getNickName(),
+                            new NotifyComment(receiver.getToken(), CurrentUser.getCurrentUser().getNickName(),
                                     newComment.getCommentText(), receiver.getPrimaryKey(), CurrentUser.getCurrentUser().getPrimaryKey(),
                                     mCurrentPost.getPrimaryKey(), newComment.getUserProfileImageUrl(), newComment.getCreationTime()).execute();
                         }

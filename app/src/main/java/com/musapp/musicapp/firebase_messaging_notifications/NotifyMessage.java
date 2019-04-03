@@ -2,32 +2,33 @@ package com.musapp.musicapp.firebase_messaging_notifications;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
 import org.json.JSONObject;
 
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Notify extends AsyncTask<Void, Void, Void> {
+public class NotifyMessage extends AsyncTask<Void, Void, Void> {
 
     private String receiverToken;
     private String notificationTitle;
     private String notificationBody;
     private String receiverId;
-    private String postId;
-    private String commenterId;
-    private String commenterImageUrl;
+    private String userId;
+    private String userProfilePicUrl;
     private String date;
+    private String chatId;
 
-    public Notify(String receiverToken, String notificationTitle, String notificationBody, String receiverId, String commenterId, String postId, String commenterImageUrl, String date) {
+    public NotifyMessage(String receiverToken, String notificationTitle, String notificationBody, String receiverId, String userId, String userProfilePicUrl, String date, String chatId) {
         this.receiverToken = receiverToken;
         this.notificationTitle = notificationTitle;
         this.notificationBody = notificationBody;
         this.receiverId = receiverId;
-        this.commenterId = commenterId;
-        this.postId = postId;
-        this.commenterImageUrl = commenterImageUrl;
+        this.userId = userId;
+        this.userProfilePicUrl = userProfilePicUrl;
         this.date = date;
+        this.chatId = chatId;
     }
 
     @Override
@@ -58,11 +59,11 @@ public class Notify extends AsyncTask<Void, Void, Void> {
             info.put("title", notificationTitle);   // Notification title
             info.put("body", notificationBody); // Notification body
             info.put("tag", receiverId);
-            info.put("commenterId", commenterId);
-            info.put("postId", postId);
-            info.put("commenterImageUrl", commenterImageUrl);
+            info.put("type", "message");
+            info.put("userId", userId);
+            info.put("userProfilePicUrl", userProfilePicUrl);
             info.put("date", date);
-
+            info.put("chatId", chatId);
             json.put("data", info);
 
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -77,4 +78,5 @@ public class Notify extends AsyncTask<Void, Void, Void> {
 
         return null;
     }
+
 }

@@ -24,6 +24,12 @@
             app:civ_border_color="#FF000000"
             app:civ_border_width="2dp" />
 
+        <ImageView
+            android:id="@+id/button_start_conversation"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:background="@drawable/mail_write"
+            android:layout_gravity="center_horizontal|center_vertical"/>
         <TextView
 
             android:id="@+id/text_fragment_other_user_profile_fullname"
@@ -58,4 +64,5 @@
 
         </android.support.v7.widget.RecyclerView>
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

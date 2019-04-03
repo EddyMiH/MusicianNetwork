@@ -11,7 +11,7 @@
         android:id="@+id/navigation_mail"
         android:icon="@drawable/ic_email_white_24dp"
         android:title="@string/title_dashboard"
-        android:visible="false"/>
+        />
 
     <item
         android:id="@+id/navigation_notifications"

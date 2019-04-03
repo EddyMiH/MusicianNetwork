@@ -19,6 +19,7 @@ public class User {
     private Profession profession;
     private Info userInfo;
     private List<String> genresId;
+    private List<String> chatsId;
 
     private String primaryKey;
 
@@ -27,11 +28,13 @@ public class User {
 
     private List<Notification> notificationList;
 
-    public User(){
+
+    public User() {
         genresId = new ArrayList<>();
         postId = new ArrayList<>();
-       favouritePostId = new ArrayList<>();
-       notificationList = new ArrayList<>();
+        favouritePostId = new ArrayList<>();
+        notificationList = new ArrayList<>();
+        chatsId = new ArrayList<>();
     }
 
     public List<String> getPostId() {
@@ -46,27 +49,29 @@ public class User {
         this.genresId = genresId;
     }
 
-    public void addGenreId(String genre){
+    public void addGenreId(String genre) {
         genresId.add(genre);
     }
 
-    public void addFavouritePostId(String postId){
+    public void addFavouritePostId(String postId) {
         favouritePostId.add(postId);
     }
 
-
+    public void addChatId(String chatId) {
+        chatsId.add(chatId);
+    }
 
     public void setPostId(List<String> postId) {
         this.postId = postId;
     }
 
-    public  void addNotification(Notification notification){
+    public void addNotification(Notification notification) {
         notificationList.add(notification);
     }
-    public void addPostId(String id){
+
+    public void addPostId(String id) {
         postId.add(id);
     }
-
 
 
     public String getFullName() {
@@ -155,6 +160,10 @@ public class User {
 
     public List<Notification> getNotificationList() {
         return notificationList;
+    }
+
+    public List<String> getChatsId() {
+        return chatsId;
     }
 
     public void setNotificationList(List<Notification> notificationList) {
