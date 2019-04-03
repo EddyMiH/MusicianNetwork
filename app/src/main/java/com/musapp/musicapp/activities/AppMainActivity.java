@@ -329,8 +329,10 @@ public class AppMainActivity extends AppCompatActivity {
         if (orientation == Configuration.ORIENTATION_LANDSCAPE){
             Toast.makeText(this, "orientation changes", Toast.LENGTH_SHORT).show();
             mToolBarTitle.hideNavigationBar();
+            mToolBarTitle.hideToolBar();
         }else{
             mToolBarTitle.showNavigationBar();
+            mToolBarTitle.showToolBar();
         }
     }
 

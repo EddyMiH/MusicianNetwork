@@ -1,5 +1,6 @@
 package com.musapp.musicapp.fragments.main_fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -138,17 +140,7 @@ public class HomePageFragment extends Fragment {
                 }
             };
 
-    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            if(dy > 0){
-                mToolBarAndNavigationBarState.hideToolBar();
-            }else{
-                mToolBarAndNavigationBarState.showToolBar();
-            }
-        }
-    };
+
 
     public void setClickListener(AppMainActivity.ClickListener clickListener) {
         mClickListener = clickListener;
@@ -168,7 +160,6 @@ public class HomePageFragment extends Fragment {
         swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_feed);
         mSearchModeSpinner = rootView.findViewById(R.id.spinner_home_page_fragment_search_mode_drop_down_);
 
-        recyclerView.addOnScrollListener(mOnScrollListener);
         return rootView;
     }
 

@@ -5,6 +5,8 @@ import android.widget.EditText;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final  class CheckUtils {
   private CheckUtils(){}
@@ -39,5 +41,17 @@ public final  class CheckUtils {
   }
   public static boolean checkEqual(EditText editText1, EditText editText2){
     return editText1.getText().toString().equals(editText2.getText().toString());
+  }
+
+  public static boolean isValidPassword(final String password) {
+
+    Pattern pattern;
+    Matcher matcher;
+    final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{4,}$";
+    pattern = Pattern.compile(PASSWORD_PATTERN);
+    matcher = pattern.matcher(password);
+
+    return matcher.matches();
+
   }
 }

@@ -2,6 +2,8 @@ package com.musapp.musicapp.activities;
 
 import android.app.Application;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -63,6 +65,8 @@ public class MainApplication extends Application {
 //           }
 //       });
         DBAsyncTask.setDatabaseReference(ref);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
 
     }
 

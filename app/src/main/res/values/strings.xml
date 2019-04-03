@@ -123,5 +123,11 @@
     </string>
 
     <string name="carambola_copyright">©Copyright Carampola™ 2019</string>
+    <string name="facebook_app_id">379902902614605</string>
+    <string name="fb_login_protocol_scheme">fb379902902614605</string>
+
+    <string name="short_password_error">at least 6 character</string>
+    <string name="invalid_password_error">password not secure(must contain numbers, 1 Alphabet, 1 special character)</string>
+
 
 </resources>

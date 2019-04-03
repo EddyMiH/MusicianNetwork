@@ -97,6 +97,14 @@ public class RegistrationFragment5 extends Fragment {
             ErrorShowUtils.showEditTextError(confirm_password, ContextUtils.getResourceString(this, R.string.password_match));
             return false;
         }
+        if(password.getText().toString().length() < 6){
+            ErrorShowUtils.showEditTextError(password, ContextUtils.getResourceString(this, R.string.short_password_error));
+            return false;
+        }
+        if (!CheckUtils.isValidPassword(password.getText().toString())){
+            ErrorShowUtils.showEditTextError(password, ContextUtils.getResourceString(this, R.string.invalid_password_error));
+            return false;
+        }
         return true;
     }
 
@@ -111,17 +119,6 @@ public class RegistrationFragment5 extends Fragment {
         return false;
     }
 
-//    @Override
-//    public void doOnResponse(String key, String childName) {
-//        user.setPrimaryKey(key);
-//        user.setPassword(password.getText().toString());
-//     //   DBAccess.createChild("user/" + user.getPrimaryKey() + '/', "primaryKey", user.getPrimaryKey());
-//        HashMap<String, Object> userHashMap = new HashMap<>();
-//        //TODO if nested primaryKey is needed
-//        userHashMap.put("primaryKey", user.getPrimaryKey());
-//        userHashMap.put("password", HashUtils.hash(password.getText().toString()));
-//        DBAccess.createFields(userHashMap, "user/"+user.getPrimaryKey()+'/');
-//    }
 
     private void addUserToFirebase() {
         CurrentUser.getCurrentUser().setToken(DBAccess.getToken());
