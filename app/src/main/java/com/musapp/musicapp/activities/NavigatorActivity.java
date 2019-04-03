@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -15,6 +16,7 @@ import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.preferences.RememberPreferences;
 
 public class NavigatorActivity extends Activity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,12 +28,11 @@ public class NavigatorActivity extends Activity {
             activityClass = Class.forName(
                     prefs.getString("lastActivity", StartActivity.class.getName()));
 
-            if(!RememberPreferences.getState(this))
+
+
+            if(RememberPreferences.getUser(this).equals("none")|| RememberPreferences.getState(this))
                 activityClass = StartActivity.class;
 
-            if(activityClass == AppMainActivity.class){
-                setCurrentUser();
-            }
 
         } catch(ClassNotFoundException ex) {
             activityClass = StartActivity.class;
@@ -42,7 +43,7 @@ public class NavigatorActivity extends Activity {
     }
 
     private void setCurrentUser(){
-        FirebaseRepository.setCurrentUser(RememberPreferences.getUser(this), new ValueEventListener() {
+     /*   FirebaseRepository.setCurrentUser(RememberPreferences.getUser(this), new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 CurrentUser.setCurrentUser(dataSnapshot.getValue(User.class));
@@ -52,6 +53,6 @@ public class NavigatorActivity extends Activity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
     }
 }

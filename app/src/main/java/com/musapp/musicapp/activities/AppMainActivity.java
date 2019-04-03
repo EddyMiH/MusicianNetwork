@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,8 +35,10 @@ import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.BlankFragment;
+import com.musapp.musicapp.fragments.main_fragments.ConversationFragment;
 import com.musapp.musicapp.fragments.main_fragments.FullScreenImageFragment;
 import com.musapp.musicapp.fragments.main_fragments.HomePageFragment;
+import com.musapp.musicapp.fragments.main_fragments.MessagesFragment;
 import com.musapp.musicapp.fragments.main_fragments.NotificationFragment;
 import com.musapp.musicapp.fragments.main_fragments.OtherUserProfileFragment;
 import com.musapp.musicapp.fragments.main_fragments.PostDetailsFragment;
@@ -55,12 +58,12 @@ import java.net.URL;
 
 public class AppMainActivity extends AppCompatActivity {
 
-    private static boolean active = false;
+    private volatile static boolean active = false;
 
     private NotificationFragment mNotificationFragment;
     private ProfileFragment mProfileFragment;
     private HomePageFragment mHomePageFragment;
-    private BlankFragment mMessagesFragment;
+    private MessagesFragment mMessagesFragment;
     private BottomNavigationView navigation;
     private SetToolBarAndNavigationBarState mToolBarTitle = new SetToolBarAndNavigationBarState() {
         @Override
@@ -129,7 +132,6 @@ public class AppMainActivity extends AppCompatActivity {
                     return true;
 
                 case R.id.navigation_mail:
-                //    mTextMessage.setText(R.string.title_dashboard);
                     beginTransaction(mMessagesFragment);
                     return true;
                 case R.id.navigation_notifications:
@@ -198,9 +200,9 @@ public class AppMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         active = true;
-        String openNotificationList = "def";
+        String customFragment = "def";
         if(getIntent() != null)
-        openNotificationList = getIntent().getStringExtra("goto");
+        customFragment = getIntent().getStringExtra("goto");
         setContentView(R.layout.activity_app_main);
         navigation = (BottomNavigationView) findViewById(R.id.navigation_activity_main);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -208,8 +210,35 @@ public class AppMainActivity extends AppCompatActivity {
         setCurrentUser();
         init();
         navigation.setSelectedItemId(R.id.navigation_home);
-        if(openNotificationList != null && openNotificationList.equals("NotificationFragment"))
+        if(customFragment != null ){
+            if(customFragment.equals("NotificationFragment"))
             beginTransaction(mNotificationFragment);
+
+            else if(customFragment.equals("ConversationFragment")){
+                ConversationFragment conversationFragment = new ConversationFragment();
+                Bundle args = new Bundle();
+                args.putString("CHAT_ID", getIntent().getStringExtra("CHAT_ID"));
+                conversationFragment.setArguments(args);
+                beginTransaction(conversationFragment);
+            }
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        active = true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        active = false;
+        SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("lastActivity", getClass().getName());
+        editor.apply();
     }
 
     @Override
@@ -222,6 +251,7 @@ public class AppMainActivity extends AppCompatActivity {
         editor.apply();
     }
 
+
     private void init(){
         mNotificationFragment = new NotificationFragment();
         mProfileFragment = new ProfileFragment();
@@ -230,7 +260,7 @@ public class AppMainActivity extends AppCompatActivity {
         mHomePageFragment.setClickListener(mClickListener);
         mHomePageFragment.setTransactionListener(mTransaction);
         mHomePageFragment.setToolBarAndNavigationBarState(mToolBarTitle);
-        mMessagesFragment = new BlankFragment();
+        mMessagesFragment = new MessagesFragment();
         mProfileFragment.setSetToolBarAndNavigationBarState(mToolBarTitle);
         mProfileFragment.setClickListener(mClickListener);
         mProfileFragment.setTransactionListener(mTransaction);
@@ -245,6 +275,7 @@ public class AppMainActivity extends AppCompatActivity {
     }
 
     private void beginTransaction(Fragment fragment){
+
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.layout_activity_app_container, fragment);
@@ -269,7 +300,6 @@ public class AppMainActivity extends AppCompatActivity {
 
 
             int count = getSupportFragmentManager().getBackStackEntryCount();
-
             if (count == 0 || count == 1) {
                 finish();
                 //additional code
@@ -283,6 +313,9 @@ public class AppMainActivity extends AppCompatActivity {
         FirebaseRepository.setCurrentUser(RememberPreferences.getUser(this), new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() == null ){
+                    RememberPreferences.saveState(AppMainActivity.this, false);
+                    activityTransaction(StartActivity.class);}
                 CurrentUser.setCurrentUser(dataSnapshot.getValue(User.class));
                 CurrentUser.setCurrentFirebaseUser(FirebaseAuth.getInstance().getCurrentUser());
             }
@@ -340,14 +373,22 @@ public class AppMainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+
         if (mLocalBinder != null){
             mLocalBinder.stop();
 
         }
         this.unbindService(mServiceConnection);
-        if(RememberPreferences.getState(this))
-        RememberPreferences.saveUser(this, CurrentUser.getCurrentUser().getPrimaryKey());
+       /* if(RememberPreferences.getState(this)){
+            if(RememberPreferences.getUser(this).equals("none"))
+                RememberPreferences.saveUser(this, "none");
+            else
+        RememberPreferences.saveUser(this, CurrentUser.getCurrentUser().getPrimaryKey());}*/
         active = false;
+       /* SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("lastActivity", StartActivity.class.getName());
+        editor.apply();*/
     }
 
     private MusicPlayerServiceConnection mPlayerServiceConnection =
@@ -404,4 +445,7 @@ public class AppMainActivity extends AppCompatActivity {
         void startSeekBarHandle();
     }
 
+    public static void setActive(boolean active) {
+        AppMainActivity.active = active;
+    }
 }

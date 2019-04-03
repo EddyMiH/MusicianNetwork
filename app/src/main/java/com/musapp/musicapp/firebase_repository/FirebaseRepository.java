@@ -13,6 +13,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
+import com.musapp.musicapp.model.Chat;
 import com.musapp.musicapp.model.Notification;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
@@ -131,7 +132,7 @@ public class FirebaseRepository {
     }
 
     public static void getUserByPrimaryKey(String primaryKey, ValueEventListener valueEventListener) {
-        DBAccess.getUserReference("users").child(primaryKey).addListenerForSingleValueEvent(valueEventListener);
+        DBAccess.getUserReference("users").child(primaryKey).addValueEventListener(valueEventListener);
     }
 
     public static void getCurrentUser(ValueEventListener valueEventListener) {
@@ -186,9 +187,7 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users/" + primaryKey).addListenerForSingleValueEvent(valueEventListener);
     }
 
-//    public static void updateCurrentUser(String primaryKey, User user){
-//        DBAccess.getDatabaseReference().child("users").child(primaryKey).setValue(user);
-//    }
+
 
     public static void updatePassword(String primaryKey, String password){
         DBAccess.getDatabaseReference().child("users").child(primaryKey).child("password").setValue(password);
@@ -239,6 +238,49 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).child("notifications").addChildEventListener(childEventListener);
     }
 
+
+    public static void createChat(Chat chat, ValueEventListener valueEventListener){
+        createObject(chat, "chats", valueEventListener);
+    }
+
+    public static void setChatInnerPrimaryKey(ValueEventListener valueEventListener){
+        setObjectInnerPrimaryKey("chats", valueEventListener);
+    }
+
+    public static void updateChat(Chat chat){
+        DBAccess.getDatabaseReference().child("chats").child(chat.getPrimaryKey()).setValue(chat);
+    }
+
+    public static void updateChat(Chat chat, OnSuccessListener<Void> onSuccessListener){
+        DBAccess.getDatabaseReference().child("chats").child(chat.getPrimaryKey()).setValue(chat).addOnSuccessListener(onSuccessListener);
+    }
+
+    public static void setMessageListenerForChatById(String id, ChildEventListener messageChildEventListener){
+        DBAccess.getDatabaseReference().child("chats").child(id).child("messages").addChildEventListener(messageChildEventListener);
+    }
+    public static void setMessageLastItemListener(String id, ChildEventListener childEventListener){
+        Query  query = DBAccess.getDatabaseReference().child("chats").child(id).child("messages").limitToLast(1);
+        query.addChildEventListener(childEventListener);
+    }
+
+
+
+    public static void getChatById(String chatId, ValueEventListener valueEventListener){
+        DBAccess.getDatabaseReference().child("chats").child(chatId).addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    public static void getChatByFirstUserId(String id, ValueEventListener valueEventListener){
+        Query query = DBAccess.getDatabaseReference().child("chats").orderByChild("firstUserId").equalTo(id);
+        query.addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    public static void updateUserChatsId(String userPrimaryKey, List<String> chatsId){
+        DBAccess.getUserReference("users/" + userPrimaryKey).child("chatsId").setValue(chatsId);
+    }
+
+    public static void loadMessages(String chatId, ChildEventListener childEventListener){
+        DBAccess.getUserReference("chats/" + chatId).child("messages").addChildEventListener(childEventListener);
+    }
 
 
 

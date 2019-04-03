@@ -1,5 +1,7 @@
 package com.musapp.musicapp.model;
 
+import android.util.Log;
+
 import com.musapp.musicapp.utils.StringUtils;
 
 public class Notification {
@@ -81,13 +83,16 @@ public class Notification {
 
     @Override
     public boolean equals(Object obj) {
-      if(!(obj instanceof Notification))
+      if(obj instanceof Notification){
+          boolean res = ((Notification) obj).commentatorId.equals(commentatorId)
+                  && ((Notification) obj).commentatorImageUrl.equals(commentatorImageUrl)
+                  && ((Notification) obj).date.equals(date)
+                  && ((Notification) obj).description.equals(description)
+                  && ((Notification) obj).notificationBody.equals(notificationBody)
+                  && ((Notification) obj).postId.equals(postId);
+          Log.d("tttt", res + "");
+          return res;
+      }
           return false;
-      return ((Notification) obj).commentatorId.equals(commentatorId)
-              && ((Notification) obj).commentatorImageUrl.equals(commentatorImageUrl)
-              && ((Notification) obj).date.equals(date)
-              && ((Notification) obj).description.equals(description)
-              && ((Notification) obj).notificationBody.equals(notificationBody)
-              && ((Notification) obj).postId.equals(postId);
     }
 }

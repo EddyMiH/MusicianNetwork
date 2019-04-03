@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -20,6 +22,7 @@ import com.musapp.musicapp.adapters.FeedRecyclerAdapter;
 
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
+import com.musapp.musicapp.model.Chat;
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.GlideUtil;
@@ -34,6 +37,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class OtherUserProfileFragment extends Fragment {
     @BindView(R.id.circular_view_fragment_other_user_profile_image)
     CircleImageView userImage;
+    @BindView(R.id.button_start_conversation)
+    ImageView startConversationButton;
     @BindView(R.id.text_fragment_other_user_profile_fullname)
     TextView fullname;
     @BindView(R.id.text_fragment_other_user_profile_nickname)
@@ -100,6 +105,12 @@ public class OtherUserProfileFragment extends Fragment {
                 infoBox.setVisibility(View.GONE);
             }
         });
+        startConversationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startConversationWithUser(userPrimaryKey);
+            }
+        });
 
         postRecyclerViewAdapter.setData(new ArrayList<Post>());
         postRecyclerViewAdapter.setPlayerServiceConnection(mPlayerServiceConnection);
@@ -163,6 +174,17 @@ public class OtherUserProfileFragment extends Fragment {
             }
         });
     }
+
+    private void startConversationWithUser(String userId){
+        ConversationFragment conversationFragment = new ConversationFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("ID", userId);
+        conversationFragment.setArguments(bundle);
+
+        getFragmentManager().beginTransaction().add(R.id.layout_activity_app_container, conversationFragment).commit();
+    }
+
+
 
 
 

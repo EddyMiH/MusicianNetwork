@@ -7,12 +7,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:elevation="@dimen/elevation"
     app:cardElevation="@dimen/elevation"
-    android:layout_marginBottom="10dp"
     app:cardBackgroundColor="@color/colorGreyCards"
-    app:cardCornerRadius="@dimen/card_view_corner_radius">
+ >
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:layout_width="60dp"
@@ -23,7 +22,10 @@
             android:src="@drawable/ic_person_black_24dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_margin="30dp"/>
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
+
+            />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -58,6 +60,7 @@
 
         </LinearLayout>
         <TextView
+            android:id="@+id/text_message_item_last_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="yesterday"
@@ -72,7 +75,6 @@
             android:background="@android:color/darker_gray"
             app:layout_constraintTop_toBottomOf="@id/image_message_image_chat_profile"
             app:layout_constraintStart_toEndOf="@id/image_message_image_chat_profile"
-            android:layout_marginTop="20dp"
             />
 
     </android.support.constraint.ConstraintLayout>

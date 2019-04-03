@@ -1,0 +1,320 @@
+package com.musapp.musicapp.fragments.main_fragments;
+
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.musapp.musicapp.R;
+import com.musapp.musicapp.adapters.ChatMessageAdapter;
+import com.musapp.musicapp.adapters.MessageDashboardRecyclerAdapter;
+import com.musapp.musicapp.currentinformation.CurrentUser;
+import com.musapp.musicapp.firebase_messaging_notifications.NotifyMessage;
+import com.musapp.musicapp.firebase_repository.FirebaseRepository;
+import com.musapp.musicapp.fragments.HandleBackPressWithFirebase;
+import com.musapp.musicapp.model.Chat;
+import com.musapp.musicapp.model.Message;
+import com.musapp.musicapp.model.User;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+
+public class ConversationFragment extends Fragment implements HandleBackPressWithFirebase {
+    private String userPrimaryKey = "none";
+    private static boolean active = false;
+    private static String chatId = "none";
+    private static String userId = "none";
+    private User mUser;
+    private Chat mChat;
+    private EditText inputText;
+    private Button enterInput;
+    private RecyclerView mRecyclerView;
+    private ChatMessageAdapter mRecyclerAdapter;
+
+    public static boolean isActive() {
+        return active;
+    }
+
+    public static String getChatId() {
+        return chatId;
+    }
+
+    public static String getUserId() {
+        return userId;
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_conversation, container, false);
+        inputText = view.findViewById(R.id.edit_text_write_message);
+        enterInput = view.findViewById(R.id.action_send_message);
+        mRecyclerView = view.findViewById(R.id.recycler_view_fragment_conversation_messages);
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        enterInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMessage(inputText.getText().toString());
+                inputText.setText("");
+            }
+        });
+        init();
+       if(userPrimaryKey.equals("nano"))
+           return;
+
+        if (getArguments() != null){
+            if(getArguments().getString("ID") != null) {
+                userPrimaryKey = getArguments().getString("ID");
+                userId = userPrimaryKey;
+                loadUser();
+                if(getArguments().getString("CHAT_ID") == null){
+                    final boolean[] check = {false};
+                    createChatIfNeeded(check);}
+
+
+            }else if(getArguments().getString("CHAT_ID") != null){
+                FirebaseRepository.getChatById(getArguments().getString("CHAT_ID"), new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mChat = dataSnapshot.getValue(Chat.class);
+                        chatId = mChat.getPrimaryKey();
+                        if (mChat.getFirstUserId().equals(CurrentUser.getCurrentUser().getPrimaryKey())) {
+                            userPrimaryKey = mChat.getSecondUserId();
+                            loadUser();
+                        } else {
+                            userPrimaryKey = mChat.getFirstUserId();
+                            loadUser();
+                        }
+                        userId = userPrimaryKey;
+                        loadMessages();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }}
+
+
+    private void loadUser(){
+        FirebaseRepository.getUserByPrimaryKey(userPrimaryKey, new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mUser = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void init(){
+        mRecyclerAdapter = new ChatMessageAdapter();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(mRecyclerAdapter);
+    }
+    private void createChatIfNeeded(final boolean check[]) {
+
+      final Chat chat = new Chat();
+      chat.setFirstUserId(CurrentUser.getCurrentUser().getPrimaryKey());
+      chat.setSecondUserId(userPrimaryKey);
+
+
+
+      FirebaseRepository.getChatByFirstUserId(CurrentUser.getCurrentUser().getPrimaryKey(), new ValueEventListener() {
+          @Override
+          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+              for(DataSnapshot chatSnapshot: dataSnapshot.getChildren()){
+                  if(chat.equals(chatSnapshot.getValue(Chat.class))){
+                      check[0] = true;
+                      mChat = chatSnapshot.getValue(Chat.class);
+                      chatId = mChat.getPrimaryKey();
+                      loadMessages();
+                      break;}}
+                      if(!check[0]){
+                            FirebaseRepository.getChatByFirstUserId(userPrimaryKey, new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for(DataSnapshot chatSnapshot: dataSnapshot.getChildren()){
+                                        if(chat.equals(chatSnapshot.getValue(Chat.class))){
+                                            check[0] = true;
+                                            mChat = chatSnapshot.getValue(Chat.class);
+                                            chatId = mChat.getPrimaryKey();
+                                            loadMessages();
+                                            break;}}
+                                            if(!check[0])
+                                                createChat();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                      }
+          }
+
+          @Override
+          public void onCancelled(@NonNull DatabaseError databaseError) {
+
+          }
+      });
+
+    }
+
+    private void createChat() {
+        final Chat chat = new Chat();
+        chat.setFirstUserId(CurrentUser.getCurrentUser().getPrimaryKey());
+        chat.setSecondUserId(userPrimaryKey);
+        FirebaseRepository.createChat(chat, new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                FirebaseRepository.setChatInnerPrimaryKey(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Iterator<DataSnapshot> lastChild = dataSnapshot.getChildren().iterator();
+                        chat.setPrimaryKey(lastChild.next().getKey());
+                        FirebaseRepository.updateChat(chat);
+                        CurrentUser.getCurrentUser().addChatId(chat.getPrimaryKey());
+                        mUser.addChatId(chat.getPrimaryKey());
+                        FirebaseRepository.updateUserChatsId(CurrentUser.getCurrentUser().getPrimaryKey(), CurrentUser.getCurrentUser().getChatsId());
+                        FirebaseRepository.updateUserChatsId(userPrimaryKey, mUser.getChatsId());
+                        mChat = chat;
+                        chatId = chat.getPrimaryKey();
+                        loadMessages();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void sendMessage(String msgText) {
+        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
+        Date date = new Date(System.currentTimeMillis());
+        Message message = new Message(msgText, CurrentUser.getCurrentUser().getPrimaryKey(), simple.format(date), CurrentUser.getCurrentUser().getUserInfo().getImageUri());
+        new NotifyMessage(mUser.getToken(), CurrentUser.getCurrentUser().getNickName() + " wrote new message", message.getMessageText(),userPrimaryKey, CurrentUser.getCurrentUser().getPrimaryKey(), CurrentUser.getCurrentUser().getUserInfo().getImageUri(), simple.format(date), chatId).execute();
+        if(mChat == null){
+            Toast.makeText(getActivity(), "Ooops, something went wrong", Toast.LENGTH_LONG).show();
+            return;
+        }
+        mChat.addMessage(message);
+        FirebaseRepository.updateChat(mChat);
+    }
+
+    private void loadMessages(){
+        FirebaseRepository.loadMessages(mChat.getPrimaryKey(), new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d("datasnapp", dataSnapshot.toString());
+                mRecyclerAdapter.addMessage(dataSnapshot.getValue(Message.class));
+                mRecyclerView.scrollToPosition(mRecyclerAdapter.getItemCount() - 1);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    public void OnBackPressed(OnSuccessListener<Void> onSuccessListener) {
+        if(mChat == null)
+            return;
+        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
+        Date date = new Date(System.currentTimeMillis());
+        mChat.setFirstUserLastSeen(simple.format(date));
+        FirebaseRepository.updateChat(mChat, onSuccessListener);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        active = true;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        active = true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        active = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        active = false;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        active = false;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        active = false;
+    }
+}

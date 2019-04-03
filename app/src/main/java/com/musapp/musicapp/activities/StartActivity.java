@@ -114,6 +114,15 @@ public class StartActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("lastActivity", StartActivity.class.getName());
+        editor.apply();
+    }
+
     private void init() {
         register1 = new RegistrationFragment1();
         register2 = new RegistrationFragment2();
@@ -183,7 +192,7 @@ public class StartActivity extends AppCompatActivity {
         CurrentUser.setCurrentUser(new User());
 
          //   beginTransaction(register1);}
-        if (!RememberPreferences.getState(this)) {
+        if (RememberPreferences.getState(this)) {
             RememberPreferences.saveUser(this, "none");
             beginTransaction(signInFragment);
         } else
@@ -236,7 +245,7 @@ public class StartActivity extends AppCompatActivity {
 
     private void setRememberSharedPreferenceState(){
         Intent intent = getIntent();
-        if(intent != null){
+        if(intent != null &&  intent.hasExtra(getString(R.string.quit))){
             RememberPreferences.saveState(this, intent.getBooleanExtra(getString(R.string.quit), RememberPreferences.getState(this)));
         }
     }

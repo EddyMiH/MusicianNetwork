@@ -27,6 +27,7 @@ import com.musapp.musicapp.R;
 import com.musapp.musicapp.activities.AppMainActivity;
 import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
+import com.musapp.musicapp.preferences.RememberPreferences;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -40,11 +41,12 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
 
         String tkn = FirebaseInstanceId.getInstance().getToken();
+        if(!RememberPreferences.getUser(getApplicationContext()).equals("none")){
         CurrentUser.getCurrentUser().setToken(tkn);
         FirebaseRepository.updateCurrentUserToken(tkn);
         Log.d("Nottttt","Token ["+tkn+"]");
 
-        sendRegistrationToServer(tkn);
+        sendRegistrationToServer(tkn);}
 
 
 
