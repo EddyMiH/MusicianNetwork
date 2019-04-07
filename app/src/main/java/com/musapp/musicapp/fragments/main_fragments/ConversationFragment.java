@@ -26,6 +26,7 @@ import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase_messaging_notifications.NotifyMessage;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.HandleBackPressWithFirebase;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.Chat;
 import com.musapp.musicapp.model.Message;
 import com.musapp.musicapp.model.User;
@@ -50,6 +51,11 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
     private Button enterInput;
     private RecyclerView mRecyclerView;
     private ChatMessageAdapter mRecyclerAdapter;
+    private SetToolBarAndNavigationBarState mToolBarAndNavigationBarState;
+
+    public void setToolBarAndNavigationBarState(SetToolBarAndNavigationBarState toolBarAndNavigationBarState) {
+        mToolBarAndNavigationBarState = toolBarAndNavigationBarState;
+    }
 
     public static boolean isActive() {
         return active;
@@ -79,8 +85,11 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
         enterInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage(inputText.getText().toString());
-                inputText.setText("");
+                if(!inputText.getText().toString().isEmpty()){
+                    sendMessage(inputText.getText().toString());
+                    inputText.setText("");
+                }
+
             }
         });
         init();
@@ -120,7 +129,9 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
                     }
                 });
             }
-        }}
+        }
+
+    }
 
 
     private void loadUser(){
@@ -128,6 +139,11 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mUser = dataSnapshot.getValue(User.class);
+                if (mUser != null){
+                    mToolBarAndNavigationBarState.setTitle(mUser.getFullName());
+                }else{
+                    mToolBarAndNavigationBarState.setTitle("Message");
+                }
             }
 
             @Override
@@ -147,8 +163,6 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
       final Chat chat = new Chat();
       chat.setFirstUserId(CurrentUser.getCurrentUser().getPrimaryKey());
       chat.setSecondUserId(userPrimaryKey);
-
-
 
       FirebaseRepository.getChatByFirstUserId(CurrentUser.getCurrentUser().getPrimaryKey(), new ValueEventListener() {
           @Override

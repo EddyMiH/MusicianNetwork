@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -38,6 +40,9 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.musapp.musicapp.R;
@@ -45,8 +50,10 @@ import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.main_fragments.ProfileFragment;
 import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
+import com.musapp.musicapp.model.Comment;
 import com.musapp.musicapp.model.Gender;
 import com.musapp.musicapp.model.Info;
+import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.Profession;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.utils.CheckUtils;
@@ -94,6 +101,8 @@ public class EditProfileFragment extends Fragment {
     EditText mConfirmPassword;
     @BindView(R.id.edit_text_fragment_edit_profile_last_password)
     EditText mLastPassword;
+    @BindView(R.id.progress_bar_edit_profile)
+    ProgressBar mProgressBar;
 
     private User mEditedUser = new User();
     private Info mInfo = new Info();
@@ -107,6 +116,8 @@ public class EditProfileFragment extends Fragment {
     private boolean isStoragePermissionAccepted = false;
     private Uri path;
     private SetToolBarAndNavigationBarState mSetToolBarAndNavigationBarState;
+    private boolean isImagePicked = false;
+    private String mChangedImageUrl;
 
     public void setSetToolBarAndNavigationBarState(SetToolBarAndNavigationBarState setToolBarAndNavigationBarState) {
         mSetToolBarAndNavigationBarState = setToolBarAndNavigationBarState;
@@ -178,6 +189,9 @@ public class EditProfileFragment extends Fragment {
         }
     };
 
+    private boolean check1 = false;
+    private boolean check2 = false;
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -194,7 +208,59 @@ public class EditProfileFragment extends Fragment {
             public void onClick(View v) {
                 boolean isGood = saveUser();
                 if(isGood){
-                    quitFragment();
+                    if (isImagePicked){
+                        mProgressBar.setVisibility(View.VISIBLE);
+
+                        FirebaseRepository.updatePostsCreatorImage(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                                    Post post = postSnapshot.getValue(Post.class);
+                                    if(post.getUserId().equals(CurrentUser.getCurrentUser().getPrimaryKey())){
+                                        FirebaseRepository.updatePostUserImage(post.getPrimaryKey(), mInfo.getImageUri());
+                                    }
+                                }
+                                //
+                                check1 = true;
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        FirebaseRepository.getComments(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                                    Comment comment = postSnapshot.getValue(Comment.class);
+                                    if(comment.getCreatorId().equals(CurrentUser.getCurrentUser().getPrimaryKey())){
+                                        FirebaseRepository.updateCommentUserImage(comment.getPrimaryKey(), mInfo.getImageUri());
+                                    }
+                                }
+                                check2 = true;
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                              if(check1 && check2){
+                                  mProgressBar.setVisibility(View.GONE);
+                                  quitFragment();
+                                  return;
+                              }
+                              handler.postDelayed(this, 100);
+                            }
+                        }, 500);
+                    }else{
+                        quitFragment();
+                    }
                 }
             }
         });
@@ -289,12 +355,14 @@ public class EditProfileFragment extends Fragment {
                 final Bitmap bmp = (Bitmap) bundle.get("data");
                 mUserImage.setImageBitmap(bmp);
                 putBitmapImageToStorage(bmp);
+                isImagePicked = true;
 
             } else if (requestCode == SELECT_FILE) {
 
                 final Uri selectedImageUri = data.getData();
                 mUserImage.setImageURI(selectedImageUri);
                 putImageToStorage(selectedImageUri);
+                isImagePicked = true;
 
             }
         }
@@ -309,6 +377,7 @@ public class EditProfileFragment extends Fragment {
                     @Override
                     public void onSuccess(Uri uri) {
                         mInfo.setImageUri(uri.toString());
+
                     }
                 });
             }

@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public final class StringUtils {
     private StringUtils(){}
@@ -16,6 +17,12 @@ public final class StringUtils {
     public static String CurrentDateAndTimeToString(){
         DateFormat simple = new SimpleDateFormat("dd MMM HH:mm");
         Date date = new Date(System.currentTimeMillis());
+        return simple.format(date);
+    }
+
+    public static String millisecondsToDateString(int millis){
+        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
+        Date date = new Date(millis);
         return simple.format(date);
     }
 

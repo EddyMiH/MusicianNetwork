@@ -261,6 +261,7 @@ public class AppMainActivity extends AppCompatActivity {
         mHomePageFragment.setTransactionListener(mTransaction);
         mHomePageFragment.setToolBarAndNavigationBarState(mToolBarTitle);
         mMessagesFragment = new MessagesFragment();
+        mMessagesFragment.setSetToolBarAndNavigationBarState(mToolBarTitle);
         mProfileFragment.setSetToolBarAndNavigationBarState(mToolBarTitle);
         mProfileFragment.setClickListener(mClickListener);
         mProfileFragment.setTransactionListener(mTransaction);

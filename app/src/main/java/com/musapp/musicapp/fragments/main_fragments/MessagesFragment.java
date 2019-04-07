@@ -37,6 +37,7 @@ public class MessagesFragment extends Fragment {
         @Override
         public void onDashboardItemClick(Conversation conversation) {
             ConversationFragment conversationFragment = new ConversationFragment();
+            conversationFragment.setToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
             Bundle bundle = new Bundle();
             bundle.putString("CHAT_ID", conversation.getChatId());
             conversationFragment.setArguments(bundle);
@@ -49,7 +50,6 @@ public class MessagesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_layout_messages, container, false);
         mRecyclerView = view.findViewById(R.id.recycler_view_fragment_messages_chats);
-        //mSetToolBarAndNavigationBarState.setTitle(R.string.title_dashboard);
         return view;
     }
 
@@ -59,6 +59,8 @@ public class MessagesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         init();
         loadConversations();
+        mSetToolBarAndNavigationBarState.setTitle(R.string.title_dashboard);
+
     }
 
     private void init() {
@@ -181,7 +183,7 @@ public class MessagesFragment extends Fragment {
     }
 
     private void quit(Fragment fragment) {
-        getFragmentManager().beginTransaction().add(R.id.layout_activity_app_container, fragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.layout_activity_app_container, fragment).commit();
     }
 
     public MessagesFragment() {

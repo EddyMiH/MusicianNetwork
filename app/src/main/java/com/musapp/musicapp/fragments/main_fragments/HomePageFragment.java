@@ -114,13 +114,7 @@ public class HomePageFragment extends Fragment {
         @Override
         public void onProfileImageClickListener(Post post) {
             mClickListener.userImageClickListener(post);
-//           OtherUserProfileFragment otherUserProfileFragment = new OtherUserProfileFragment();
-//           Bundle args = new Bundle();
-//           args.putString(String.class.getSimpleName(), post.getUserId());
-//           otherUserProfileFragment.setArguments(args);
-//           otherUserProfileFragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
-//           otherUserProfileFragment.setPlayerServiceConnection(mPlayerServiceConnection);
-//           beginTransaction(otherUserProfileFragment);
+
         }
     };
 
@@ -130,13 +124,7 @@ public class HomePageFragment extends Fragment {
                 public void onItemSelected(Post post) {
                     //TODO open extended post fragment
                     mClickListener.postClickListener(post);
-//                    Bundle bundle = new Bundle();
-//                    bundle.putParcelable(HomePageFragment.ARG_POST, post);
-//                    PostDetailsFragment fragment = new PostDetailsFragment();
-//                    fragment.setPlayerServiceConnection(mPlayerServiceConnection);
-//                    fragment.setArguments(bundle);
-//                    fragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
-//                    beginTransaction(fragment);
+
                 }
             };
 
