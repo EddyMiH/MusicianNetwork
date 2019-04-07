@@ -46,6 +46,7 @@ import com.musapp.musicapp.pattern.UploadTypeFactory;
 import com.musapp.musicapp.pattern.UploadsAdapterFactory;
 import com.musapp.musicapp.uploads.BaseUpload;
 import com.musapp.musicapp.utils.GlideUtil;
+import com.musapp.musicapp.utils.StringUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -229,9 +230,9 @@ public class PostDetailsFragment extends Fragment {
                 mCommentText.setText("");
                 if (!postText.isEmpty()){
                     final Comment newComment = new Comment();
-                    DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
-                    Date date = new Date(System.currentTimeMillis());
-                    newComment.setCreationTime(simple.format(date));
+//                    DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
+//                    Date date = new Date(System.currentTimeMillis());
+                    newComment.setCreationTime(System.currentTimeMillis());
                     newComment.setCommentText(postText);
                     newComment.setCreatorId(CurrentUser.getCurrentUser().getPrimaryKey());
                     newComment.setUserCreatorNickName(CurrentUser.getCurrentUser().getNickName());
@@ -355,7 +356,7 @@ public class PostDetailsFragment extends Fragment {
     private void setPostPage(){
         mFullName.setText(mCurrentPost.getUserName());
         GlideUtil.setImageGlide(mCurrentPost.getProfileImage(), mProfileImage);
-        mPublishedTime.setText(mCurrentPost.getPublishedTime());
+        mPublishedTime.setText(StringUtils.millisecondsToDateString(mCurrentPost.getPublishedTime()));
         mPostText.setText(mCurrentPost.getPostText());
         initRecyclerView();
      //   mCommentCount.setText(String.valueOf(mCurrentPost.getCommentsQuantity()));

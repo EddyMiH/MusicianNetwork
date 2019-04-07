@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.google.firebase.database.Exclude;
 import com.musapp.musicapp.enums.PostUploadType;
 import com.musapp.musicapp.uploads.AttachedFile;
+import com.musapp.musicapp.utils.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class Post implements Parcelable{
 
     private String primaryKey;
     private String mUserId;
-    private String mPublishedTime;
+    private long mPublishedTime;
     private String mPostText;
     private String mProfileImage;
     private String mUserName;
@@ -79,7 +80,7 @@ public class Post implements Parcelable{
         this.primaryKey = primaryKey;
     }
 
-    public Post(String mUserName, String mPublishedTime, String mPostText, String mProfileImageUri
+    public Post(String mUserName, long mPublishedTime, String mPostText, String mProfileImageUri
             ,AttachedFile attachedFile, List<String> commentsId, PostUploadType type) {
         this.mUserId = mUserName;
         this.mPublishedTime = mPublishedTime;
@@ -94,7 +95,7 @@ public class Post implements Parcelable{
         return mUserId;
     }
 
-    public String getPublishedTime() {
+    public long getPublishedTime() {
         return mPublishedTime;
     }
 
@@ -110,7 +111,7 @@ public class Post implements Parcelable{
         this.mUserId = mUserId;
     }
 
-    public void setPublishedTime(String mPublishedTime) {
+    public void setPublishedTime(long mPublishedTime) {
         this.mPublishedTime = mPublishedTime;
     }
 
@@ -122,82 +123,6 @@ public class Post implements Parcelable{
         this.mProfileImage = mProfileImageUri;
     }
 
-/*
-    @Exclude
-    private RecyclerView innerRecyclerView;
-    @Exclude
-    private BaseUploadsAdapter<BaseUpload, BasePostViewHolder> innerAdapter;
-    @Exclude
-    private AttachedFile attachedFile;
-    @Exclude
-    private List<BaseUpload> uploads = new ArrayList<>();
-    @Exclude
-    private BaseUploadsAdapter.OnItemSelectedListener mOnSongItemSelectedListener =
-            new BaseUploadsAdapter.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(String uri) {
-                    if(mLocalBinder != null){
-                        if(mLocalBinder.isPlaying()){
-                            mLocalBinder.pause();
-                        }else{
-                            mLocalBinder.play(uri);
-                        }
-                    }
-                }
-            };
-
-    public void setInnerRecyclerView(View view){
-        innerRecyclerView = view.findViewById(R.id.inner_recycler_view_post_item_container);
-    }
-
-    public void initializeInnerRecyclerAndAdapter(Context context){
-        innerAdapter = UploadsAdapterFactory.setAdapterTypeByInputType(type);
-        if(type == PostUploadType.MUSIC){
-            innerAdapter.setOnItemSelectedListener(mOnSongItemSelectedListener);
-        }
-        //TODO select attached file from firebase by id and set here
-        loadAttachedFiles();
-        innerAdapter.setUploads(uploads);
-        if(type ==PostUploadType.VIDEO || type == PostUploadType.MUSIC){
-            innerRecyclerView.setLayoutManager(new GridLayoutManager(context, 1));
-
-        }else{
-            innerRecyclerView.setLayoutManager(new GridLayoutManager(context, 2));
-
-        }
-        innerRecyclerView.setAdapter(innerAdapter);
-<<<<<<< HEAD
-        //innerAdapter.setUploads(uploads);
-=======
-
->>>>>>> f227bbc78a9ac682e425daf2ff0fa8e144071708
-    }
-
-    //old version
-    private void loadAttachedFiles(){
-        uploads.clear();
-        if(type != PostUploadType.NONE){
-            if(attachmentId != null) {
-                FirebaseRepository.getAttachment(attachmentId, new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                        attachedFile = dataSnapshot.getValue(AttachedFile.class);
-                        for (String url : attachedFile.getFilesUrls()) {
-                            uploads.add(UploadTypeFactory.setUploadByType(attachedFile.getFileType(), url));
-                        }
-                        innerAdapter.setUploads(uploads);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        }
-    }
-*/
     @Override
     public int describeContents() {
         return 0;
@@ -208,7 +133,7 @@ public class Post implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
             dest.writeString(primaryKey);
             dest.writeString(mUserId);
-            dest.writeString(mPublishedTime);
+            dest.writeLong(mPublishedTime);
             dest.writeString(mPostText);
             dest.writeString(mProfileImage);
             dest.writeStringList(commentsId);
@@ -222,7 +147,7 @@ public class Post implements Parcelable{
         Post post = new Post();
         post.primaryKey = source.readString();
         post.mUserId = source.readString();
-        post.mPublishedTime = source.readString();
+        post.mPublishedTime = source.readLong();
         post.mPostText = source.readString();
         post.mProfileImage = source.readString();
         post.commentsId = new ArrayList<String>();
@@ -271,13 +196,13 @@ public class Post implements Parcelable{
     }
 
     public AttachedFile getAttachment(){return attachment;}
-    public void setAttachment(AttachedFile attachment){this.attachment = attachment;}
+    public void setAttachment(AttachedFile attachment){this.attachment = attachment; }
 
     @Override
     public boolean equals( Object obj) {
         if(obj instanceof Post){
             if(primaryKey == null){
-                return ((Post) obj).getPublishedTime().equals(mPublishedTime)
+                return (String.valueOf(((Post) obj).getPublishedTime()).equals(String.valueOf(mPublishedTime)))
                         && ((Post)obj).getUserId().equals(mUserId)
                         && ((Post)obj).getPostText().equals(mPostText)
                         && ((Post)obj).getType() == type;

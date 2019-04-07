@@ -30,6 +30,7 @@ import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigat
 import com.musapp.musicapp.model.Chat;
 import com.musapp.musicapp.model.Message;
 import com.musapp.musicapp.model.User;
+import com.musapp.musicapp.utils.StringUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -243,10 +244,14 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
 
 
     private void sendMessage(String msgText) {
-        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
-        Date date = new Date(System.currentTimeMillis());
-        Message message = new Message(msgText, CurrentUser.getCurrentUser().getPrimaryKey(), simple.format(date), CurrentUser.getCurrentUser().getUserInfo().getImageUri());
-        new NotifyMessage(mUser.getToken(), CurrentUser.getCurrentUser().getNickName() + " wrote new message", message.getMessageText(),userPrimaryKey, CurrentUser.getCurrentUser().getPrimaryKey(), CurrentUser.getCurrentUser().getUserInfo().getImageUri(), simple.format(date), chatId).execute();
+//        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
+//        Date date = new Date(System.currentTimeMillis());
+        Message message = new Message(msgText, CurrentUser.getCurrentUser().getPrimaryKey(), System.currentTimeMillis()
+                , CurrentUser.getCurrentUser().getUserInfo().getImageUri());
+        new NotifyMessage(mUser.getToken(), CurrentUser.getCurrentUser().getNickName() + " wrote new message"
+                , message.getMessageText(),userPrimaryKey, CurrentUser.getCurrentUser().getPrimaryKey()
+                , CurrentUser.getCurrentUser().getUserInfo().getImageUri()
+                , System.currentTimeMillis(), chatId).execute();
         if(mChat == null){
             Toast.makeText(getActivity(), "Ooops, something went wrong", Toast.LENGTH_LONG).show();
             return;
@@ -290,9 +295,8 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
     public void OnBackPressed(OnSuccessListener<Void> onSuccessListener) {
         if(mChat == null)
             return;
-        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
-        Date date = new Date(System.currentTimeMillis());
-        mChat.setFirstUserLastSeen(simple.format(date));
+
+        mChat.setFirstUserLastSeen(StringUtils.millisecondsToDateString(System.currentTimeMillis()));
         FirebaseRepository.updateChat(mChat, onSuccessListener);
     }
 

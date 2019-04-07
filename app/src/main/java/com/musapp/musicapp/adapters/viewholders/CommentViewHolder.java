@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.utils.GlideUtil;
+import com.musapp.musicapp.utils.StringUtils;
 
 public class CommentViewHolder extends RecyclerView.ViewHolder {
 
@@ -42,8 +43,8 @@ public class CommentViewHolder extends RecyclerView.ViewHolder {
         mUserName.setText(userName);
     }
 
-    public void setPublishedTime(String publishedTime) {
-        mPublishedTime.setText(publishedTime);
+    public void setPublishedTime(long publishedTime) {
+        mPublishedTime.setText(StringUtils.millisecondsToDateString(publishedTime));
     }
 
     public void setCommentText(String commentText) {

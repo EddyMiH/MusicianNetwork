@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.musapp.musicapp.R;
 import com.musapp.musicapp.utils.ContextUtils;
+import com.musapp.musicapp.utils.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,7 +47,7 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
     public void setMessageText(String message){
         messageText.setText(message);
     }
-    public void setMessageDate(String date){
-        messageDate.setText(date);
+    public void setMessageDate(long date){
+        messageDate.setText(StringUtils.millisecondsToDateString(date));
     }
 }

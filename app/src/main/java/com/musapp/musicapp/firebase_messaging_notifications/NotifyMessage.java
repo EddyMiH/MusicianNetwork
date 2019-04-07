@@ -17,10 +17,10 @@ public class NotifyMessage extends AsyncTask<Void, Void, Void> {
     private String receiverId;
     private String userId;
     private String userProfilePicUrl;
-    private String date;
+    private long date;
     private String chatId;
 
-    public NotifyMessage(String receiverToken, String notificationTitle, String notificationBody, String receiverId, String userId, String userProfilePicUrl, String date, String chatId) {
+    public NotifyMessage(String receiverToken, String notificationTitle, String notificationBody, String receiverId, String userId, String userProfilePicUrl, long date, String chatId) {
         this.receiverToken = receiverToken;
         this.notificationTitle = notificationTitle;
         this.notificationBody = notificationBody;

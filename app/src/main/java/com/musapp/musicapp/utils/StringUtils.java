@@ -15,12 +15,12 @@ public final class StringUtils {
     }
 
     public static String CurrentDateAndTimeToString(){
-        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm");
+        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm",Locale.US);
         Date date = new Date(System.currentTimeMillis());
         return simple.format(date);
     }
 
-    public static String millisecondsToDateString(int millis){
+    public static String millisecondsToDateString(long millis){
         DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
         Date date = new Date(millis);
         return simple.format(date);

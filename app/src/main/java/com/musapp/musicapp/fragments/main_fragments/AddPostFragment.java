@@ -288,9 +288,9 @@ public class AddPostFragment extends Fragment {
     private void savePost(){
         mNewPost.setPostText(mPostText.getText().toString());
         mNewPost.setType(mType);
-        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
-        Date date = new Date(System.currentTimeMillis());
-        mNewPost.setPublishedTime( simple.format(date));
+//        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
+//        Date date = new Date(System.currentTimeMillis());
+        mNewPost.setPublishedTime( System.currentTimeMillis());
         mNewPost.setUserId(CurrentUser.getCurrentUser().getPrimaryKey());
         mNewPost.setUserName(CurrentUser.getCurrentUser().getNickName());
         startService();

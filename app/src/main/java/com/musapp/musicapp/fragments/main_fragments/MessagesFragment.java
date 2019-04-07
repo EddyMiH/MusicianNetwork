@@ -23,6 +23,7 @@ import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigat
 import com.musapp.musicapp.model.Conversation;
 import com.musapp.musicapp.model.Message;
 import com.musapp.musicapp.model.User;
+import com.musapp.musicapp.utils.StringUtils;
 
 import java.util.Iterator;
 
@@ -81,7 +82,8 @@ public class MessagesFragment extends Fragment {
                     FirebaseRepository.getUserByPrimaryKey(message.getCreatorId(), new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            Conversation conversation = new Conversation(dataSnapshot.getValue(User.class).getNickName(), message.getMessageText(), message.getCreationDate());
+                            Conversation conversation = new Conversation(dataSnapshot.getValue(User.class).getNickName()
+                                    , message.getMessageText(), StringUtils.millisecondsToDateString(message.getCreationDate()));
                             conversation.setChatId(chatId);
                             conversation.setUserProfile(dataSnapshot.getValue(User.class).getUserInfo().getImageUri());
                             if (mMessageDashboardRecyclerAdapter.getItemCount() > 0) {

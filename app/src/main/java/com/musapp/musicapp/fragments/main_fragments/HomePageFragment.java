@@ -226,7 +226,7 @@ public class HomePageFragment extends Fragment {
         });
     }
 
-    private void loadPostsFromDatabase(String lastPostTime,final int limit){
+    private void loadPostsFromDatabase(long lastPostTime,final int limit){
 
       FirebaseRepository.getPosts(limit, lastPostTime, new ValueEventListener() {
           @Override
