@@ -1,6 +1,11 @@
 package com.musapp.musicapp.fragments.main_fragments;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,6 +34,7 @@ import com.musapp.musicapp.fragments.HandleBackPressWithFirebase;
 import com.musapp.musicapp.model.Chat;
 import com.musapp.musicapp.model.Message;
 import com.musapp.musicapp.model.User;
+import com.musapp.musicapp.service.BoundService;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,7 +47,6 @@ import java.util.Locale;
 
 public class ConversationFragment extends Fragment implements HandleBackPressWithFirebase {
     private String userPrimaryKey = "none";
-    private static boolean active = false;
     private static String chatId = "none";
     private static String userId = "none";
     private User mUser;
@@ -50,18 +55,23 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
     private Button enterInput;
     private RecyclerView mRecyclerView;
     private ChatMessageAdapter mRecyclerAdapter;
+    private BoundService.NotificationBinder mNotificationBinder;
+    private boolean isBind = false;
 
-    public static boolean isActive() {
-        return active;
-    }
+   private ServiceConnection mServiceConnection = new ServiceConnection() {
+       @Override
+       public void onServiceConnected(ComponentName name, IBinder service) {
+           mNotificationBinder = (BoundService.NotificationBinder) service;
+           isBind = true;
+           connectService();
+       }
 
-    public static String getChatId() {
-        return chatId;
-    }
-
-    public static String getUserId() {
-        return userId;
-    }
+       @Override
+       public void onServiceDisconnected(ComponentName name) {
+           mNotificationBinder = null;
+           isBind = false;
+       }
+   };
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -87,17 +97,18 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
        if(userPrimaryKey.equals("nano"))
            return;
 
-        if (getArguments() != null){
-            if(getArguments().getString("ID") != null) {
+        if (getArguments() != null) {
+            if (getArguments().getString("ID") != null) {
                 userPrimaryKey = getArguments().getString("ID");
                 userId = userPrimaryKey;
                 loadUser();
-                if(getArguments().getString("CHAT_ID") == null){
+                if (getArguments().getString("CHAT_ID") == null) {
                     final boolean[] check = {false};
-                    createChatIfNeeded(check);}
+                    createChatIfNeeded(check);
+                }
 
 
-            }else if(getArguments().getString("CHAT_ID") != null){
+            } else if (getArguments().getString("CHAT_ID") != null) {
                 FirebaseRepository.getChatById(getArguments().getString("CHAT_ID"), new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -120,10 +131,31 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
                     }
                 });
             }
-        }}
+        }
+     /*   if(isBind){
+            mNotificationBinder.setBindState(true);
+            Bundle args = new Bundle();
+            args.putString("fragmentName", ConversationFragment.class.getSimpleName());
+            args.putString("id", userPrimaryKey);
+            mNotificationBinder.setBindFragmentBundle(args);
+        }*/
+    }
+
+    private void connectService(){
+        mNotificationBinder.setBindState(true);
+        Bundle args = new Bundle();
+        args.putString("fragmentName", ConversationFragment.class.getSimpleName());
+        args.putString("id", userPrimaryKey);
+        mNotificationBinder.setBindFragmentBundle(args);
+
+    }
 
 
     private void loadUser(){
+        Intent intent = new Intent(getActivity(), BoundService.class);
+        getActivity().bindService(intent, mServiceConnection,  Context.BIND_AUTO_CREATE);
+
+
         FirebaseRepository.getUserByPrimaryKey(userPrimaryKey, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -285,36 +317,32 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        active = true;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        active = true;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        active = true;
-    }
 
     @Override
     public void onStop() {
         super.onStop();
-        active = false;
+        if(isBind)
+        getActivity().unbindService(mServiceConnection);
+        isBind = false;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        active = false;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        active = false;
+        if(isBind)
+        getActivity().unbindService(mServiceConnection);
+        isBind = false;
     }
 }

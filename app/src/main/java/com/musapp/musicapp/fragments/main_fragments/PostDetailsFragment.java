@@ -1,7 +1,11 @@
 package com.musapp.musicapp.fragments.main_fragments;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -44,6 +48,7 @@ import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 
 import com.musapp.musicapp.pattern.UploadTypeFactory;
 import com.musapp.musicapp.pattern.UploadsAdapterFactory;
+import com.musapp.musicapp.service.BoundService;
 import com.musapp.musicapp.uploads.BaseUpload;
 import com.musapp.musicapp.utils.GlideUtil;
 
@@ -58,7 +63,6 @@ import java.util.Locale;
 
 public class PostDetailsFragment extends Fragment {
 
-    private static boolean active = false;
     private static String id = "none";
     private ImageView mProfileImage;
     private TextView mFullName;
@@ -85,8 +89,24 @@ public class PostDetailsFragment extends Fragment {
         mSetToolBarAndNavigationBarState = setToolBarAndNavigationBarState;
     }
 
-    private User mCurrentUser = CurrentUser.getCurrentUser();
-    private String mCurrentUserImage;
+
+    private BoundService.NotificationBinder mNotificationBinder;
+    private boolean isBind = false;
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mNotificationBinder = (BoundService.NotificationBinder) service;
+            isBind = true;
+            connectService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mNotificationBinder = null;
+            isBind = false;
+        }
+    };
 
     private List<Comment> mComments;
 
@@ -178,7 +198,6 @@ public class PostDetailsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        active = true;
     }
 
     @Nullable
@@ -207,6 +226,7 @@ public class PostDetailsFragment extends Fragment {
             mCurrentPost = getArguments().getParcelable(HomePageFragment.ARG_POST);
             setPostPage();
             id = mCurrentPost.getPrimaryKey();
+
         }
 
         initCommentsRecyclerView();
@@ -287,23 +307,7 @@ public class PostDetailsFragment extends Fragment {
         mSetToolBarAndNavigationBarState.setTitle(R.string.title_activity_opened_post);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        active = true;
-    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        active = false;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        active = false;
-    }
 
     private void initCommentsRecyclerView(){
         mCommentAdapter = new CommentRecyclerViewAdapter();
@@ -446,11 +450,37 @@ public class PostDetailsFragment extends Fragment {
         mRecyclerView.setLayoutManager(new GridLayoutManager(context, 1));
     }
 
-    public static boolean isActive() {
-        return active;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Intent intent = new Intent(getActivity(), BoundService.class);
+        getActivity().getBaseContext().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    public static String getPostId(){
-        return id;
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(isBind)
+        getActivity().unbindService(mServiceConnection);
+        isBind = false;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(isBind)
+            getActivity().unbindService(mServiceConnection);
+        isBind = false;
+    }
+
+    private void connectService(){
+        mNotificationBinder.setBindState(true);
+        Bundle bundle = new Bundle();
+        bundle.putString("fragmentName", PostDetailsFragment.class.getSimpleName());
+        bundle.putString("id", id);
+        mNotificationBinder.setBindFragmentBundle(bundle);
+    }
+
+
 }

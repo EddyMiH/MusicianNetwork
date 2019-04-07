@@ -45,6 +45,7 @@ import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigat
 import com.musapp.musicapp.model.Post;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.preferences.RememberPreferences;
+import com.musapp.musicapp.service.BoundService;
 import com.musapp.musicapp.service.MusicPlayerService;
 import com.musapp.musicapp.utils.GlideUtil;
 
@@ -56,13 +57,14 @@ import java.net.URL;
 
 public class AppMainActivity extends AppCompatActivity {
 
-    private volatile static boolean active = false;
 
     private NotificationFragment mNotificationFragment;
     private ProfileFragment mProfileFragment;
     private HomePageFragment mHomePageFragment;
     private MessagesFragment mMessagesFragment;
     private BottomNavigationView navigation;
+
+
     private SetToolBarAndNavigationBarState mToolBarTitle = new SetToolBarAndNavigationBarState() {
         @Override
         public void setTitle(int titleId) {
@@ -197,7 +199,6 @@ public class AppMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        active = true;
         String customFragment = "def";
         if(getIntent() != null)
         customFragment = getIntent().getStringExtra("goto");
@@ -224,15 +225,8 @@ public class AppMainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        active = true;
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
-        active = false;
         SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("lastActivity", getClass().getName());
@@ -242,7 +236,6 @@ public class AppMainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        active = false;
         SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("lastActivity", getClass().getName());
@@ -286,7 +279,7 @@ public class AppMainActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        intent.putExtra(getString(R.string.quit), false );
+        intent.putExtra(getString(R.string.quit), true );
         startActivity(intent);
         finish();
     }
@@ -307,11 +300,17 @@ public class AppMainActivity extends AppCompatActivity {
         }
 
     private void setCurrentUser(){
+
+        if(RememberPreferences.getUser(this).equals("none")){
+            RememberPreferences.saveState(AppMainActivity.this, true);
+            activityTransaction(StartActivity.class);
+        }
+
         FirebaseRepository.setCurrentUser(RememberPreferences.getUser(this), new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() == null ){
-                    RememberPreferences.saveState(AppMainActivity.this, false);
+                    RememberPreferences.saveState(AppMainActivity.this, true);
                     activityTransaction(StartActivity.class);}
                 CurrentUser.setCurrentUser(dataSnapshot.getValue(User.class));
                 CurrentUser.setCurrentFirebaseUser(FirebaseAuth.getInstance().getCurrentUser());
@@ -341,7 +340,6 @@ public class AppMainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        active = true;
         Intent intent = new Intent(this, MusicPlayerService.class);
         this.bindService(intent,mServiceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -359,15 +357,16 @@ public class AppMainActivity extends AppCompatActivity {
 
         if (mLocalBinder != null){
             mLocalBinder.stop();
+            this.unbindService(mServiceConnection);
 
         }
-        this.unbindService(mServiceConnection);
+
+
        /* if(RememberPreferences.getState(this)){
             if(RememberPreferences.getUser(this).equals("none"))
                 RememberPreferences.saveUser(this, "none");
             else
         RememberPreferences.saveUser(this, CurrentUser.getCurrentUser().getPrimaryKey());}*/
-        active = false;
        /* SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("lastActivity", StartActivity.class.getName());
@@ -415,9 +414,6 @@ public class AppMainActivity extends AppCompatActivity {
                 }
             };
 
-    public static boolean isActive(){
-        return active;
-    }
 
     public interface MusicPlayerServiceConnection{
         void play(String url);
@@ -428,7 +424,4 @@ public class AppMainActivity extends AppCompatActivity {
         void startSeekBarHandle();
     }
 
-    public static void setActive(boolean active) {
-        AppMainActivity.active = active;
-    }
 }

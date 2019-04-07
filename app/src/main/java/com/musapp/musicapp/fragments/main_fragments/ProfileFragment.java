@@ -158,7 +158,8 @@ public class ProfileFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case(R.id.action_log_out):{
-                AppMainActivity.setActive(false);
+                //TODO cho za podozritelnaya xren'
+                RememberPreferences.saveState(getActivity(), true);
                 RememberPreferences.saveUser(getActivity(), "none");
               changeActivity.changeActivity(StartActivity.class);
               break;

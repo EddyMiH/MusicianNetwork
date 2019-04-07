@@ -36,6 +36,7 @@ import com.musapp.musicapp.fragments.main_fragments.PostDetailsFragment;
 import com.musapp.musicapp.model.Conversation;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.preferences.RememberPreferences;
+import com.musapp.musicapp.service.BoundService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,21 +66,32 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if(remoteMessage.getData().get("type").equals("comment")) {
             if (!remoteMessage.getData().get("tag").equals(RememberPreferences.getUser(this))) {
 
-            } else if (AppMainActivity.isActive() && PostDetailsFragment.isActive() && PostDetailsFragment.getPostId().equals(remoteMessage.getData().get("postId")))
-                return;
-
-            loadNotificationToFirebase(remoteMessage.getData().get("tag"), remoteMessage);
-
-        }
-        else if(remoteMessage.getData().get("type").equals("message")){
-            if(AppMainActivity.isActive() && ConversationFragment.isActive() && (ConversationFragment.getChatId().equals(remoteMessage.getData().get("chatId")))
-                    || ConversationFragment.getUserId().equals(remoteMessage.getData().get("userId"))){
-                return;
             }
+            //TODO check if activity is active and is postdetail is active and PostDetailsFragment.getPostId().equals(remoteMessage.getData().get("postId")
+       //     else if ( PostDetailsFragment.isActive() && PostDetailsFragment.getPostId().equals(remoteMessage.getData().get("postId")))
+       //         return;
+
+
+            else if(BoundService.isFragmentBind() &&
+                    BoundService.getFragmentInformation().getString("fragmentName").equals(PostDetailsFragment.class.getSimpleName()) &&
+                    BoundService.getFragmentInformation().getString("id").equals(remoteMessage.getData().get("postId"))){return;}
+            loadNotificationToFirebase(remoteMessage.getData().get("tag"), remoteMessage);
+        }
+        else if(BoundService.isFragmentBind() &&
+                BoundService.getFragmentInformation().getString("fragmentName").equals(ConversationFragment.class.getSimpleName()) &&
+                BoundService.getFragmentInformation().getString("id").equals(remoteMessage.getData().get("userId"))) {
+            return;
+            //TODO check if activity is active and is postdetail is active and PostDetailsFragment.getPostId().equals(remoteMessage.getData().get("postId")
+
+            //    if(AppMainActivity.isActive() && ConversationFragment.isActive() && (ConversationFragment.getChatId().equals(remoteMessage.getData().get("chatId")))
+            //  || ConversationFragment.getUserId().equals(remoteMessage.getData().get("userId"))){
+            //       return;
+            //}
+        }
          createNotification(remoteMessage, "ConversationFragment");
 
         }
-    }
+
 
     private void loadNotificationToFirebase(final String userPrimaryKey, final RemoteMessage remoteMessage) {
         Map<String, String> data = remoteMessage.getData();
