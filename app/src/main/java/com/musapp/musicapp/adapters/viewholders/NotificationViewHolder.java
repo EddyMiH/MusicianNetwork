@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.musapp.musicapp.R;
+import com.musapp.musicapp.utils.StringUtils;
 
 public class NotificationViewHolder extends RecyclerView.ViewHolder {
 
@@ -70,8 +71,8 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder {
         return date.getText().toString();
     }
 
-    public void setDate(String date) {
-        this.date.setText(date);
+    public void setDate(long date) {
+        this.date.setText(StringUtils.millisecondsToDateString(date));
     }
 
     public void setImageOnClickListener(ImageOnClickListener imageOnClickListener) {

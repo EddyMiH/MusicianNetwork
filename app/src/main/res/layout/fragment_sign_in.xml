@@ -106,14 +106,19 @@
         app:layout_constraintTop_toBottomOf="@id/layout_fragment_sign_in_buttons"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"
         android:layout_marginTop="50dp"
         >
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
         <Button
             android:id="@+id/action_fragment_sign_in_facebook"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="35dp"
+            android:visibility="gone"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/facebook" />
         <Button
@@ -122,12 +127,14 @@
             android:background="@drawable/twitter"
             android:layout_marginEnd="35dp"
             android:layout_gravity="center_horizontal"
+            android:visibility="gone"
             android:id="@+id/action_fragment_sign_in_twitter"/>
         <Button
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@drawable/google_plus"
             android:layout_gravity="center_horizontal"
+            android:visibility="gone"
             android:id="@+id/action_fragment_sign_in_google_plus"/>
 
     </LinearLayout>

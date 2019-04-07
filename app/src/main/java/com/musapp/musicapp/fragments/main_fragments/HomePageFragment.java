@@ -1,5 +1,6 @@
 package com.musapp.musicapp.fragments.main_fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -41,7 +43,7 @@ import java.util.List;
 public class HomePageFragment extends Fragment {
 
     private FeedRecyclerAdapter feedRecyclerAdapter;
-    private final int limit = 5;
+    private final int limit = 10;
 
     private ProgressBar mProgressBar;
     private Spinner mSearchModeSpinner;
@@ -57,6 +59,11 @@ public class HomePageFragment extends Fragment {
     private AppMainActivity.MusicPlayerServiceConnection mPlayerServiceConnection;
     private AppMainActivity.ClickListener mClickListener;
     private FeedRecyclerAdapter.FragmentTransactionListener mTransactionListener;
+    private SetToolBarAndNavigationBarState mToolBarAndNavigationBarState;
+
+    public void setToolBarAndNavigationBarState(SetToolBarAndNavigationBarState toolBarAndNavigationBarState) {
+        mToolBarAndNavigationBarState = toolBarAndNavigationBarState;
+    }
 
     public void setTransactionListener(FeedRecyclerAdapter.FragmentTransactionListener transactionListener) {
         mTransactionListener = transactionListener;
@@ -107,13 +114,7 @@ public class HomePageFragment extends Fragment {
         @Override
         public void onProfileImageClickListener(Post post) {
             mClickListener.userImageClickListener(post);
-//           OtherUserProfileFragment otherUserProfileFragment = new OtherUserProfileFragment();
-//           Bundle args = new Bundle();
-//           args.putString(String.class.getSimpleName(), post.getUserId());
-//           otherUserProfileFragment.setArguments(args);
-//           otherUserProfileFragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
-//           otherUserProfileFragment.setPlayerServiceConnection(mPlayerServiceConnection);
-//           beginTransaction(otherUserProfileFragment);
+
         }
     };
 
@@ -123,15 +124,11 @@ public class HomePageFragment extends Fragment {
                 public void onItemSelected(Post post) {
                     //TODO open extended post fragment
                     mClickListener.postClickListener(post);
-//                    Bundle bundle = new Bundle();
-//                    bundle.putParcelable(HomePageFragment.ARG_POST, post);
-//                    PostDetailsFragment fragment = new PostDetailsFragment();
-//                    fragment.setPlayerServiceConnection(mPlayerServiceConnection);
-//                    fragment.setArguments(bundle);
-//                    fragment.setSetToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
-//                    beginTransaction(fragment);
+
                 }
             };
+
+
 
     public void setClickListener(AppMainActivity.ClickListener clickListener) {
         mClickListener = clickListener;
@@ -150,6 +147,7 @@ public class HomePageFragment extends Fragment {
         mProgressBar.getIndeterminateDrawable().setColorFilter(getActivity().getResources().getColor(R.color.darkPurple), android.graphics.PorterDuff.Mode.MULTIPLY);
         swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_feed);
         mSearchModeSpinner = rootView.findViewById(R.id.spinner_home_page_fragment_search_mode_drop_down_);
+
         return rootView;
     }
 
@@ -228,7 +226,7 @@ public class HomePageFragment extends Fragment {
         });
     }
 
-    private void loadPostsFromDatabase(String lastPostTime,final int limit){
+    private void loadPostsFromDatabase(long lastPostTime,final int limit){
 
       FirebaseRepository.getPosts(limit, lastPostTime, new ValueEventListener() {
           @Override
@@ -391,9 +389,15 @@ public class HomePageFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        mSetToolBarAndNavigationBarState.showToolBar();
+
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-
     }
 
     public void beginTransaction(Fragment fragment){

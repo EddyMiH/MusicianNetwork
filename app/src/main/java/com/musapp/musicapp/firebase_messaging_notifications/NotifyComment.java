@@ -17,9 +17,9 @@ public class NotifyComment extends AsyncTask<Void, Void, Void> {
     private String postId;
     private String commenterId;
     private String commenterImageUrl;
-    private String date;
+    private long date;
 
-    public NotifyComment(String receiverToken, String notificationTitle, String notificationBody, String receiverId, String commenterId, String postId, String commenterImageUrl, String date) {
+    public NotifyComment(String receiverToken, String notificationTitle, String notificationBody, String receiverId, String commenterId, String postId, String commenterImageUrl, long date) {
         this.receiverToken = receiverToken;
         this.notificationTitle = notificationTitle;
         this.notificationBody = notificationBody;

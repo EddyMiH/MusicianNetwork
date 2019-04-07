@@ -25,6 +25,7 @@ import com.musapp.musicapp.pattern.UploadTypeFactory;
 import com.musapp.musicapp.pattern.UploadsAdapterFactory;
 import com.musapp.musicapp.uploads.BaseUpload;
 import com.musapp.musicapp.utils.GlideUtil;
+import com.musapp.musicapp.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,8 +105,8 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
         this.mUserName.setText(mUserName);
     }
 
-    public void setPostTime(String mPostTime) {
-        this.mPostTime.setText(mPostTime);
+    public void setPostTime(long mPostTime) {
+        this.mPostTime.setText(StringUtils.millisecondsToDateString(mPostTime));
     }
 
     public void setPostSetting(ImageView mPostSetting) {

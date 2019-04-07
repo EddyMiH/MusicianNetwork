@@ -148,7 +148,7 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users/" + CurrentUser.getCurrentUser().getPrimaryKey()).child("favouriteId").setValue(CurrentUser.getCurrentUser().getFavouritePostId());
     }
 
-    public static void getPosts(int limit, @NotNull String lastDateRetrivered, ValueEventListener valueEventListener) {
+    public static void getPosts(int limit, @NotNull long lastDateRetrivered, ValueEventListener valueEventListener) {
         Query postQuery = DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").endAt(lastDateRetrivered).limitToFirst(limit);
         postQuery.addListenerForSingleValueEvent(valueEventListener);
     }
@@ -282,8 +282,18 @@ public class FirebaseRepository {
         DBAccess.getUserReference("chats/" + chatId).child("messages").addChildEventListener(childEventListener);
     }
 
+    public static void updatePostsCreatorImage( ValueEventListener valueEventListener){
+        DBAccess.getDatabaseReference().child("posts").orderByChild("publishedTime").addValueEventListener(valueEventListener);
+    }
+    public static void getComments( ValueEventListener valueEventListener){
+        DBAccess.getDatabaseReference().child("comments").addValueEventListener(valueEventListener);
+    }
 
-
-
+    public static void updatePostUserImage(String postId, String imageUrl){
+        DBAccess.getDatabaseReference().child("posts").child(postId).child("profileImage").setValue(imageUrl);
+    }
+    public static void updateCommentUserImage(String commentId, String imageUrl){
+        DBAccess.getDatabaseReference().child("comments").child(commentId).child("userProfileImageUrl").setValue(imageUrl);
+    }
 
 }

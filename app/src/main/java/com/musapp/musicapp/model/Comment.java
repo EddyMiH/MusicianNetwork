@@ -4,7 +4,7 @@ public class Comment {
     private String primaryKey;
     private String userCreatorNickName;
     private String userProfileImageUrl;
-    private String creationTime;
+    private long creationTime;
     private String commentText;
     private String creatorId;
 
@@ -51,11 +51,11 @@ public class Comment {
         this.userProfileImageUrl = userProfileImageUrl;
     }
 
-    public String getCreationTime() {
+    public long getCreationTime() {
         return creationTime;
     }
 
-    public void setCreationTime(String creationTime) {
+    public void setCreationTime(long creationTime) {
         this.creationTime = creationTime;
     }
 

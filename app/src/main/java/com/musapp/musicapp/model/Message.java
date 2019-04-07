@@ -3,12 +3,12 @@ package com.musapp.musicapp.model;
 public class Message {
     private String messageText;
     private String creatorId;
-    private String creationDate;
+    private long creationDate;
     private String creatorPic;
 
 
     public Message(){}
-    public Message(String messageText, String creatorId, String creationDate, String creatorPic){
+    public Message(String messageText, String creatorId, long creationDate, String creatorPic){
         this.messageText = messageText;
         this.creatorId = creatorId;
         this.creationDate = creationDate;
@@ -31,11 +31,11 @@ public class Message {
         this.creatorId = creatorId;
     }
 
-    public String getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 

@@ -2,6 +2,8 @@ package com.musapp.musicapp.activities;
 
 import android.app.Application;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -9,6 +11,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase.DBAsyncTask;
+import com.musapp.musicapp.utils.ContextUtils;
 import com.musapp.musicapp.utils.GlideUtil;
 
 
@@ -24,6 +27,7 @@ public class MainApplication extends Application {
         DatabaseReference ref = database.getReference();
         StorageReference storageReference = storage.getReference();
         GlideUtil.setContext(this);
+        ContextUtils.setContext(this);
         DBAccess.setFirebaseAuth(FirebaseAuth.getInstance());
         DBAccess.setDatabaseReference(ref);
 
@@ -63,6 +67,8 @@ public class MainApplication extends Application {
 //           }
 //       });
         DBAsyncTask.setDatabaseReference(ref);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
 
     }
 

@@ -177,6 +177,7 @@ public class OtherUserProfileFragment extends Fragment {
 
     private void startConversationWithUser(String userId){
         ConversationFragment conversationFragment = new ConversationFragment();
+        conversationFragment.setToolBarAndNavigationBarState(mSetToolBarAndNavigationBarState);
         Bundle bundle = new Bundle();
         bundle.putString("ID", userId);
         conversationFragment.setArguments(bundle);

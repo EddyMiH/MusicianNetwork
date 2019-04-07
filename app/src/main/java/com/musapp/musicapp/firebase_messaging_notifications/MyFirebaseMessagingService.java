@@ -36,8 +36,8 @@ import com.musapp.musicapp.fragments.main_fragments.PostDetailsFragment;
 import com.musapp.musicapp.model.Conversation;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.preferences.RememberPreferences;
-import com.musapp.musicapp.service.BoundService;
 
+import com.musapp.musicapp.service.BoundService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +97,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Map<String, String> data = remoteMessage.getData();
         final com.musapp.musicapp.model.Notification pushedNotification;
         pushedNotification = new com.musapp.musicapp.model.Notification(data.get("commenterId"), data.get("postId"),
-                data.get("body"), data.get("date"), data.get("commenterImageUrl"), data.get("title"));
+                data.get("body"), Long.parseLong(data.get("date")), data.get("commenterImageUrl"), data.get("title"));
 
 
         FirebaseRepository.getUserByPrimaryKey(userPrimaryKey, new ValueEventListener() {

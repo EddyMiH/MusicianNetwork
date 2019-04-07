@@ -31,10 +31,12 @@ import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase_messaging_notifications.NotifyMessage;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.HandleBackPressWithFirebase;
+import com.musapp.musicapp.fragments.main_fragments.toolbar.SetToolBarAndNavigationBarState;
 import com.musapp.musicapp.model.Chat;
 import com.musapp.musicapp.model.Message;
 import com.musapp.musicapp.model.User;
 import com.musapp.musicapp.service.BoundService;
+import com.musapp.musicapp.utils.StringUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -73,6 +75,13 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
        }
    };
 
+    private SetToolBarAndNavigationBarState mToolBarAndNavigationBarState;
+
+    public void setToolBarAndNavigationBarState(SetToolBarAndNavigationBarState toolBarAndNavigationBarState) {
+        mToolBarAndNavigationBarState = toolBarAndNavigationBarState;
+    }
+
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_conversation, container, false);
@@ -89,8 +98,11 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
         enterInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage(inputText.getText().toString());
-                inputText.setText("");
+                if(!inputText.getText().toString().isEmpty()){
+                    sendMessage(inputText.getText().toString());
+                    inputText.setText("");
+                }
+
             }
         });
         init();
@@ -132,13 +144,7 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
                 });
             }
         }
-     /*   if(isBind){
-            mNotificationBinder.setBindState(true);
-            Bundle args = new Bundle();
-            args.putString("fragmentName", ConversationFragment.class.getSimpleName());
-            args.putString("id", userPrimaryKey);
-            mNotificationBinder.setBindFragmentBundle(args);
-        }*/
+
     }
 
     private void connectService(){
@@ -147,6 +153,7 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
         args.putString("fragmentName", ConversationFragment.class.getSimpleName());
         args.putString("id", userPrimaryKey);
         mNotificationBinder.setBindFragmentBundle(args);
+
 
     }
 
@@ -160,6 +167,11 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mUser = dataSnapshot.getValue(User.class);
+                if (mUser != null){
+                    mToolBarAndNavigationBarState.setTitle(mUser.getFullName());
+                }else{
+                    mToolBarAndNavigationBarState.setTitle("Message");
+                }
             }
 
             @Override
@@ -179,8 +191,6 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
       final Chat chat = new Chat();
       chat.setFirstUserId(CurrentUser.getCurrentUser().getPrimaryKey());
       chat.setSecondUserId(userPrimaryKey);
-
-
 
       FirebaseRepository.getChatByFirstUserId(CurrentUser.getCurrentUser().getPrimaryKey(), new ValueEventListener() {
           @Override
@@ -261,10 +271,14 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
 
 
     private void sendMessage(String msgText) {
-        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
-        Date date = new Date(System.currentTimeMillis());
-        Message message = new Message(msgText, CurrentUser.getCurrentUser().getPrimaryKey(), simple.format(date), CurrentUser.getCurrentUser().getUserInfo().getImageUri());
-        new NotifyMessage(mUser.getToken(), CurrentUser.getCurrentUser().getNickName() + " wrote new message", message.getMessageText(),userPrimaryKey, CurrentUser.getCurrentUser().getPrimaryKey(), CurrentUser.getCurrentUser().getUserInfo().getImageUri(), simple.format(date), chatId).execute();
+//        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
+//        Date date = new Date(System.currentTimeMillis());
+        Message message = new Message(msgText, CurrentUser.getCurrentUser().getPrimaryKey(), System.currentTimeMillis()
+                , CurrentUser.getCurrentUser().getUserInfo().getImageUri());
+        new NotifyMessage(mUser.getToken(), CurrentUser.getCurrentUser().getNickName() + " wrote new message"
+                , message.getMessageText(),userPrimaryKey, CurrentUser.getCurrentUser().getPrimaryKey()
+                , CurrentUser.getCurrentUser().getUserInfo().getImageUri()
+                , System.currentTimeMillis(), chatId).execute();
         if(mChat == null){
             Toast.makeText(getActivity(), "Ooops, something went wrong", Toast.LENGTH_LONG).show();
             return;
@@ -308,9 +322,8 @@ public class ConversationFragment extends Fragment implements HandleBackPressWit
     public void OnBackPressed(OnSuccessListener<Void> onSuccessListener) {
         if(mChat == null)
             return;
-        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
-        Date date = new Date(System.currentTimeMillis());
-        mChat.setFirstUserLastSeen(simple.format(date));
+
+        mChat.setFirstUserLastSeen(StringUtils.millisecondsToDateString(System.currentTimeMillis()));
         FirebaseRepository.updateChat(mChat, onSuccessListener);
     }
 

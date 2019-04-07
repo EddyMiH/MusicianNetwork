@@ -25,6 +25,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.musapp.musicapp.R;
@@ -40,6 +41,7 @@ import com.musapp.musicapp.pattern.UploadsAdapterFactory;
 import com.musapp.musicapp.service.UploadForegroundService;
 import com.musapp.musicapp.uploads.AttachedFile;
 import com.musapp.musicapp.uploads.BaseUpload;
+import com.musapp.musicapp.utils.CheckUtils;
 
 import java.io.File;
 import java.io.Serializable;
@@ -200,10 +202,15 @@ public class AddPostFragment extends Fragment {
                 mAddMusic.setEnabled(false);
 
                 final Uri selectedImageUri = data.getData();
-                addToUploads(selectedImageUri.toString());
-                fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedImageUri), selectedImageUri);
-                selectedFiles++;
-                mSelectedFilesName.setText(String.valueOf(selectedFiles));
+                if(CheckUtils.checkImageExtension(getFileExtension(selectedImageUri))){
+                    addToUploads(selectedImageUri.toString());
+                    fileUri.put(System.currentTimeMillis() + "." + getFileExtension(selectedImageUri), selectedImageUri);
+                    selectedFiles++;
+                    mSelectedFilesName.setText(String.valueOf(selectedFiles));
+                }else{
+                    Toast.makeText(getContext(), "type of image does not support", Toast.LENGTH_LONG).show();
+                }
+
 
             }else if(requestCode == SELECT_VIDEO){
                 mAddMusic.setEnabled(false);
@@ -281,9 +288,9 @@ public class AddPostFragment extends Fragment {
     private void savePost(){
         mNewPost.setPostText(mPostText.getText().toString());
         mNewPost.setType(mType);
-        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
-        Date date = new Date(System.currentTimeMillis());
-        mNewPost.setPublishedTime( simple.format(date));
+//        DateFormat simple = new SimpleDateFormat("dd MMM HH:mm", Locale.US);
+//        Date date = new Date(System.currentTimeMillis());
+        mNewPost.setPublishedTime( System.currentTimeMillis());
         mNewPost.setUserId(CurrentUser.getCurrentUser().getPrimaryKey());
         mNewPost.setUserName(CurrentUser.getCurrentUser().getNickName());
         startService();

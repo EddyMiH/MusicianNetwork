@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -21,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -250,7 +252,9 @@ public class AppMainActivity extends AppCompatActivity {
         mHomePageFragment.setSetToolBarAndNavigationBarState(mToolBarTitle);
         mHomePageFragment.setClickListener(mClickListener);
         mHomePageFragment.setTransactionListener(mTransaction);
+        mHomePageFragment.setToolBarAndNavigationBarState(mToolBarTitle);
         mMessagesFragment = new MessagesFragment();
+        mMessagesFragment.setSetToolBarAndNavigationBarState(mToolBarTitle);
         mProfileFragment.setSetToolBarAndNavigationBarState(mToolBarTitle);
         mProfileFragment.setClickListener(mClickListener);
         mProfileFragment.setTransactionListener(mTransaction);
@@ -348,6 +352,20 @@ public class AppMainActivity extends AppCompatActivity {
         void userImageClickListener(Post post);
         void postClickListener(Post post);
         void userCommentImageClickListener(String userId);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE){
+            Toast.makeText(this, "orientation changes", Toast.LENGTH_SHORT).show();
+            mToolBarTitle.hideNavigationBar();
+            mToolBarTitle.hideToolBar();
+        }else{
+            mToolBarTitle.showNavigationBar();
+            mToolBarTitle.showToolBar();
+        }
     }
 
     @Override

@@ -11,22 +11,22 @@ public class Notification {
     private String postId;
     private String notificationBody;
     private String description;
-    private String date;
+    private long date;
 
-    public String getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
     public Notification(){
         description = "Description";
-        date = StringUtils.CurrentDateAndTimeToString();
+        date = System.currentTimeMillis();
     }
 
-    public Notification(String commentatorId, String postId, String notificationBody, String date, String commentatorImageUrl){
+    public Notification(String commentatorId, String postId, String notificationBody, long date, String commentatorImageUrl){
         this.commentatorId = commentatorId;
         this.postId = postId;
         this.notificationBody = notificationBody;
@@ -34,7 +34,7 @@ public class Notification {
         this.commentatorImageUrl = commentatorImageUrl;
     }
 
-    public Notification(String commentatorId, String postId, String notificationBody, String date, String commentatorImageUrl, String commentatorName){
+    public Notification(String commentatorId, String postId, String notificationBody, long date, String commentatorImageUrl, String commentatorName){
         this(commentatorId, postId, notificationBody, date, commentatorImageUrl);
         description = commentatorName;
     }
@@ -86,7 +86,7 @@ public class Notification {
       if(obj instanceof Notification){
           boolean res = ((Notification) obj).commentatorId.equals(commentatorId)
                   && ((Notification) obj).commentatorImageUrl.equals(commentatorImageUrl)
-                  && ((Notification) obj).date.equals(date)
+                  && String.valueOf(((Notification) obj).date).equals(String.valueOf(date))
                   && ((Notification) obj).description.equals(description)
                   && ((Notification) obj).notificationBody.equals(notificationBody)
                   && ((Notification) obj).postId.equals(postId);
