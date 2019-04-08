@@ -230,8 +230,15 @@ public class FirebaseRepository {
         DBAccess.getUserReference("users").child(CurrentUser.getCurrentUser().getPrimaryKey()).child("token").setValue(newToken);
     }
 
-    public static void updateUserNotificationListById(String userId, List<Notification> value,OnSuccessListener<Void> successListener){
-        DBAccess.getUserReference("users/" + userId).child("notifications").setValue(value).addOnSuccessListener(successListener);
+    public static void updateUserNotificationListById(String userId,long index,Notification value){
+        DBAccess.getUserReference("users/" + userId).child("notifications").child(index+"").setValue(value);
+    }
+
+    public static void adddChildListenerOnNotifications(String userId, ValueEventListener valueEventListener){
+        DBAccess.getUserReference("users/" + userId).child("notifications").addListenerForSingleValueEvent(valueEventListener);
+    }
+    public static void removeListenerNotification(String userId, ValueEventListener valueEventListener){
+        DBAccess.getUserReference("users/" + userId).child("notifications").removeEventListener(valueEventListener);
     }
 
     public static void loadNotifications(ChildEventListener childEventListener){

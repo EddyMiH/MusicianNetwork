@@ -371,14 +371,13 @@ public class PostDetailsFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.i("loadnewcom", dataSnapshot.toString());
+                if(mCommentAdapter.getItemCount() > 0)
+                mRecyclerView.scrollToPosition(mCommentAdapter.getItemCount() - 1);
                 FirebaseRepository.getCommentById(dataSnapshot.getValue(String.class), new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         mCommentAdapter.addComment(dataSnapshot.getValue(Comment.class));
-                        if(mCommentAdapter.getItemCount() > 0){
-                            mRecyclerView.scrollToPosition(mCommentAdapter.getItemCount() - 1);}
-
 
                     }
 

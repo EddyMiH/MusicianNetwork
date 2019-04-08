@@ -13,6 +13,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -20,6 +21,7 @@ import android.util.Log;
 
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -31,6 +33,7 @@ import com.musapp.musicapp.currentinformation.CurrentUser;
 import com.musapp.musicapp.firebase.DBAccess;
 import com.musapp.musicapp.firebase_repository.FirebaseRepository;
 import com.musapp.musicapp.fragments.main_fragments.ConversationFragment;
+import com.musapp.musicapp.fragments.main_fragments.HomePageFragment;
 import com.musapp.musicapp.fragments.main_fragments.NotificationFragment;
 import com.musapp.musicapp.fragments.main_fragments.PostDetailsFragment;
 import com.musapp.musicapp.model.Conversation;
@@ -40,6 +43,7 @@ import com.musapp.musicapp.preferences.RememberPreferences;
 import com.musapp.musicapp.service.BoundService;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -60,22 +64,76 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 */
 
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
+    public void onMessageReceived(final RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
         if(remoteMessage.getData().get("type").equals("comment")) {
             if (!remoteMessage.getData().get("tag").equals(RememberPreferences.getUser(this))) {
 
             }
-            //TODO check if activity is active and is postdetail is active and PostDetailsFragment.getPostId().equals(remoteMessage.getData().get("postId")
-       //     else if ( PostDetailsFragment.isActive() && PostDetailsFragment.getPostId().equals(remoteMessage.getData().get("postId")))
-       //         return;
-
-
             else if(BoundService.isFragmentBind() &&
                     BoundService.getFragmentInformation().getString("fragmentName").equals(PostDetailsFragment.class.getSimpleName()) &&
                     BoundService.getFragmentInformation().getString("id").equals(remoteMessage.getData().get("postId"))){return;}
-            loadNotificationToFirebase(remoteMessage.getData().get("tag"), remoteMessage);
+                    loadNotificationToFirebase(remoteMessage.getData().get("tag"), remoteMessage);
+                    FirebaseRepository.adddChildListenerOnNotifications(remoteMessage.getData().get("tag"), /*new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                            Log.i("SNAPME", dataSnapshot.toString());
+                            if (remoteMessage.getData().get("tag").equals(RememberPreferences.getUser(MyFirebaseMessagingService.this)) &&
+                                    dataSnapshot.getValue(com.musapp.musicapp.model.Notification.class).getCommentatorId().equals(remoteMessage.getData().get("commenterId"))
+                                    && dataSnapshot.getValue(com.musapp.musicapp.model.Notification.class).getNotificationBody().equals(remoteMessage.getData().get("body"))
+                                    && dataSnapshot.getValue(com.musapp.musicapp.model.Notification.class).getPostId().equals(remoteMessage.getData().get("postId"))
+                                    && String.valueOf(dataSnapshot.getValue(com.musapp.musicapp.model.Notification.class).getDate()).equals(remoteMessage.getData().get("data"))) {
+                                createNotification(remoteMessage, "PostDetailsFragment");}
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                            Log.i("SNAPHIM", dataSnapshot.toString());
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    }*/
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                    com.musapp.musicapp.model.Notification notification = null ;
+                                    Iterator<DataSnapshot> iter = dataSnapshot.getChildren().iterator();
+                                    while(iter.hasNext())
+                                        notification = iter.next().getValue(com.musapp.musicapp.model.Notification.class);
+                                    Log.i("SNAPME", notification.getNotificationBody());
+                                    if (remoteMessage.getData().get("tag").equals(RememberPreferences.getUser(MyFirebaseMessagingService.this)) &&
+                                           notification != null &&notification.getCommentatorId()!= null &&
+                                           notification.getCommentatorId().equals(remoteMessage.getData().get("commenterId"))
+                                            &&notification.getNotificationBody().equals(remoteMessage.getData().get("body"))
+                                            &&notification.getPostId().equals(remoteMessage.getData().get("postId"))
+                                           // && String.valueOf(notification.getDate()).equals(remoteMessage.getData().get("data"))
+                                    ) {
+                                        Log.i("SNAPME", notification.toString());
+                                        createNotification(remoteMessage, "NotificationFragment");
+                                    }
+                                    FirebaseRepository.removeListenerNotification(remoteMessage.getData().get("tag"), this);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
         }
         else if(BoundService.isFragmentBind() &&
                 BoundService.getFragmentInformation().getString("fragmentName").equals(ConversationFragment.class.getSimpleName()) &&
@@ -88,6 +146,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             //       return;
             //}
         }
+        else
          createNotification(remoteMessage, "ConversationFragment");
 
         }
@@ -104,12 +163,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<com.musapp.musicapp.model.Notification> notifications = new ArrayList<>();
-                if (dataSnapshot.child("notifications").getValue() != null){
-                    for(DataSnapshot infoSnapshot: dataSnapshot.child("notifications").getChildren())
+                for(DataSnapshot infoSnapshot: dataSnapshot.child("notifications").getChildren())
                         notifications.add(infoSnapshot.getValue(com.musapp.musicapp.model.Notification.class));
-                }
-                  //  notifications.addAll((ArrayList<com.musapp.musicapp.model.Notification>) dataSnapshot.child("notifications").getValue());
                 if(notifications.contains(pushedNotification))
+                    return;
+
+                   FirebaseRepository.updateUserNotificationListById(userPrimaryKey, dataSnapshot.child("notifications").getChildrenCount() + 1 , pushedNotification);
+
+                  //  notifications.addAll((ArrayList<com.musapp.musicapp.model.Notification>) dataSnapshot.child("notifications").getValue());
+               /* if(notifications.contains(pushedNotification))
                     return;
                 notifications.add(pushedNotification);
                 FirebaseRepository.updateUserNotificationListById(userPrimaryKey, notifications, new OnSuccessListener<Void>() {
@@ -120,7 +182,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         }
 
                     }
-                });
+                });*/
 
             }
 
@@ -159,6 +221,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if(goTo.equals("ConversationFragment")){
             resultIntent.putExtra("CHAT_ID", remoteMessage.getData().get("chatId"));
         }
+
 
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -214,6 +277,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         notificationManager.notify(new Random().nextInt(1000), builder.build());
 
     }
+
 
 
 

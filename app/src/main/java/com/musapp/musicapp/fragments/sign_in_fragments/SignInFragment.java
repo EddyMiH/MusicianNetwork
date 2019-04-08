@@ -14,12 +14,12 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
+/*import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
+import com.facebook.login.widget.LoginButton;*/
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -78,12 +78,12 @@ public class SignInFragment extends Fragment {
     Button twitterSign;
     @BindView(R.id.action_fragment_sign_in_google_plus)
     Button googleSign;
-    @BindView(R.id.login_button)
-    LoginButton facebookLogin;
+   // @BindView(R.id.login_button)
+    //LoginButton facebookLogin;
 
     private boolean isClicked;
     private FirebaseAuth mAuth;
-    CallbackManager mCallbackManager;
+   // CallbackManager mCallbackManager;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
 
     private View.OnClickListener onSignInClickListener = new View.OnClickListener() {
@@ -155,7 +155,7 @@ public class SignInFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
 
-        mCallbackManager = CallbackManager.Factory.create();
+      /*  mCallbackManager = CallbackManager.Factory.create();
         facebookLogin.setReadPermissions(Arrays.asList("email","public_profile"));
 
         facebookLogin.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
@@ -193,10 +193,10 @@ public class SignInFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Pass the activity result back to the Facebook SDK
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+   //     mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void handleFacebookAccessToken(AccessToken token) {
+/*    private void handleFacebookAccessToken(AccessToken token) {
 
         final AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
@@ -213,7 +213,7 @@ public class SignInFragment extends Fragment {
 
 
                     }
-                });
+                });*/
 
     }
 
@@ -280,6 +280,7 @@ public class SignInFragment extends Fragment {
                     }
                 }
                 if (isFound){
+                    Log.d("emm", "yee");
                     if(getActivity() != null && getActivity().getBaseContext() != null){
                     RememberPreferences.saveState(getActivity().getBaseContext(), !remembered.isChecked());
                     RememberPreferences.saveUser(getActivity().getBaseContext(), CurrentUser.getCurrentUser().getPrimaryKey());
@@ -287,7 +288,7 @@ public class SignInFragment extends Fragment {
                 }
 
                 else {
-
+                    Log.d("emm", "emmm");
                     Toast.makeText(getActivity().getBaseContext(), "Email or password is wrong", Toast.LENGTH_LONG).show();
 
 
