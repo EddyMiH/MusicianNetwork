@@ -139,12 +139,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 BoundService.getFragmentInformation().getString("fragmentName").equals(ConversationFragment.class.getSimpleName()) &&
                 BoundService.getFragmentInformation().getString("id").equals(remoteMessage.getData().get("userId"))) {
             return;
-            //TODO check if activity is active and is postdetail is active and PostDetailsFragment.getPostId().equals(remoteMessage.getData().get("postId")
-
-            //    if(AppMainActivity.isActive() && ConversationFragment.isActive() && (ConversationFragment.getChatId().equals(remoteMessage.getData().get("chatId")))
-            //  || ConversationFragment.getUserId().equals(remoteMessage.getData().get("userId"))){
-            //       return;
-            //}
         }
         else
          createNotification(remoteMessage, "ConversationFragment");
@@ -208,7 +202,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         notificationBuilder = new NotificationCompat.Builder(this, "technoWeb")
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle(remoteMessage.getData().get("title"))
+                .setContentTitle(remoteMessage.getData().get("title") + " has commented your post")
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_background))
                 .setContentText(remoteMessage.getData().get("body"))
                 .setAutoCancel(true)
@@ -252,6 +246,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         mChannel.setDescription(description);
         mChannel.enableLights(true);
         mChannel.setLightColor(Color.BLUE);
+        mChannel.setImportance(NotificationManager.IMPORTANCE_HIGH);
 
         Intent intent = new Intent(this, AppMainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -263,7 +258,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, chanel_id)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle(remoteMessage.getData().get("title"))
+                .setContentTitle(remoteMessage.getData().get("title") + " has commented your post")
                 .setContentText(remoteMessage.getData().get("body"))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that will fire when the user taps the notification
@@ -271,10 +266,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setAutoCancel(true)
                 .setVibrate(new long[]{100, 100, 100, 100})
                 .setSound(defaultSoundUri);
-
-
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(new Random().nextInt(1000), builder.build());
+        NotificationManager notificationManager1 = getSystemService(NotificationManager.class);
+        notificationManager1.createNotificationChannel(mChannel);
+        notificationManager1.notify(new Random().nextInt(1000), builder.build());
+      //  notificationManager.notify(new Random().nextInt(1000), builder.build());
 
     }
 

@@ -220,6 +220,7 @@ public class AppMainActivity extends AppCompatActivity {
                 Bundle args = new Bundle();
                 args.putString("CHAT_ID", getIntent().getStringExtra("CHAT_ID"));
                 conversationFragment.setArguments(args);
+                conversationFragment.setToolBarAndNavigationBarState(mToolBarTitle);
                 beginTransaction(conversationFragment);
             }
         }
